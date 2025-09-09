@@ -1,40 +1,15 @@
-from typing import Union
-from pydantic import BaseModel
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
-
+from fastapi import FastAPI, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.database import get_db
+from app.models.user import User
+from app.core.security import hash_password
 
 app = FastAPI()
 
-# Not safe! Add your own allowed domains
-origins = [
-    "*",
-] 
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Define what you will receiving in request
-class TypePayload(BaseModel):
-    content: str
-
-# Example GET route for app
-@app.get("/")
-def read_root():
-    return {"Message": "Hello World! FastAPI is working."}
-
-# Example POST route for app
-@app.post("/getdata")
-async def create_secret(payload: TypePayload):
-    with open('output_file.txt', 'a') as f:
-        now = datetime.now()
-        formatted_date = now.strftime("%B %d, %Y at %I:%M %p")
-        f.write(formatted_date + ": " + payload.content)
-        f.write('\n')
-    return payload.content
+@app.post("/create_user")
+async def create_user(email: str, password: str, db: AsyncSession = Depends(get_db)):
+    new_user = User(email=email, hashed_password=hash_password(password))
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
+    return {"id": str(new_user.id), "email": new_user.email}
