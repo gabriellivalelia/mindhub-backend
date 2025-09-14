@@ -1,17 +1,40 @@
 from enum import Enum
-from typing import Type
+from typing import Any, Type, TypedDict
 
 
 class GuardException(Exception): ...
 
 
+class Argument(TypedDict):
+    argument: Any
+    argument_name: str
+
+
 class Guard:
     @staticmethod
-    def against_empty_list(argument: list, argument_name) -> None:
+    def against_empty_list_bulk(args: list[Argument]) -> None:
+        """
+        Expects a list of dicts with keys: 'argument' and 'argument_name'.
+        For each item, raises GuardException if the argument is an empty list.
+        Example of args:
+          [
+            {"argument": user_list, "argument_name": "user_list"},
+            {"argument": items,     "argument_name": "items"}
+          ]
+        """
+        for arg_item in args:
+            Guard.against_empty_list(arg_item["argument"], arg_item["argument_name"])
+
+    @staticmethod
+    def against_empty_list(argument: list[Any], argument_name: str) -> None:
         """
         Raises GuardException if argument is an empty list.
         """
-        if len(argument) == 0:
+
+        if (
+            not isinstance(argument, list)  # type: ignore
+            or len([filter(lambda item: item is not None, argument)]) == 0
+        ):
             raise GuardException(f"{argument_name} cannot be empty")
 
     @staticmethod
@@ -35,15 +58,18 @@ class Guard:
             )
 
     @staticmethod
-    def against_empty_str(argument: object, argument_name: str) -> None:
+    def against_empty_str(argument: Any, argument_name: str) -> None:
         """
         Raises GuardException if argument is a empty string.
         """
+        if argument is None:
+            raise GuardException(f"{argument_name} cannot be null or undefined")
+
         if str(argument) == "":
             raise GuardException(f"{argument_name} cannot be a empty")
 
     @staticmethod
-    def against_empty_str_bulk(args: list[dict]) -> None:
+    def against_empty_str_bulk(args: list[Argument]) -> None:
         """
         Expects a list of dicts with keys: 'argument' and 'argument_name'.
         For each item, raises GuardException if the argument is an empty string.
@@ -82,7 +108,7 @@ class Guard:
             raise GuardException(f"{argument_name} is undefined.")
 
     @staticmethod
-    def against_undefined_bulk(args: list[dict]) -> None:
+    def against_undefined_bulk(args: list[Argument]) -> None:
         """
         Expects a list of dicts with keys: 'argument' and 'argument_name'.
         For each item, raises GuardException if the argument is None.
@@ -96,7 +122,7 @@ class Guard:
             Guard.against_undefined(arg_item["argument"], arg_item["argument_name"])
 
     @staticmethod
-    def is_one_of(value: object, valid_values: list, argument_name: str) -> None:
+    def is_one_of(value: object, valid_values: list[Any], argument_name: str) -> None:
         """
         Raises GuardException if value is not in the list of valid_values.
         """
@@ -106,7 +132,7 @@ class Guard:
             )
 
     @staticmethod
-    def is_one_of_enum(value, enum_class: Type[Enum], argument_name: str) -> None:
+    def is_one_of_enum(value: Any, enum_class: Type[Enum], argument_name: str) -> None:
         """
         Raises GuardException if value is not in enum class.
         """
