@@ -4,12 +4,12 @@ from enum import Enum
 
 from domain.city import City
 from domain.common.entity import Entity
-from domain.common.files.file_data import FileData
 from domain.common.guard import Guard
 from domain.common.unique_entity_id import UniqueEntityId
 from domain.state import State
 from domain.value_objects.cpf import CPF
 from domain.value_objects.email import Email
+from domain.value_objects.file_data import FileData
 from domain.value_objects.password import Password
 from domain.value_objects.phone_number import PhoneNumber
 
@@ -91,7 +91,7 @@ class User(Entity, ABC):
 
     @property
     def phone_number(self) -> PhoneNumber:
-        return self.phone_number
+        return self._phone_number
 
     @property
     def profile_picture(self) -> FileData | None:

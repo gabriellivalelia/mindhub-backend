@@ -18,4 +18,5 @@ class CRP(ValueObject):
             raise DomainException(
                 "Invalid CRP format. Expected format: XX/XXXX or XX/XXXXX"
             )
-        return
+
+        return crp

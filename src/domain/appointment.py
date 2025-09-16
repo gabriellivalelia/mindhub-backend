@@ -6,8 +6,10 @@ from domain.common.exception import DomainException
 from domain.common.guard import Guard
 from domain.common.unique_entity_id import UniqueEntityId
 from domain.patient import Patient
-from domain.payment import Payment
+from domain.pix_payment import PixPayment
 from domain.psychologist import Psychologist
+
+# TODO
 
 DEFAULT_DURATION_MIN = 50
 
@@ -25,7 +27,7 @@ class Appointment(Entity):
         date: datetime,
         patient: Patient,
         psychologist: Psychologist,
-        payment: Payment,
+        pix_payment: PixPayment,
         duration_min: int = DEFAULT_DURATION_MIN,
         status: AppointmentStatusEnum = AppointmentStatusEnum.SCHEDULED,
         id: UniqueEntityId | None = None,
@@ -35,7 +37,7 @@ class Appointment(Entity):
                 {"argument": date, "argument_name": "date"},
                 {"argument": patient, "argument_name": "patient"},
                 {"argument": psychologist, "argument_name": "psychologist"},
-                {"argument": payment, "argument_name": "payment"},
+                {"argument": pix_payment, "argument_name": "pix_payment"},
                 {"argument": duration_min, "argument_name": "duration_min"},
                 {"argument": status, "argument_name": "status"},
             ]
@@ -48,7 +50,7 @@ class Appointment(Entity):
         self._date = date
         self._patient = patient
         self._psychologist = psychologist
-        self._payment = payment
+        self._pix_payment = pix_payment
         self._duration_min = duration_min
         self._status = status
 

@@ -1,13 +1,15 @@
 from datetime import date
 
 from domain.city import City
-from domain.common.files.file_data import FileData
 from domain.common.unique_entity_id import UniqueEntityId
 from domain.user import GenderEnum, User
 from domain.value_objects.cpf import CPF
 from domain.value_objects.email import Email
+from domain.value_objects.file_data import FileData
 from domain.value_objects.password import Password
 from domain.value_objects.phone_number import PhoneNumber
+
+# TODO
 
 
 class Patient(User):

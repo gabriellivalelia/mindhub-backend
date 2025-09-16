@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 
 from fastapi import UploadFile
 
-from src.domain.common.files.file_data import FileData
+from domain.value_objects.file_data import FileData
 
 
-class IFileHandler(ABC):
+class IFileService(ABC):
     @abstractmethod
     async def upload(self, file: UploadFile) -> FileData: ...
 

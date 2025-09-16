@@ -1,4 +1,6 @@
-from pydantic import ValidationInfo, field_validator
+from __future__ import annotations
+
+from pydantic import Field, ValidationInfo, field_validator
 
 from domain.common.exception import DomainException
 from domain.common.value_object import ValueObject
@@ -14,10 +16,10 @@ INCLUDES_UPPERCASE: bool = True
 
 
 class Password(ValueObject):
+    hashed: bool = Field(default=False)
     value: str
-    hashed: bool = False
 
-    @field_validator("value")
+    @field_validator("value", mode="after")
     @classmethod
     def validate_password(cls, v: str, info: ValidationInfo):
         # Skip validation if already hashed

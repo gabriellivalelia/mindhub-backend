@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from domain.appointment import Appointment
 from domain.common.entity import Entity
 from domain.common.exception import DomainException
 from domain.common.guard import Guard
@@ -23,14 +22,14 @@ class Availability(Entity):
         self._appointment_id = appointment_id
         self._available = available
 
-    def schedule(self, appointment: Appointment):
+    def schedule(self, appointment_id: UniqueEntityId):
         if self.available:
             raise DomainException("Appointment is already fullfield.")
 
-        Guard.against_undefined(appointment, "appointment")
+        Guard.against_undefined(appointment_id, "appointment")
 
         self._available = True
-        self._appointment_id = appointment.id
+        self._appointment_id = appointment_id
 
     @property
     def date(self) -> datetime:

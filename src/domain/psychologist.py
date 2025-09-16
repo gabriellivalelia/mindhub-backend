@@ -1,8 +1,8 @@
 from datetime import date
 from enum import Enum
 
+from domain.availability import Availability
 from domain.city import City
-from domain.common.files.file_data import FileData
 from domain.common.guard import Guard
 from domain.common.unique_entity_id import UniqueEntityId
 from domain.specialty import Specialty
@@ -10,9 +10,9 @@ from domain.user import GenderEnum, User
 from domain.value_objects.cpf import CPF
 from domain.value_objects.crp import CRP
 from domain.value_objects.email import Email
+from domain.value_objects.file_data import FileData
 from domain.value_objects.password import Password
 from domain.value_objects.phone_number import PhoneNumber
-from src.domain.availability import Availability
 
 
 class ApproachEnum(Enum):
@@ -80,3 +80,23 @@ class Psychologist(User):
     @property
     def crp(self) -> CRP:
         return self._crp
+
+    @property
+    def description(self) -> str:
+        return self._description
+
+    @property
+    def specialties(self) -> list[Specialty]:
+        return self._specialties
+
+    @property
+    def approaches(self) -> list[ApproachEnum]:
+        return self._approaches
+
+    @property
+    def audiences(self) -> list[AudienceEnum]:
+        return self._audiences
+
+    @property
+    def availabilities(self) -> list[Availability] | None:
+        return self._availabilities
