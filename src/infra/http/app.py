@@ -17,6 +17,7 @@ from domain.common.exception import DomainException
 from domain.common.guard import GuardException
 from infra.config.settings import Settings
 from infra.providers import container
+from infra.routers.patient_router import router as patient_router
 from infra.routers.psychologist_router import router as psychologist_router
 
 
@@ -60,6 +61,7 @@ class MindHubApp:
 
     def _set_routers(self) -> None:
         self.__app.include_router(psychologist_router)
+        self.__app.include_router(patient_router)
 
         if Settings().ENV == "development":
             # Disponibiliza os arquivos salvos na pasta "/temp"
