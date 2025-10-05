@@ -39,7 +39,6 @@ class MongoPsychologistRepo(IPsychologistRepo):
         doc = await PsychologistMongoMapper.to_model(entity)
         await doc.save(link_rule=WriteRules.WRITE, session=self._session)
         await doc.fetch_all_links()
-        # ex = await AvailabilityDocument.find_all(session=self._session).to_list()
 
         return await PsychologistMongoMapper.to_domain(doc)
 
@@ -70,6 +69,17 @@ class MongoPsychologistRepo(IPsychologistRepo):
                 query_conditions["approaches"] = {"$in": list(filters.approaches)}
             if filters.audiences:
                 query_conditions["audiences"] = {"$in": list(filters.audiences)}
+            if filters.min_price is not None:
+                query_conditions["value_per_appointment"] = {"$gte": filters.min_price}
+            if filters.max_price is not None:
+                if "value_per_appointment" in query_conditions:
+                    query_conditions["value_per_appointment"]["$lte"] = (
+                        filters.max_price
+                    )
+                else:
+                    query_conditions["value_per_appointment"] = {
+                        "$lte": filters.max_price
+                    }
 
         total = await PsychologistDocument.count()
 

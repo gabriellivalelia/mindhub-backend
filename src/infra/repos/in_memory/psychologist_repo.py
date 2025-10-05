@@ -11,6 +11,9 @@ class InMemoryPsychologistRepo(IPsychologistRepo):
 
     def __init__(self) -> None: ...
 
+    async def exists_by_crp(self, crp: str) -> bool:
+        return any(item.crp.value == crp for item in InMemoryPsychologistRepo.items)
+
     async def create(self, entity: Psychologist) -> Psychologist:
         InMemoryPsychologistRepo.items.append(entity)
         return entity
@@ -50,6 +53,14 @@ class InMemoryPsychologistRepo(IPsychologistRepo):
                     p
                     for p in items
                     if any(a.value in filters.audiences for a in p.audiences)
+                ]
+            if filters.min_price is not None:
+                items = [
+                    p for p in items if p.value_per_appointment >= filters.min_price
+                ]
+            if filters.max_price is not None:
+                items = [
+                    p for p in items if p.value_per_appointment <= filters.max_price
                 ]
 
         start = pageable.offset()

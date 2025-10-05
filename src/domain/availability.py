@@ -20,11 +20,9 @@ class Availability(Entity):
         self._date = date
         self._available = available
 
-    def schedule(self, appointment_id: UniqueEntityId):
+    def schedule(self):
         if not self.available:
             raise DomainException("Appointment is already scheduled.")
-
-        Guard.against_undefined(appointment_id, "appointment")
 
         self._available = False
 

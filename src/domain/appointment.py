@@ -7,8 +7,6 @@ from domain.common.guard import Guard
 from domain.common.unique_entity_id import UniqueEntityId
 from domain.pix_payment import PixPayment
 
-# TODO
-
 DEFAULT_DURATION_MIN = 50
 
 

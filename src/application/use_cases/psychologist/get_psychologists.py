@@ -30,7 +30,6 @@ class GetPsychologistsUseCase(IUseCase[GetPsychologistsDTO, Page[PsychologistDTO
             min_price=dto.min_price,
             max_price=dto.max_price,
         )
-
         page = await self.psychologist_repo.get(pageable, filters)
         return Page(
             items=[PsychologistDTO.to_dto(entity) for entity in page.items],

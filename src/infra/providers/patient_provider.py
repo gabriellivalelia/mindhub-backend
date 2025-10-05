@@ -4,8 +4,10 @@ from dishka import (
     provide,  # type: ignore
 )
 
+from application.repos.iappointment_repo import IAppointmentRepo
 from application.repos.icity_repo import ICityRepo
 from application.repos.ipatient_repo import IPatientRepo
+from application.repos.ipsychologist_repo import IPsychologistRepo
 from application.repos.iuser_repo import IUserRepo
 from application.services.iauth_service import IAuthService
 from application.services.ifile_service import IFileService
@@ -13,6 +15,9 @@ from application.use_cases.patient.create_patient import (
     CreatePatientUseCase,
 )
 from application.use_cases.patient.get_patients import GetPatientsUseCase
+from application.use_cases.patient.solicit_schedule_appointment import (
+    ScheduleAppointmentUseCase,
+)
 
 
 class PatientProvider(Provider):
@@ -39,3 +44,14 @@ class PatientProvider(Provider):
         patient_repo: IPatientRepo,
     ) -> GetPatientsUseCase:
         return GetPatientsUseCase(patient_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def SoliciteScheduleAppointmentUseCaseInstance(
+        self,
+        patient_repo: IPatientRepo,
+        psychologist_repo: IPsychologistRepo,
+        appointment_repo: IAppointmentRepo,
+    ) -> ScheduleAppointmentUseCase:
+        return ScheduleAppointmentUseCase(
+            patient_repo, psychologist_repo, appointment_repo
+        )

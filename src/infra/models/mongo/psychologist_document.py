@@ -14,4 +14,5 @@ class PsychologistDocument(UserDocument):
     specialties: list[Link[SpecialtyDocument]] = Field(default_factory=list)
     approaches: list[str] = Field(default_factory=list)
     audiences: list[str] = Field(default_factory=list)
+    value_per_appointment: float
     availabilities: list[Link[AvailabilityDocument]] | None = None

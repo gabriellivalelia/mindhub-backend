@@ -3,6 +3,7 @@ from enum import Enum
 
 from domain.availability import Availability
 from domain.city import City
+from domain.common.exception import DomainException
 from domain.common.guard import Guard
 from domain.common.unique_entity_id import UniqueEntityId
 from domain.specialty import Specialty
@@ -39,6 +40,7 @@ class Psychologist(User):
         specialties: list[Specialty],
         approaches: list[ApproachEnum],
         audiences: list[AudienceEnum],
+        value_per_appointment: float,
         availabilities: list[Availability] | None = None,
         profile_picture: FileData | None = None,
         id: UniqueEntityId | None = None,
@@ -59,6 +61,7 @@ class Psychologist(User):
         Guard.against_undefined_bulk(
             [
                 {"argument": crp, "argument_name": "crp"},
+                {"argument": crp, "argument_name": "crp"},
             ]
         )
         Guard.against_empty_str(description, "description")
@@ -76,6 +79,7 @@ class Psychologist(User):
         self._approaches = approaches
         self._audiences = audiences
         self._availabilities = availabilities
+        self.value_per_appointment = value_per_appointment
 
     @property
     def crp(self) -> CRP:
@@ -123,3 +127,27 @@ class Psychologist(User):
             return dt.replace(tzinfo=timezone.utc)
         else:
             return dt.astimezone(timezone.utc)
+
+    def get_availability_by_date(self, availability_date: datetime) -> UniqueEntityId:
+        if not self.availabilities:
+            raise DomainException("Psychologist has not availabilities.")
+
+        availability = next(
+            (
+                item
+                for item in self.availabilities
+                if self._normalize_datetime(item.date)
+                == self._normalize_datetime(availability_date)
+            ),
+            None,
+        )
+
+        if not availability:
+            raise DomainException("No availability found for the given date.")
+
+        if not availability.available:
+            raise DomainException("The selected date is not available.")
+
+        availability.schedule()
+
+        return availability.id

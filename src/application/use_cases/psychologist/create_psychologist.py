@@ -39,6 +39,7 @@ class CreatePsychologistDTO(BaseModel):
     specialty_ids: list[UUID]
     approaches: list[str]
     audiences: list[str]
+    value_per_appointment: float
     availabilities: list[AvailabilityDTO] | None = None
     profile_picture: UploadFile | None = None
 
@@ -121,6 +122,7 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
             specialties=specialties,
             approaches=approaches,
             audiences=audiences,
+            value_per_appointment=dto.value_per_appointment,
             profile_picture=profile_picture,
         )
         created_psychologist = await self.psychologist_repo.create(psychologist)

@@ -47,6 +47,7 @@ class PsychologistMongoMapper(IMapper[PsychologistDocument, Psychologist]):
             specialties=specialties,
             approaches=[ApproachEnum(approach) for approach in model.approaches],
             audiences=[AudienceEnum(audience) for audience in model.audiences],
+            value_per_appointment=model.value_per_appointment,
             availabilities=availabilities,
             profile_picture=model.profile_picture,
             id=UniqueEntityId(model.id),
@@ -88,5 +89,6 @@ class PsychologistMongoMapper(IMapper[PsychologistDocument, Psychologist]):
             specialties=specialties,  # type: ignore
             approaches=[approach.value for approach in entity.approaches],
             audiences=[audience.value for audience in entity.audiences],
+            value_per_appointment=entity.value_per_appointment,
             availabilities=availabilities,  # type: ignore
         )

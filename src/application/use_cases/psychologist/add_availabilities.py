@@ -8,7 +8,6 @@ from application.common.use_case import IUseCase
 from application.dtos.psychologist_dto import PsychologistDTO
 from application.repos.ipsychologist_repo import IPsychologistRepo
 from domain.availability import Availability
-from domain.common.exception import DomainException
 from domain.common.unique_entity_id import UniqueEntityId
 
 
@@ -31,8 +30,6 @@ class AddAvailabilitiesUseCase(IUseCase[AddAvailabilitiesDTO, PsychologistDTO]):
 
     async def execute(self, dto: AddAvailabilitiesDTO) -> PsychologistDTO:
         availability_datetimes = dto.availability_datetimes
-        if not availability_datetimes:
-            raise DomainException("No availability datetimes provided.")
 
         psychologist = await self.psychologist_repo.get_by_id(
             UniqueEntityId(dto.psychologist_id)

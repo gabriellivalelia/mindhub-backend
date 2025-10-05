@@ -13,6 +13,7 @@ class PsychologistDTO(UserDTO):
     specialties: list[SpecialtyDTO]
     approaches: list[str]
     audiences: list[str]
+    value_per_appointment: float
     availabilities: list[AvailabilityDTO] | None = None
 
     @staticmethod
@@ -30,6 +31,7 @@ class PsychologistDTO(UserDTO):
             specialties=[SpecialtyDTO.to_dto(s) for s in entity.specialties],
             approaches=[approach.value for approach in entity.approaches],
             audiences=[audience.value for audience in entity.audiences],
+            value_per_appointment=entity.value_per_appointment,
             city=CityDTO.to_dto(entity.city),
             profile_picture=entity.profile_picture,
             availabilities=[

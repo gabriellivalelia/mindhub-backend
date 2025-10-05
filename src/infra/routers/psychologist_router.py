@@ -41,15 +41,16 @@ async def create_psychologist(
     phone_number: Annotated[str, Form(examples=["71999258225"])],
     birth_date: Annotated[date, Form(examples=["1999-07-28"])],
     gender: Annotated[str, Form(examples=["male"])],
-    city_id: Annotated[UUID, Form(examples=["94b829ad-8c2e-4e96-8d3e-d5ee73784d44"])],
+    city_id: Annotated[UUID, Form(examples=["c51e05bc-c48b-4229-980e-3841e62ae413"])],
     crp: Annotated[str, Form(examples=["05/5555"])],
     description: Annotated[str, Form(example=["string"])],
     specialty_ids: Annotated[
-        list[UUID], Form(examples=[["96c95918-75af-4fa9-b97e-9e72bdd1e4b0"]])
+        list[UUID], Form(examples=[["b5a736f6-834f-46ad-94f0-4cab9a7a90f5"]])
     ],
     approaches: Annotated[list[str], Form(examples=[["tcc"]])],
     audiences: Annotated[list[str], Form(examples=[["children"]])],
     use_case: FromDishka[CreatePsychologistUseCase],
+    value_per_appointment: Annotated[float, Form(examples=[150.00])],
     profile_picture: Annotated[UploadFile | None, File()] = None,
 ) -> PsychologistDTO | JSONResponse:
     dto = CreatePsychologistDTO(
@@ -67,6 +68,7 @@ async def create_psychologist(
         approaches=approaches,
         audiences=audiences,
         profile_picture=profile_picture,
+        value_per_appointment=value_per_appointment,
     )
     return await use_case.execute(dto)
 
