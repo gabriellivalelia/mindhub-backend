@@ -5,6 +5,7 @@ from dishka.integrations.fastapi import DishkaRoute
 from fastapi import APIRouter, Body, status
 from fastapi.responses import JSONResponse
 
+from application.dtos.user_dto import UserDTO
 from application.services.iauth_service import JWTData
 from application.use_cases.session.login import (
     ForbiddenAccessException,
@@ -14,6 +15,7 @@ from application.use_cases.session.login import (
     UnauthorizedAccessException,
 )
 from application.use_cases.session.logout import LogoutUseCase, UserNotFoundException
+from application.use_cases.session.me import MeUseCase
 
 router = APIRouter(route_class=DishkaRoute)
 route = "/sessions"
@@ -59,7 +61,7 @@ async def logout(
     jwt_data: FromDishka[JWTData],
 ) -> JSONResponse:
     try:
-        await use_case.execute(jwt_data.user.id)
+        await use_case.execute(jwt_data.id)
         return JSONResponse(
             status_code=status.HTTP_200_OK, content={"message": "User is logged out"}
         )
@@ -67,3 +69,15 @@ async def logout(
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND, content={"message": str(exc)}
         )
+
+
+@router.post(
+    f"{route}/me",
+    status_code=status.HTTP_200_OK,
+    tags=["sessions"],
+)
+async def me(
+    use_case: FromDishka[MeUseCase],
+    jwt_data: FromDishka[JWTData],
+) -> UserDTO | None:
+    return await use_case.execute(jwt_data.id)

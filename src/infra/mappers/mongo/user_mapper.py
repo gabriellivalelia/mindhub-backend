@@ -12,6 +12,9 @@ class UserMongoMapper(IMapper[UserDocument, User]):
         if isinstance(model, PatientDocument):
             return await PatientMongoMapper.to_domain(model)
 
+        # if isinstance(model, PsychologistDocument):
+        #     return await PsychologistMongoMapper.to_domain(model)
+
         raise ValueError("Invalid model type")
 
     @staticmethod

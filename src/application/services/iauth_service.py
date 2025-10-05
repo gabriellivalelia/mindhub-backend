@@ -1,14 +1,18 @@
 from abc import ABC, abstractmethod
+from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, FieldSerializationInfo, field_serializer
 
-from application.dtos.user_dto import UserDTO
 from domain.user import User
 from domain.value_objects.password import Password
 
 
 class JWTData(BaseModel):
-    user: UserDTO
+    id: UUID
+
+    @field_serializer("id")
+    def serialize_id(self, id: UUID, _info: FieldSerializationInfo) -> str:
+        return str(id)
 
 
 class IAuthService(ABC):

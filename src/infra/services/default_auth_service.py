@@ -6,11 +6,7 @@ import bcrypt
 import jwt
 from redis.asyncio import Redis
 
-from application.dtos.patient_dto import PatientDTO
-from application.dtos.psychologist_dto import PsychologistDTO
 from application.services.iauth_service import IAuthService, JWTData
-from domain.patient import Patient
-from domain.psychologist import Psychologist
 from domain.user import User
 from domain.value_objects.password import Password
 from infra.config.settings import Settings
@@ -36,17 +32,7 @@ class DefaultAuthService(IAuthService):
             return None
 
     def sign_jwt_tokens(self, user: User) -> tuple[str, str]:
-        dto = None
-        if isinstance(user, Patient):
-            dto = PatientDTO.to_dto(user)
-
-        elif isinstance(user, Psychologist):
-            dto = PsychologistDTO.to_dto(user)
-
-        if dto is None:
-            raise ValueError("Invalid user type")
-
-        access_token_data = JWTData(user=dto).model_dump()
+        access_token_data = JWTData(id=user.id.value).model_dump()
         access_token_expire = datetime.now(timezone.utc) + timedelta(
             minutes=Settings().ACCESS_TOKEN_EXPIRE_MINUTES
         )
