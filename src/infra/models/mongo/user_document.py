@@ -1,8 +1,7 @@
-from datetime import date
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from beanie import Document, Link
-from pydantic import EmailStr, Field
+from pydantic import EmailStr
 from pymongo import IndexModel
 
 from domain.user import GenderEnum
@@ -11,18 +10,16 @@ from infra.models.mongo.city_document import CityDocument
 
 
 class UserDocument(Document):
-    id: UUID = Field(default_factory=uuid4)  # type: ignore
-    name: str = Field(..., description="Patient name")
-    email: EmailStr = Field(..., description="Patient email")
-    password_hash: str = Field(..., description="Hashed password")
-    cpf: str = Field(..., description="Patient CPF", min_length=11, max_length=11)
-    phone_number: str = Field(..., description="Patient phone number")
-    birth_date: date = Field(..., description="Patient birth date")
-    gender: GenderEnum = Field(..., description="Patient gender")
-    city: Link[CityDocument] = Field(..., description="Reference to city")
-    profile_picture: FileData | None = Field(
-        default=None, description="Profile picture data"
-    )
+    id: UUID
+    name: str
+    email: EmailStr
+    password_hash: str
+    cpf: str
+    phone_number: str
+    birth_date: str
+    gender: GenderEnum
+    city: Link[CityDocument]
+    profile_picture: FileData | None = None
 
     class Settings:
         name = "users"

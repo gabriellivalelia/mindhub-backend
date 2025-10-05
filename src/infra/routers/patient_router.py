@@ -30,13 +30,13 @@ route = "/patients"
 )
 async def create_patient(
     name: Annotated[str, Form(examples=["Gabi"])],
-    email: Annotated[str, Form(examples=["gabi@gamil.com"])],
+    email: Annotated[str, Form(examples=["gabi@gmail.com"])],
     password: Annotated[str, Form(examples=["AcC123456*"])],
-    cpf: Annotated[str, Form(examples=["86231101533"])],
+    cpf: Annotated[str, Form(examples=["18071991775"])],
     phone_number: Annotated[str, Form(examples=["71999258225"])],
     birth_date: Annotated[date, Form(examples=["2025-09-16"])],
     gender: Annotated[str, Form(examples=["male"])],
-    city_id: Annotated[UUID, Form(examples=["0984ba51-3300-4857-bcfc-b72640cd972d"])],
+    city_id: Annotated[UUID, Form(examples=["94b829ad-8c2e-4e96-8d3e-d5ee73784d44"])],
     use_case: FromDishka[CreatePatientUseCase],
     profile_picture: Annotated[UploadFile | None, File(examples=None)] = None,
 ) -> PatientDTO | JSONResponse:

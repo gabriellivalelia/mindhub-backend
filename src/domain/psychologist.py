@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timezone
 from enum import Enum
 
 from domain.availability import Availability
@@ -104,4 +104,22 @@ class Psychologist(User):
     def add_availabilities(self, availabilities: list[Availability]) -> None:
         if self._availabilities is None:
             self._availabilities = []
-        self._availabilities.extend(availabilities)
+
+        existing_datetimes = {
+            self._normalize_datetime(availability.date)
+            for availability in self._availabilities
+        }
+
+        new_availabilities = [
+            availability
+            for availability in availabilities
+            if self._normalize_datetime(availability.date) not in existing_datetimes
+        ]
+
+        self._availabilities.extend(new_availabilities)
+
+    def _normalize_datetime(self, dt: datetime) -> datetime:
+        if dt.tzinfo is None:
+            return dt.replace(tzinfo=timezone.utc)
+        else:
+            return dt.astimezone(timezone.utc)

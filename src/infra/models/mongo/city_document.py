@@ -1,16 +1,15 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from beanie import Document, Link
-from pydantic import Field
 from pymongo import IndexModel
 
 from infra.models.mongo.state_document import StateDocument
 
 
 class CityDocument(Document):
-    id: UUID = Field(default_factory=uuid4)
-    name: str = Field(..., description="City name")
-    state: Link[StateDocument] = Field(..., description="Reference to state")
+    id: UUID
+    name: str
+    state: Link[StateDocument]
 
     class Settings:
         name = "cities"

@@ -16,10 +16,10 @@ from application.repos.ispecialty_repo import ISpecialtyRepo
 from application.repos.istate_repo import IStateRepo
 from application.repos.iuser_repo import IUserRepo
 from infra.config.mongo_db_manager import MongoManager
-from infra.repos.in_memory.psychologist_repo import InMemoryPsychologistRepo
-from infra.repos.in_memory.specialty_repo import InMemorySpecialtyRepo
 from infra.repos.mongo.city_repo import MongoCityRepo
 from infra.repos.mongo.patient_repo import MongoPatientRepo
+from infra.repos.mongo.psychologist_repo import MongoPsychologistRepo
+from infra.repos.mongo.specialty_repo import MongoSpecialtyRepo
 from infra.repos.mongo.state_repo import MongoStateRepo
 from infra.repos.mongo.user_repo import MongoUserRepo
 
@@ -54,9 +54,9 @@ class MongoDBProvider(Provider):
         return MongoStateRepo(session)
 
     @provide(scope=Scope.REQUEST)
-    def PscychologistRepo(self) -> IPsychologistRepo:
-        return InMemoryPsychologistRepo()
+    def PsychologistRepo(self, session: AsyncClientSession) -> IPsychologistRepo:
+        return MongoPsychologistRepo(session)
 
     @provide(scope=Scope.REQUEST)
-    def SpecialtyRepo(self) -> ISpecialtyRepo:
-        return InMemorySpecialtyRepo()
+    def SpecialtyRepo(self, session: AsyncClientSession) -> ISpecialtyRepo:
+        return MongoSpecialtyRepo(session)

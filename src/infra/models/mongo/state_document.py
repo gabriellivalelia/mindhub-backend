@@ -1,4 +1,4 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from beanie import Document
 from pydantic import Field
@@ -6,9 +6,9 @@ from pymongo import IndexModel
 
 
 class StateDocument(Document):
-    id: UUID = Field(default_factory=uuid4)
-    name: str = Field(..., description="State name")
-    abbreviation: str = Field(..., description="State abbreviation", max_length=2)
+    id: UUID
+    name: str
+    abbreviation: str = Field(..., max_length=2)
 
     class Settings:
         name = "states"

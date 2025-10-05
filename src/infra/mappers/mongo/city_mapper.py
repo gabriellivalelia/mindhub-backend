@@ -8,7 +8,7 @@ from infra.models.mongo.city_document import CityDocument
 class CityMongoMapper(IMapper[CityDocument, City]):
     @staticmethod
     async def to_domain(model: CityDocument) -> City:
-        state = await StateMongoMapper.to_domain(model.state)
+        state = await StateMongoMapper.to_domain(model.state)  # type: ignore
 
         return City(
             name=model.name,
@@ -18,8 +18,10 @@ class CityMongoMapper(IMapper[CityDocument, City]):
 
     @staticmethod
     async def to_model(entity: City) -> CityDocument:
+        state = await StateMongoMapper.to_model(entity.state)
+
         return CityDocument(
             name=entity.name,
-            state=entity.state.id.value,
+            state=state,  # type: ignore
             id=entity.id.value,
         )

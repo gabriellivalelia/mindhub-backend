@@ -4,12 +4,14 @@ from uuid import UUID
 from fastapi import UploadFile
 from pydantic import BaseModel
 
+from application.common.exception import ApplicationException
 from application.common.use_case import IUseCase
 from application.dtos.availability_dto import AvailabilityDTO
 from application.dtos.psychologist_dto import PsychologistDTO
 from application.repos.icity_repo import ICityRepo
 from application.repos.ipsychologist_repo import IPsychologistRepo
 from application.repos.ispecialty_repo import ISpecialtyRepo
+from application.repos.iuser_repo import IUserRepo
 from application.services.iauth_service import IAuthService
 from application.services.ifile_service import IFileService
 from domain.common.exception import DomainException
@@ -45,6 +47,7 @@ class CreatePsychologistDTO(BaseModel):
 
 
 class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]):
+    user_repo: IUserRepo
     psychologist_repo: IPsychologistRepo
     city_repo: ICityRepo
     specialty_repo: ISpecialtyRepo
@@ -53,12 +56,14 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
 
     def __init__(
         self,
+        user_repo: IUserRepo,
         psychologist_repo: IPsychologistRepo,
         specialty_repo: ISpecialtyRepo,
         city_repo: ICityRepo,
         file_service: IFileService,
         auth_service: IAuthService,
     ) -> None:
+        self.user_repo = user_repo
         self.psychologist_repo = psychologist_repo
         self.specialty_repo = specialty_repo
         self.city_repo = city_repo
@@ -68,9 +73,17 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
     async def execute(self, dto: CreatePsychologistDTO) -> PsychologistDTO:
         email = Email(value=dto.email)
         cpf = CPF(value=dto.cpf)
-        password = Password(value=dto.password)
-        phone_number = PhoneNumber(value=dto.phone_number)
         crp = CRP(value=dto.crp)
+
+        is_duplicated_cpf_or_email = await self.user_repo.exists_by_email_or_cpf(
+            email.value, cpf.value
+        )
+        if is_duplicated_cpf_or_email:
+            raise ApplicationException("Duplicated e-mail or cpf.")
+
+        is_duplicated_crp = await self.psychologist_repo.exists_by_crp(crp.value)
+        if is_duplicated_crp:
+            raise ApplicationException("Duplicated crp.")
 
         city = await self.city_repo.get_by_id(UniqueEntityId(dto.city_id))
         if not city:
@@ -85,12 +98,15 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
         approaches = [ApproachEnum(approach) for approach in dto.approaches]
         audiences = [AudienceEnum(audience) for audience in dto.audiences]
 
+        password = Password(value=dto.password)
         hashed_password = await self.auth_service.hash_password(password)
         profile_picture = (
             await self.file_service.upload(dto.profile_picture)
             if dto.profile_picture is not None
             else None
         )
+
+        phone_number = PhoneNumber(value=dto.phone_number)
         psychologist = Psychologist(
             name=dto.name,
             email=email,
@@ -107,8 +123,5 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
             audiences=audiences,
             profile_picture=profile_picture,
         )
-
-        print(f"crp={psychologist.crp}")
-
         created_psychologist = await self.psychologist_repo.create(psychologist)
         return PsychologistDTO.to_dto(created_psychologist)

@@ -9,9 +9,6 @@ from domain.patient import Patient
 
 class IPatientRepo(ABC):
     @abstractmethod
-    async def exists_by_email_or_cpf(self, email: str, cpf: str) -> bool: ...
-
-    @abstractmethod
     async def create(self, entity: Patient) -> Patient: ...
 
     @abstractmethod

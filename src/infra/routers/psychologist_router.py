@@ -1,9 +1,19 @@
-from datetime import date
+from datetime import date, datetime
 from typing import Annotated
 from uuid import UUID
 
+from dishka import FromDishka
+from dishka.integrations.fastapi import DishkaRoute
+from fastapi import APIRouter, Body, File, Form, Query, UploadFile, status
+from fastapi.responses import JSONResponse
+
 from application.common.page import Page
 from application.dtos.psychologist_dto import PsychologistDTO
+from application.services.iauth_service import JWTData
+from application.use_cases.psychologist.add_availabilities import (
+    AddAvailabilitiesDTO,
+    AddAvailabilitiesUseCase,
+)
 from application.use_cases.psychologist.create_psychologist import (
     CreatePsychologistDTO,
     CreatePsychologistUseCase,
@@ -12,10 +22,6 @@ from application.use_cases.psychologist.get_psychologists import (
     GetPsychologistsDTO,
     GetPsychologistsUseCase,
 )
-from dishka import FromDishka
-from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, File, Form, Query, UploadFile, status
-from fastapi.responses import JSONResponse
 
 router = APIRouter(route_class=DishkaRoute)
 route = "/psychologists"
@@ -28,18 +34,18 @@ route = "/psychologists"
     tags=["psychologists"],
 )
 async def create_psychologist(
-    name: Annotated[str, Form(examples=["Gabi"])],
-    email: Annotated[str, Form(examples=["gabi@gamil.com"])],
+    name: Annotated[str, Form(examples=["Cleber"])],
+    email: Annotated[str, Form(examples=["cleber@psy.com"])],
     password: Annotated[str, Form(examples=["AcC123456*"])],
     cpf: Annotated[str, Form(examples=["86231101533"])],
     phone_number: Annotated[str, Form(examples=["71999258225"])],
-    birth_date: Annotated[date, Form(examples=["2025-09-16"])],
+    birth_date: Annotated[date, Form(examples=["1999-07-28"])],
     gender: Annotated[str, Form(examples=["male"])],
-    city_id: Annotated[UUID, Form(examples=["f0678630-c3c0-4d8c-8a2a-1e7555c15cb5"])],
+    city_id: Annotated[UUID, Form(examples=["94b829ad-8c2e-4e96-8d3e-d5ee73784d44"])],
     crp: Annotated[str, Form(examples=["05/5555"])],
     description: Annotated[str, Form(example=["string"])],
     specialty_ids: Annotated[
-        list[UUID], Form(examples=[["3fa85f64-5717-4562-b3fc-2c963f66afa6"]])
+        list[UUID], Form(examples=[["96c95918-75af-4fa9-b97e-9e72bdd1e4b0"]])
     ],
     approaches: Annotated[list[str], Form(examples=[["tcc"]])],
     audiences: Annotated[list[str], Form(examples=[["children"]])],
@@ -78,21 +84,31 @@ async def get_psychologists(
     return await use_case.execute(dto)
 
 
-# @router.post(
-#     f"{route}/{{psychologist_id}}/availabilities",
-#     status_code=status.HTTP_200_OK,
-#     response_model=PsychologistDTO,
-#     tags=["psychologists"],
-# )
-# async def add_availabilities(
-#     psychologist_id: UUID,
-#     request_dto: Annotated[AddAvailabilitiesDTO, Body()],
-#     use_case: FromDishka[AddAvailabilitiesUseCase],
-#     psychologist_repo: FromDishka[IPsychologistRepo],
-# ) -> PsychologistDTO | JSONResponse:
-#     dto = AddAvailabilitiesDTO(
-#         availability_datetimes=request_dto.availability_datetimes,
-#         psychologist_id=request_dto.psychologist_id,
-#     )
+@router.post(
+    f"{route}/availabilities",
+    status_code=status.HTTP_200_OK,
+    response_model=PsychologistDTO,
+    tags=["psychologists"],
+)
+async def add_availabilities(
+    jwt_data: FromDishka[JWTData],
+    request_dto: Annotated[
+        list[datetime],
+        Body(
+            examples=[
+                [
+                    "2025-10-05T18:50:29.022Z",
+                    "2025-10-15T18:50:29.022Z",
+                    "2025-10-25T18:50:29.022Z",
+                ]
+            ]
+        ),
+    ],
+    use_case: FromDishka[AddAvailabilitiesUseCase],
+) -> PsychologistDTO | JSONResponse:
+    dto = AddAvailabilitiesDTO(
+        availability_datetimes=request_dto,
+        psychologist_id=jwt_data.id,
+    )
 
-#     return await use_case.execute(dto)
+    return await use_case.execute(dto)

@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 from domain.common.entity import Entity
+from domain.common.exception import DomainException
 from domain.common.guard import Guard
 from domain.common.unique_entity_id import UniqueEntityId
 
@@ -35,7 +36,7 @@ class PixPayment(Entity):
         )
 
         if amount <= 0:
-            raise ValueError("amount must be positive")
+            raise DomainException("amount must be positive")
 
         super().__init__(id)
 

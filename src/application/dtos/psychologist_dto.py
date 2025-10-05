@@ -23,7 +23,7 @@ class PsychologistDTO(UserDTO):
             email=entity.email.value,
             cpf=entity.cpf.value,
             phone_number=entity.phone_number.value,
-            birth_date=entity.birth_date,
+            birth_date=entity.birth_date.isoformat(),
             gender=entity.gender,
             crp=entity.crp.value,
             description=entity.description,

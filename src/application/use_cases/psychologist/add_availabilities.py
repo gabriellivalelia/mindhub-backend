@@ -1,14 +1,15 @@
 from datetime import datetime
 from uuid import UUID
 
+from pydantic import BaseModel
+
+from application.common.exception import ApplicationException
 from application.common.use_case import IUseCase
 from application.dtos.psychologist_dto import PsychologistDTO
-from application.repos.iavailability_repo import IAvailabilityRepo
 from application.repos.ipsychologist_repo import IPsychologistRepo
 from domain.availability import Availability
 from domain.common.exception import DomainException
 from domain.common.unique_entity_id import UniqueEntityId
-from pydantic import BaseModel
 
 
 class AddAvailabilitiesDTO(BaseModel):
@@ -21,19 +22,15 @@ class AddAvailabilitiesDTO(BaseModel):
 
 class AddAvailabilitiesUseCase(IUseCase[AddAvailabilitiesDTO, PsychologistDTO]):
     psychologist_repo: IPsychologistRepo
-    availability_repo: IAvailabilityRepo
 
     def __init__(
         self,
         psychologist_repo: IPsychologistRepo,
-        availability_repo: IAvailabilityRepo,
     ) -> None:
         self.psychologist_repo = psychologist_repo
-        self.availability_repo = availability_repo
 
     async def execute(self, dto: AddAvailabilitiesDTO) -> PsychologistDTO:
         availability_datetimes = dto.availability_datetimes
-
         if not availability_datetimes:
             raise DomainException("No availability datetimes provided.")
 
@@ -42,26 +39,18 @@ class AddAvailabilitiesUseCase(IUseCase[AddAvailabilitiesDTO, PsychologistDTO]):
         )
 
         if not psychologist:
-            raise DomainException("Psychologist not found.")
+            raise ApplicationException("Psychologist not found.")
 
-        created_availabilities = []
-
+        availabiliies: list[Availability] = []
         for availability_datetime in availability_datetimes:
             availability = Availability(
                 date=availability_datetime,
                 available=True,
-                appointment_id=None,
             )
-            created_availability = await self.availability_repo.save(availability)
-            created_availabilities.append(created_availability)
 
-        await self.psychologist_repo.add_availabilities(
-            dto.entity,
-            [availability.id for availability in created_availabilities],
-        )
+            availabiliies.append(availability)
 
-        updated_psychologist = await self.psychologist_repo.get_by_id(dto.entity.id)
-        if updated_psychologist is None:
-            raise DomainException("Psychologist not found after update.")
+        psychologist.add_availabilities(availabiliies)
 
+        updated_psychologist = await self.psychologist_repo.update(psychologist)
         return PsychologistDTO.to_dto(updated_psychologist)

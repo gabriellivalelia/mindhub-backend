@@ -13,7 +13,7 @@ class PatientDTO(UserDTO):
             name=entity.name,
             email=entity.email.value,
             phone_number=entity.phone_number.value,
-            birth_date=entity.birth_date,
+            birth_date=entity.birth_date.isoformat(),
             gender=entity.gender,
             city=CityDTO.to_dto(entity.city),
             profile_picture=entity.profile_picture,

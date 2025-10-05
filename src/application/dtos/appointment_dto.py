@@ -19,7 +19,7 @@ class AppointmentDTO(BaseModel):
     status: str
     availability_id: UUID | None = None
 
-    @field_serializer("id", "appointment_id")
+    @field_serializer("id")
     def serialize_id(
         self, value: UUID | None, _info: FieldSerializationInfo
     ) -> str | None:

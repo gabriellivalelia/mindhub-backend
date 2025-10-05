@@ -9,6 +9,7 @@ from application.common.use_case import IUseCase
 from application.dtos.patient_dto import PatientDTO
 from application.repos.icity_repo import ICityRepo
 from application.repos.ipatient_repo import IPatientRepo
+from application.repos.iuser_repo import IUserRepo
 from application.services.iauth_service import IAuthService
 from application.services.ifile_service import IFileService
 from domain.common.unique_entity_id import UniqueEntityId
@@ -36,6 +37,7 @@ class CreatePatientDTO(BaseModel):
 
 
 class CreatePatientUseCase(IUseCase[CreatePatientDTO, PatientDTO]):
+    user_repo: IUserRepo
     patient_repo: IPatientRepo
     city_repo: ICityRepo
     file_service: IFileService
@@ -43,11 +45,13 @@ class CreatePatientUseCase(IUseCase[CreatePatientDTO, PatientDTO]):
 
     def __init__(
         self,
+        user_repo: IUserRepo,
         patient_repo: IPatientRepo,
         city_repo: ICityRepo,
         file_service: IFileService,
         auth_service: IAuthService,
     ) -> None:
+        self.user_repo = user_repo
         self.patient_repo = patient_repo
         self.city_repo = city_repo
         self.file_service = file_service
@@ -56,13 +60,18 @@ class CreatePatientUseCase(IUseCase[CreatePatientDTO, PatientDTO]):
     async def execute(self, dto: CreatePatientDTO) -> PatientDTO:
         email = Email(value=dto.email)
         cpf = CPF(value=dto.cpf)
-        password = Password(value=dto.password)
-        phone_number = PhoneNumber(value=dto.phone_number)
+
+        is_duplicated = await self.user_repo.exists_by_email_or_cpf(
+            email.value, cpf.value
+        )
+        if is_duplicated:
+            raise ApplicationException("Duplicated e-mail or cpf.")
 
         city = await self.city_repo.get_by_id(UniqueEntityId(dto.city_id))
         if not city:
             raise ApplicationException("City not found.")
 
+        password = Password(value=dto.password)
         hashed_password = await self.auth_service.hash_password(password)
         profile_picture = (
             await self.file_service.upload(dto.profile_picture)
@@ -70,6 +79,7 @@ class CreatePatientUseCase(IUseCase[CreatePatientDTO, PatientDTO]):
             else None
         )
 
+        phone_number = PhoneNumber(value=dto.phone_number)
         patient = Patient(
             name=dto.name,
             email=email,

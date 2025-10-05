@@ -10,4 +10,3 @@ class AppointmentFilters(BaseModel):
     patient_id: UUID | None = None
     status: str | None = None
     availability_id: UUID | None = None
-    appointment_id: UUID | None = None

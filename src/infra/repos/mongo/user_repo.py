@@ -13,6 +13,15 @@ class MongoUserRepo(IUserRepo):
     def __init__(self, session: AsyncClientSession) -> None:
         self._session = session
 
+    async def exists_by_email_or_cpf(self, email: str, cpf: str) -> bool:
+        docs_num = await UserDocument.find_one(
+            {"$or": [{"email": email}, {"cpf": cpf}]},
+            session=self._session,
+            with_children=True,
+        ).count()
+
+        return docs_num > 0
+
     async def get_by_id(self, user_id: UniqueEntityId) -> User | None:
         found_doc = await UserDocument.get(
             user_id.value,
@@ -20,8 +29,11 @@ class MongoUserRepo(IUserRepo):
             session=self._session,
             with_children=True,
         )
+        if found_doc is None:
+            return None
 
-        return await UserMongoMapper.to_domain(found_doc) if found_doc else None
+        await found_doc.fetch_all_links()
+        return await UserMongoMapper.to_domain(found_doc)
 
     async def get_by_email(self, email: str) -> User | None:
         found_doc = await UserDocument.find_one(
@@ -30,5 +42,8 @@ class MongoUserRepo(IUserRepo):
             session=self._session,
             with_children=True,
         )
+        if found_doc is None:
+            return None
 
-        return await UserMongoMapper.to_domain(found_doc) if found_doc else None
+        await found_doc.fetch_all_links()
+        return await UserMongoMapper.to_domain(found_doc)

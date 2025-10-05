@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from datetime import date
 from uuid import UUID
 
 from pydantic import BaseModel, FieldSerializationInfo, field_serializer
@@ -15,7 +14,7 @@ class UserDTO(BaseModel):
     email: str
     cpf: str
     phone_number: str
-    birth_date: date
+    birth_date: str
     gender: str
     city: CityDTO | None = None
     profile_picture: FileData | None = None
@@ -23,9 +22,3 @@ class UserDTO(BaseModel):
     @field_serializer("id")
     def serialize_id(self, id: UUID, _info: FieldSerializationInfo) -> str:
         return str(id)
-
-    @field_serializer("birth_date")
-    def serialize_birth_date(
-        self, birth_date: date, _info: FieldSerializationInfo
-    ) -> str:
-        return birth_date.isoformat()
