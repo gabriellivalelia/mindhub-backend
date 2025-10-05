@@ -1,5 +1,6 @@
 from pymongo.asynchronous.client_session import AsyncClientSession
 
+from application.common.exception import ApplicationException
 from application.repos.iuser_repo import IUserRepo
 from domain.common.unique_entity_id import UniqueEntityId
 from domain.user import User
@@ -13,9 +14,20 @@ class MongoUserRepo(IUserRepo):
     def __init__(self, session: AsyncClientSession) -> None:
         self._session = session
 
-    async def exists_by_email_or_cpf(self, email: str, cpf: str) -> bool:
+    async def exists_by_email_or_cpf(
+        self, email: str | None = None, cpf: str | None = None
+    ) -> bool:
+        if not email or not cpf:
+            raise ApplicationException("Invalid cpf and email.")
+
+        query: list[dict[str, str]] = []
+        if email:
+            query.append({"email": email})
+        if cpf:
+            query.append({"cpf": cpf})
+
         docs_num = await UserDocument.find_one(
-            {"$or": [{"email": email}, {"cpf": cpf}]},
+            {"$or": query},
             session=self._session,
             with_children=True,
         ).count()

@@ -6,7 +6,9 @@ from domain.user import User
 
 class IUserRepo(ABC):
     @abstractmethod
-    async def exists_by_email_or_cpf(self, email: str, cpf: str) -> bool: ...
+    async def exists_by_email_or_cpf(
+        self, email: str | None = None, cpf: str | None = None
+    ) -> bool: ...
 
     @abstractmethod
     async def get_by_id(self, user_id: UniqueEntityId) -> User | None: ...

@@ -18,6 +18,7 @@ from application.use_cases.patient.get_patients import GetPatientsUseCase
 from application.use_cases.patient.solicit_schedule_appointment import (
     ScheduleAppointmentUseCase,
 )
+from application.use_cases.patient.update_patient import UpdatePatientUseCase
 
 
 class PatientProvider(Provider):
@@ -44,6 +45,23 @@ class PatientProvider(Provider):
         patient_repo: IPatientRepo,
     ) -> GetPatientsUseCase:
         return GetPatientsUseCase(patient_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def UpdatePatientUseCaseInstance(
+        self,
+        user_repo: IUserRepo,
+        patient_repo: IPatientRepo,
+        city_repo: ICityRepo,
+        file_service: IFileService,
+        auth_service: IAuthService,
+    ) -> UpdatePatientUseCase:
+        return UpdatePatientUseCase(
+            user_repo=user_repo,
+            patient_repo=patient_repo,
+            city_repo=city_repo,
+            file_service=file_service,
+            auth_service=auth_service,
+        )
 
     @provide(scope=Scope.REQUEST)
     def SoliciteScheduleAppointmentUseCaseInstance(

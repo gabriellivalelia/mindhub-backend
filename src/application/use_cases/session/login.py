@@ -18,7 +18,7 @@ class ForbiddenAccessException(ApplicationException):
 
 
 class LoginDTO(BaseModel):
-    email: str = Field(examples=["gabi@gamil.com"])
+    email: str = Field(examples=["gabi@gmail.com"])
     password: str = Field(examples=["AcC123456*"])
 
 

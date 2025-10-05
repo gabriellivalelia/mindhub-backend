@@ -23,6 +23,10 @@ from application.use_cases.patient.solicit_schedule_appointment import (
     ScheduleAppointmentUseCase,
     SolicitScheduleAppointmentDTO,
 )
+from application.use_cases.patient.update_patient import (
+    UpdatePatientDTO,
+    UpdatePatientUseCase,
+)
 
 router = APIRouter(route_class=DishkaRoute)
 route = "/patients"
@@ -87,5 +91,39 @@ async def solicit_schedule_appointment(
 ) -> AppointmentDTO | JSONResponse:
     dto = SolicitScheduleAppointmentDTO(
         date=appointment_date, psychologist_id=psychologist_id, patient_id=jwt_data.id
+    )
+    return await use_case.execute(dto)
+
+
+@router.put(
+    f"{route}",
+    status_code=status.HTTP_200_OK,
+    response_model=PatientDTO,
+    tags=["patients"],
+)
+async def update_patient(
+    jwt_data: FromDishka[JWTData],
+    use_case: FromDishka[UpdatePatientUseCase],
+    name: Annotated[str | None, Form(examples=[""])] = None,
+    email: Annotated[str | None, Form(examples=[""])] = None,
+    cpf: Annotated[str | None, Form(examples=[""])] = None,
+    phone_number: Annotated[str | None, Form(examples=[""])] = None,
+    birth_date: Annotated[date | None, Form(examples=[""])] = None,
+    gender: Annotated[str | None, Form(examples=[""])] = None,
+    city_id: Annotated[UUID | None, Form(examples=[""])] = None,
+    profile_picture: Annotated[UploadFile | None, File(examples=None)] = None,
+    delete_profile_picture: Annotated[bool, Form(examples=[False])] = False,
+) -> PatientDTO | JSONResponse:
+    dto = UpdatePatientDTO(
+        patient_id=jwt_data.id,
+        name=name,
+        email=email,
+        cpf=cpf,
+        phone_number=phone_number,
+        birth_date=birth_date,
+        gender=gender,
+        city_id=city_id,
+        profile_picture=profile_picture,
+        delete_profile_picture=delete_profile_picture,
     )
     return await use_case.execute(dto)
