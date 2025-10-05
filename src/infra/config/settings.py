@@ -15,11 +15,24 @@ class Settings(BaseSettings):
     FILES_PATH: str = "./temp"
 
     # DATABASE CONFIG
-    POSTGRES_USER: str = "admin"
-    POSTGRES_PASSWORD: str = "admin"
-    POSTGRES_DB: str = "mindhub"
+    POSTGRES_USER: str = "user"
+    POSTGRES_PASSWORD: str = "password"
+    POSTGRES_DB: str = "mindhub-dev"
     POSTGRES_HOST: str = "localhost"
     POSTGRES_PORT: int = 5432
+
+    MONGO_URI: str = "mongodb://localhost:27017"
+    MONGO_DATABASE_NAME: str = "mindhub-dev"
+
+    @property
+    def DATABASE_URL(self) -> str:
+        """Construct the PostgreSQL database URL for SQLAlchemy"""
+        return (
+            f"postgresql+asyncpg://"
+            f"{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
+            f"@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}"
+            f"/{self.POSTGRES_DB}"
+        )
 
     # REDIS CONFIG
     REDIS_HOST: str = "localhost"

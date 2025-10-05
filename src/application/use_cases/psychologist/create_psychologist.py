@@ -110,5 +110,5 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
 
         print(f"crp={psychologist.crp}")
 
-        created_psychologist = await self.psychologist_repo.save(psychologist)
+        created_psychologist = await self.psychologist_repo.create(psychologist)
         return PsychologistDTO.to_dto(created_psychologist)

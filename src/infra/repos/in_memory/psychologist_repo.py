@@ -11,8 +11,15 @@ class InMemoryPsychologistRepo(IPsychologistRepo):
 
     def __init__(self) -> None: ...
 
-    async def save(self, entity: Psychologist) -> Psychologist:
+    async def create(self, entity: Psychologist) -> Psychologist:
         InMemoryPsychologistRepo.items.append(entity)
+        return entity
+
+    async def update(self, entity: Psychologist) -> Psychologist:
+        for i, item in enumerate(InMemoryPsychologistRepo.items):
+            if item.id == entity.id:
+                InMemoryPsychologistRepo.items[i] = entity
+                return entity
         return entity
 
     async def get(
@@ -51,8 +58,8 @@ class InMemoryPsychologistRepo(IPsychologistRepo):
 
         return Page(
             items=page_items,
-            total=len(InMemoryPsychologistRepo.items),
             pageable=pageable,
+            total=len(InMemoryPsychologistRepo.items),
         )
 
     async def get_by_id(self, id: UniqueEntityId) -> Psychologist | None:
@@ -60,3 +67,31 @@ class InMemoryPsychologistRepo(IPsychologistRepo):
             (item for item in InMemoryPsychologistRepo.items if item.id == id),
             None,
         )
+
+    async def add_availabilities(
+        self,
+        entity: Psychologist,
+        availability_ids: list[UniqueEntityId],
+    ) -> None:
+        # Buscar as availabilities pelo ID no repositório de availabilities
+        from infra.repos.in_memory.availability_repo import InMemoryAvailabilityRepo
+
+        availabilities_to_add = []
+        for availability_id in availability_ids:
+            availability = next(
+                (
+                    item
+                    for item in InMemoryAvailabilityRepo.items
+                    if item.id == availability_id
+                ),
+                None,
+            )
+            if availability:
+                availabilities_to_add.append(availability)
+
+        # Encontrar o psicólogo na lista e atualizar suas availabilities
+        for i, psychologist in enumerate(InMemoryPsychologistRepo.items):
+            if psychologist.id == entity.id:
+                psychologist.add_availabilities(availabilities_to_add)
+                InMemoryPsychologistRepo.items[i] = psychologist
+                break

@@ -100,3 +100,8 @@ class Psychologist(User):
     @property
     def availabilities(self) -> list[Availability] | None:
         return self._availabilities
+
+    def add_availabilities(self, availabilities: list[Availability]) -> None:
+        if self._availabilities is None:
+            self._availabilities = []
+        self._availabilities.extend(availabilities)

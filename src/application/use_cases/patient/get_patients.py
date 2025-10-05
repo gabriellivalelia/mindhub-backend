@@ -27,7 +27,7 @@ class GetPatientsUseCase(IUseCase[GetPatientsDTO, Page[PatientDTO]]):
         )
 
         page = await self.patient_repo.get(pageable, filters)
-        return Page(
+        return Page[PatientDTO](
             items=[PatientDTO.to_dto(entity) for entity in page.items],
             total=page.total,
             pageable=page.pageable,

@@ -36,7 +36,7 @@ async def create_patient(
     phone_number: Annotated[str, Form(examples=["71999258225"])],
     birth_date: Annotated[date, Form(examples=["2025-09-16"])],
     gender: Annotated[str, Form(examples=["male"])],
-    city_id: Annotated[UUID, Form(examples=["f0678630-c3c0-4d8c-8a2a-1e7555c15cb5"])],
+    city_id: Annotated[UUID, Form(examples=["0984ba51-3300-4857-bcfc-b72640cd972d"])],
     use_case: FromDishka[CreatePatientUseCase],
     profile_picture: Annotated[UploadFile | None, File(examples=None)] = None,
 ) -> PatientDTO | JSONResponse:
@@ -65,3 +65,32 @@ async def get_patients(
     use_case: FromDishka[GetPatientsUseCase],
 ) -> Page[PatientDTO]:
     return await use_case.execute(dto)
+
+
+# @router.post(
+#     f"{route}/{{patient_id}}/schedule-appointment",
+#     status_code=status.HTTP_200_OK,
+#     response_model=AppointmentDTO,
+#     tags=["patients"],
+# )
+# async def schedule_appointment(
+#     patient_id: UUID,
+#     request_dto: Annotated[ScheduleAppointmentRequestDTO, Body()],
+#     use_case: FromDishka[ScheduleAppointmentUseCase],
+#     patient_repo: FromDishka[IPatientRepo],
+# ) -> AppointmentDTO | JSONResponse:
+#     patient = await patient_repo.get_by_id(UniqueEntityId(patient_id))
+
+#     if not patient:
+#         return JSONResponse(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             content={"detail": "Patient not found"},
+#         )
+
+#     # Create the use case DTO with the patient entity
+#     dto = ScheduleAppointmentDTO(
+#         appointment_datetime=request_dto.appointment_datetime,
+#         entity=patient,
+#     )
+
+#     return await use_case.execute(dto)

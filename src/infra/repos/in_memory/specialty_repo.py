@@ -16,7 +16,7 @@ class InMemorySpecialtyRepo(ISpecialtyRepo):
 
     def __init__(self) -> None: ...
 
-    async def save(self, entity: Specialty) -> Specialty:
+    async def create(self, entity: Specialty) -> Specialty:
         InMemorySpecialtyRepo.items.append(entity)
         return entity
 

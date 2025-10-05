@@ -1,0 +1,62 @@
+from __future__ import annotations
+
+from typing import AsyncGenerator
+
+from dishka import (
+    Provider,
+    Scope,
+    provide,  # type: ignore
+)
+from pymongo.asynchronous.client_session import AsyncClientSession
+
+from application.repos.icity_repo import ICityRepo
+from application.repos.ipatient_repo import IPatientRepo
+from application.repos.ipsychologist_repo import IPsychologistRepo
+from application.repos.ispecialty_repo import ISpecialtyRepo
+from application.repos.istate_repo import IStateRepo
+from application.repos.iuser_repo import IUserRepo
+from infra.config.mongo_db_manager import MongoManager
+from infra.repos.in_memory.psychologist_repo import InMemoryPsychologistRepo
+from infra.repos.in_memory.specialty_repo import InMemorySpecialtyRepo
+from infra.repos.mongo.city_repo import MongoCityRepo
+from infra.repos.mongo.patient_repo import MongoPatientRepo
+from infra.repos.mongo.state_repo import MongoStateRepo
+from infra.repos.mongo.user_repo import MongoUserRepo
+
+
+class MongoDBProvider(Provider):
+    @provide(scope=Scope.APP)
+    async def MongoDBManager(self) -> AsyncGenerator[MongoManager]:
+        async with MongoManager.connect() as db_manager:
+            yield db_manager
+
+    @provide(scope=Scope.REQUEST)
+    async def MongoDBSession(
+        self, db_manager: MongoManager
+    ) -> AsyncGenerator[AsyncClientSession]:
+        async with db_manager.get_session() as session:
+            yield session
+
+    @provide(scope=Scope.REQUEST)
+    def UserRepo(self, session: AsyncClientSession) -> IUserRepo:
+        return MongoUserRepo(session)
+
+    @provide(scope=Scope.REQUEST)
+    def PatientRepo(self, session: AsyncClientSession) -> IPatientRepo:
+        return MongoPatientRepo(session)
+
+    @provide(scope=Scope.REQUEST)
+    def CityRepo(self, session: AsyncClientSession) -> ICityRepo:
+        return MongoCityRepo(session)
+
+    @provide(scope=Scope.REQUEST)
+    def StateRepo(self, session: AsyncClientSession) -> IStateRepo:
+        return MongoStateRepo(session)
+
+    @provide(scope=Scope.REQUEST)
+    def PscychologistRepo(self) -> IPsychologistRepo:
+        return InMemoryPsychologistRepo()
+
+    @provide(scope=Scope.REQUEST)
+    def SpecialtyRepo(self) -> ISpecialtyRepo:
+        return InMemorySpecialtyRepo()

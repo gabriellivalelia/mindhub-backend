@@ -4,13 +4,13 @@ from uuid import UUID
 from fastapi import UploadFile
 from pydantic import BaseModel
 
+from application.common.exception import ApplicationException
 from application.common.use_case import IUseCase
 from application.dtos.patient_dto import PatientDTO
 from application.repos.icity_repo import ICityRepo
 from application.repos.ipatient_repo import IPatientRepo
 from application.services.iauth_service import IAuthService
 from application.services.ifile_service import IFileService
-from domain.common.exception import DomainException
 from domain.common.unique_entity_id import UniqueEntityId
 from domain.patient import Patient
 from domain.user import GenderEnum
@@ -61,7 +61,7 @@ class CreatePatientUseCase(IUseCase[CreatePatientDTO, PatientDTO]):
 
         city = await self.city_repo.get_by_id(UniqueEntityId(dto.city_id))
         if not city:
-            raise DomainException("City not found.")
+            raise ApplicationException("City not found.")
 
         hashed_password = await self.auth_service.hash_password(password)
         profile_picture = (
@@ -82,5 +82,5 @@ class CreatePatientUseCase(IUseCase[CreatePatientDTO, PatientDTO]):
             profile_picture=profile_picture,
         )
 
-        created_patient = await self.patient_repo.save(patient)
+        created_patient = await self.patient_repo.create(patient)
         return PatientDTO.to_dto(created_patient)

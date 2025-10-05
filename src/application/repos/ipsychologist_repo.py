@@ -9,7 +9,10 @@ from domain.psychologist import Psychologist
 
 class IPsychologistRepo(ABC):
     @abstractmethod
-    async def save(self, entity: Psychologist) -> Psychologist: ...
+    async def create(self, entity: Psychologist) -> Psychologist: ...
+
+    @abstractmethod
+    async def update(self, entity: Psychologist) -> Psychologist: ...
 
     @abstractmethod
     async def get(

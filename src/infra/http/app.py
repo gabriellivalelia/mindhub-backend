@@ -19,6 +19,7 @@ from infra.config.settings import Settings
 from infra.providers import container
 from infra.routers.patient_router import router as patient_router
 from infra.routers.psychologist_router import router as psychologist_router
+from infra.routers.session_router import router as session_router
 
 
 class LifeSpan(TypedDict): ...
@@ -35,6 +36,10 @@ class MindHubApp:
             summary="API do MindHub",
             lifespan=self.__lifespan,
         )
+
+        # Add Bearer token security scheme for Swagger
+        self.__app.openapi_schema = None
+        self._configure_openapi_security()
 
         setup_dishka(container=container, app=self.__app)
 
@@ -60,6 +65,7 @@ class MindHubApp:
         )
 
     def _set_routers(self) -> None:
+        self.__app.include_router(session_router)
         self.__app.include_router(psychologist_router)
         self.__app.include_router(patient_router)
 
@@ -148,6 +154,36 @@ class MindHubApp:
                     "errors": str(exc),
                 },
             )
+
+    def _configure_openapi_security(self) -> None:
+        def custom_openapi():
+            if self.__app.openapi_schema:
+                return self.__app.openapi_schema
+
+            from fastapi.openapi.utils import get_openapi
+
+            openapi_schema = get_openapi(
+                title=self.__app.title,
+                version=self.__app.version,
+                description=self.__app.description,
+                routes=self.__app.routes,
+            )
+
+            # Add Bearer token security scheme
+            openapi_schema["components"]["securitySchemes"] = {
+                "BearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT",
+                    "description": "Enter your JWT token",
+                }
+            }
+            openapi_schema["security"] = [{"BearerAuth": []}]
+
+            self.__app.openapi_schema = openapi_schema
+            return self.__app.openapi_schema
+
+        self.__app.openapi = custom_openapi
 
     @property
     def app(self) -> FastAPI:

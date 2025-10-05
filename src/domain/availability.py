@@ -10,7 +10,6 @@ class Availability(Entity):
     def __init__(
         self,
         date: datetime,
-        appointment_id: UniqueEntityId | None = None,
         available: bool = True,
         id: UniqueEntityId | None = None,
     ) -> None:
@@ -19,25 +18,19 @@ class Availability(Entity):
         super().__init__(id)
 
         self._date = date
-        self._appointment_id = appointment_id
         self._available = available
 
     def schedule(self, appointment_id: UniqueEntityId):
-        if self.available:
-            raise DomainException("Appointment is already fullfield.")
+        if not self.available:
+            raise DomainException("Appointment is already scheduled.")
 
         Guard.against_undefined(appointment_id, "appointment")
 
-        self._available = True
-        self._appointment_id = appointment_id
+        self._available = False
 
     @property
     def date(self) -> datetime:
         return self._date
-
-    @property
-    def appointment_id(self) -> UniqueEntityId | None:
-        return self._appointment_id
 
     @property
     def available(self) -> bool:

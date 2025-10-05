@@ -1,5 +1,8 @@
 from uuid import UUID
 
+from application.common.page import Page
+from application.common.pageable import Pageable
+from application.filters.city_filters import CityFilters
 from application.repos.icity_repo import ICityRepo
 from domain.city import City
 from domain.common.unique_entity_id import UniqueEntityId
@@ -24,6 +27,21 @@ class InMemoryCityRepo(ICityRepo):
             name="Muniz Freire",
         ),
     ]
+
+    async def get(
+        self,
+        pageable: Pageable,
+        filters: CityFilters | None = None,
+    ) -> Page[City]:
+        start = pageable.offset()
+        end = start + pageable.size
+        page_items = InMemoryCityRepo.items[start:end]
+
+        return Page(
+            items=page_items,
+            total=len(InMemoryCityRepo.items),
+            pageable=pageable,
+        )
 
     async def get_by_id(self, id: UniqueEntityId) -> City | None:
         return next((item for item in InMemoryCityRepo.items if item.id == id), None)

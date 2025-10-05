@@ -7,12 +7,14 @@ mind_hub_app = MindHubApp()
 app = mind_hub_app.app
 
 if __name__ == "__main__":
-    is_development = Settings().ENV == "development"
+    settings = Settings()
+    is_development = settings.ENV == "development"
 
     uvicorn.run(
         "main:app",
-        host=Settings().HOST,
-        port=Settings().PORT,
+        host=settings.HOST,
+        port=settings.PORT,
+        reload_dirs=["src"] if is_development else None,
         reload=is_development,
-        log_level=Settings().LOG_LEVEL,
+        log_level=settings.LOG_LEVEL,
     )

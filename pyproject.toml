@@ -5,18 +5,18 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "bcrypt>=4.3.0",
-    "dishka>=1.7.1",
-    "fastapi[standard]>=0.116.1",
-    "pydantic-settings>=2.10.1",
-    "uvicorn[standard]>=0.35.0",
+  "bcrypt>=4.3.0",
+  "beanie>=2.0.0",
+  "dishka>=1.7.1",
+  "fastapi[standard]>=0.116.1",
+  "pydantic-settings>=2.10.1",
+  "pyjwt>=2.10.1",
+  "redis>=6.4.0",
+  "uvicorn[standard]>=0.35.0",
 ]
 
 [dependency-groups]
-dev = [
-    "poethepoet>=0.37.0",
-    "ruff>=0.13.0",
-]
+dev = ["poethepoet>=0.37.0", "ruff>=0.13.0"]
 
 [tool.poe]
 executor.type = "uv"
@@ -27,3 +27,30 @@ check = "ruff check ."
 format = "ruff format ."
 dev = "uv run python src/main.py"
 start-dev = ["format", "dev"]
+
+[tool.ruff]
+exclude = [
+  "venv",
+  ".venv",
+  "__pypackages__",
+  "dockervolume",
+  "build",
+  "dist",
+  "*.pyc",
+  "*.pyo",
+  "*.pyd",
+  "__pycache__",
+  "*.so",
+  "*.dylib",
+  "*.dll",
+  "*.egg",
+  "*.egg-info",
+  ".eggs",
+  ".mypy_cache",
+  ".tox",
+  ".nox",
+  ".coverage",
+  ".hypothesis",
+  ".pytest_cache",
+  ".ruff_cache",
+]

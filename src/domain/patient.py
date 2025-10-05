@@ -1,5 +1,6 @@
-from datetime import date
+from datetime import date, datetime
 
+from domain.appointment import Appointment
 from domain.city import City
 from domain.common.unique_entity_id import UniqueEntityId
 from domain.user import GenderEnum, User
@@ -38,3 +39,16 @@ class Patient(User):
             profile_picture=profile_picture,
             id=id,
         )
+
+    def schedule_appointment(
+        self,
+        date: datetime,
+        psychologist_id: UniqueEntityId,
+    ) -> Appointment:
+        pass
+
+        # Ver se o horário está disponível
+        # Criar o pagamento via Pix
+        # Criar a consulta
+        # Marcar o horário como indisponível
+        # Retornar a consulta

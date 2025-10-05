@@ -2,11 +2,6 @@ from datetime import date
 from typing import Annotated
 from uuid import UUID
 
-from dishka import FromDishka
-from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, File, Form, Query, UploadFile, status
-from fastapi.responses import JSONResponse
-
 from application.common.page import Page
 from application.dtos.psychologist_dto import PsychologistDTO
 from application.use_cases.psychologist.create_psychologist import (
@@ -17,6 +12,10 @@ from application.use_cases.psychologist.get_psychologists import (
     GetPsychologistsDTO,
     GetPsychologistsUseCase,
 )
+from dishka import FromDishka
+from dishka.integrations.fastapi import DishkaRoute
+from fastapi import APIRouter, File, Form, Query, UploadFile, status
+from fastapi.responses import JSONResponse
 
 router = APIRouter(route_class=DishkaRoute)
 route = "/psychologists"
@@ -77,3 +76,23 @@ async def get_psychologists(
     use_case: FromDishka[GetPsychologistsUseCase],
 ) -> Page[PsychologistDTO]:
     return await use_case.execute(dto)
+
+
+# @router.post(
+#     f"{route}/{{psychologist_id}}/availabilities",
+#     status_code=status.HTTP_200_OK,
+#     response_model=PsychologistDTO,
+#     tags=["psychologists"],
+# )
+# async def add_availabilities(
+#     psychologist_id: UUID,
+#     request_dto: Annotated[AddAvailabilitiesDTO, Body()],
+#     use_case: FromDishka[AddAvailabilitiesUseCase],
+#     psychologist_repo: FromDishka[IPsychologistRepo],
+# ) -> PsychologistDTO | JSONResponse:
+#     dto = AddAvailabilitiesDTO(
+#         availability_datetimes=request_dto.availability_datetimes,
+#         psychologist_id=request_dto.psychologist_id,
+#     )
+
+#     return await use_case.execute(dto)
