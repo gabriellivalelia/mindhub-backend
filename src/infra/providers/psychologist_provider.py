@@ -19,6 +19,9 @@ from application.use_cases.psychologist.create_psychologist import (
 from application.use_cases.psychologist.get_psychologists import (
     GetPsychologistsUseCase,
 )
+from application.use_cases.psychologist.update_psychologist import (
+    UpdatePsychologistUseCase,
+)
 
 
 class PsychologistProvider(Provider):
@@ -53,3 +56,22 @@ class PsychologistProvider(Provider):
         self, psychologist_repo: IPsychologistRepo
     ) -> AddAvailabilitiesUseCase:
         return AddAvailabilitiesUseCase(psychologist_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def UpdatePsychologistUseCaseInstance(
+        self,
+        user_repo: IUserRepo,
+        psychologist_repo: IPsychologistRepo,
+        city_repo: ICityRepo,
+        specialty_repo: ISpecialtyRepo,
+        file_service: IFileService,
+        auth_service: IAuthService,
+    ) -> UpdatePsychologistUseCase:
+        return UpdatePsychologistUseCase(
+            user_repo=user_repo,
+            psychologist_repo=psychologist_repo,
+            city_repo=city_repo,
+            specialty_repo=specialty_repo,
+            file_service=file_service,
+            auth_service=auth_service,
+        )
