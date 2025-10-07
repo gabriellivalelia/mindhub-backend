@@ -17,9 +17,12 @@ from domain.common.exception import DomainException
 from domain.common.guard import GuardException
 from infra.config.settings import Settings
 from infra.providers import container
+from infra.routers.approach_router import router as approach_router
+from infra.routers.geography_router import router as geography_router
 from infra.routers.patient_router import router as patient_router
 from infra.routers.psychologist_router import router as psychologist_router
 from infra.routers.session_router import router as session_router
+from infra.routers.specialty_router import router as specialty_router
 
 
 class LifeSpan(TypedDict): ...
@@ -68,6 +71,9 @@ class MindHubApp:
         self.__app.include_router(session_router)
         self.__app.include_router(psychologist_router)
         self.__app.include_router(patient_router)
+        self.__app.include_router(geography_router)
+        self.__app.include_router(approach_router)
+        self.__app.include_router(specialty_router)
 
         if Settings().ENV == "development":
             # Disponibiliza os arquivos salvos na pasta "/temp"

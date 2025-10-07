@@ -47,14 +47,16 @@ async def create_psychologist(
     gender: Annotated[str, Form(examples=["male"])],
     city_id: Annotated[UUID, Form(examples=["c51e05bc-c48b-4229-980e-3841e62ae413"])],
     crp: Annotated[str, Form(examples=["05/5555"])],
-    description: Annotated[str, Form(example=["string"])],
     specialty_ids: Annotated[
         list[UUID], Form(examples=[["b5a736f6-834f-46ad-94f0-4cab9a7a90f5"]])
     ],
-    approaches: Annotated[list[str], Form(examples=[["tcc"]])],
+    approach_ids: Annotated[
+        list[UUID], Form(examples=[["b5a736f6-834f-46ad-94f0-4cab9a7a90f5"]])
+    ],
     audiences: Annotated[list[str], Form(examples=[["children"]])],
     use_case: FromDishka[CreatePsychologistUseCase],
     value_per_appointment: Annotated[float, Form(examples=[150.00])],
+    description: Annotated[str | None, Form(example=[None])] = None,
     profile_picture: Annotated[UploadFile | None, File()] = None,
 ) -> PsychologistDTO | JSONResponse:
     dto = CreatePsychologistDTO(
@@ -69,7 +71,7 @@ async def create_psychologist(
         crp=crp,
         description=description,
         specialty_ids=specialty_ids,
-        approaches=approaches,
+        approach_ids=approach_ids,
         audiences=audiences,
         profile_picture=profile_picture,
         value_per_appointment=value_per_appointment,
@@ -139,7 +141,7 @@ async def update_psychologist(
     crp: Annotated[str | None, Form(examples=[""])] = None,
     description: Annotated[str | None, Form(examples=[""])] = None,
     specialty_ids: Annotated[list[UUID] | None, Form(examples=[[""]])] = None,
-    approaches: Annotated[list[str] | None, Form(examples=[[""]])] = None,
+    approach_ids: Annotated[list[UUID] | None, Form(examples=[[""]])] = None,
     audiences: Annotated[list[str] | None, Form(examples=[[""]])] = None,
     value_per_appointment: Annotated[float | None, Form(examples=[None])] = None,
     profile_picture: Annotated[UploadFile | None, File(examples=[None])] = None,
@@ -157,7 +159,7 @@ async def update_psychologist(
         crp=crp,
         description=description,
         specialty_ids=specialty_ids,
-        approaches=approaches,
+        approach_ids=approach_ids,
         audiences=audiences,
         value_per_appointment=value_per_appointment,
         profile_picture=profile_picture,

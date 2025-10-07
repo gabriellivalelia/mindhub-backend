@@ -1,63 +1,57 @@
 import asyncio
 
-from beanie import WriteRules
+from beanie.operators import In
 from pymongo import ASCENDING, DESCENDING
 from pymongo.asynchronous.client_session import AsyncClientSession
 
 from application.common.page import Page
 from application.common.pageable import Pageable
-from application.filters.city_filters import CityFilters
-from application.repos.icity_repo import ICityRepo
-from domain.city import City
+from application.filters.approach_filters import ApproachFilters
+from application.repos.iapproach_repo import IApproachRepo
+from domain.approach import Approach
 from domain.common.unique_entity_id import UniqueEntityId
-from infra.mappers.mongo.city_mapper import CityMongoMapper
-from infra.models.mongo.city_document import CityDocument
+from infra.mappers.mongo.approach_mapper import ApproachMongoMapper
+from infra.models.mongo.approach_document import ApproachDocument
 
 
-class MongoCityRepo(ICityRepo):
+class MongoApproachRepo(IApproachRepo):
     _session: AsyncClientSession
 
     def __init__(self, session: AsyncClientSession) -> None:
         self._session = session
 
-    async def create(self, entity: City) -> City:
-        doc = await CityMongoMapper.to_model(entity)
-        await doc.save(link_rule=WriteRules.WRITE, session=self._session)
-
-        return await CityMongoMapper.to_domain(doc)
-
-    async def get_by_id(self, id: UniqueEntityId) -> City | None:
-        doc = await CityDocument.find_one(
-            CityDocument.id == id.value, fetch_links=True, session=self._session
+    async def get_by_id(self, id: UniqueEntityId) -> Approach | None:
+        doc = await ApproachDocument.find_one(
+            ApproachDocument.id == id.value, session=self._session
         )
-        return await CityMongoMapper.to_domain(doc) if doc else None
+        return await ApproachMongoMapper.to_domain(doc) if doc else None
 
-    async def get_all(self) -> list[City]:
-        docs = await CityDocument.find_all(
-            fetch_links=True, session=self._session
+    async def get_by_ids(self, ids: list[UniqueEntityId]) -> list[Approach]:
+        docs = await ApproachDocument.find(
+            In(ApproachDocument.id, [id.value for id in ids]), session=self._session
         ).to_list()
-        return await asyncio.gather(*(CityMongoMapper.to_domain(doc) for doc in docs))
+
+        return await asyncio.gather(
+            *(ApproachMongoMapper.to_domain(doc) for doc in docs)
+        )
 
     async def get(
         self,
         pageable: Pageable,
-        filters: CityFilters | None = None,
-    ) -> Page[City]:
+        filters: ApproachFilters | None = None,
+    ) -> Page[Approach]:
         query_conditions = {}
 
         if filters:
             if filters.name:
                 query_conditions["name"] = {"$regex": filters.name, "$options": "i"}
-            if filters.state_id:
-                query_conditions["state.$id"] = filters.state_id
 
-        total = await CityDocument.find(
+        total = await ApproachDocument.find(
             query_conditions if query_conditions else {}, session=self._session
         ).count()
 
-        find_query = CityDocument.find(
+        find_query = ApproachDocument.find(
             query_conditions if query_conditions else {},
-            fetch_links=True,
             session=self._session,
         )
 
@@ -75,7 +69,7 @@ class MongoCityRepo(ICityRepo):
         docs = await find_query.to_list()
 
         entities = await asyncio.gather(
-            *(CityMongoMapper.to_domain(doc) for doc in docs)
+            *(ApproachMongoMapper.to_domain(doc) for doc in docs)
         )
 
         return Page(

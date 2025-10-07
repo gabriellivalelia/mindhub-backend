@@ -8,6 +8,7 @@ from application.common.exception import ApplicationException
 from application.common.use_case import IUseCase
 from application.dtos.availability_dto import AvailabilityDTO
 from application.dtos.psychologist_dto import PsychologistDTO
+from application.repos.iapproach_repo import IApproachRepo
 from application.repos.icity_repo import ICityRepo
 from application.repos.ipsychologist_repo import IPsychologistRepo
 from application.repos.ispecialty_repo import ISpecialtyRepo
@@ -16,7 +17,7 @@ from application.services.iauth_service import IAuthService
 from application.services.ifile_service import IFileService
 from domain.common.exception import DomainException
 from domain.common.unique_entity_id import UniqueEntityId
-from domain.psychologist import ApproachEnum, AudienceEnum, Psychologist
+from domain.psychologist import AudienceEnum, Psychologist
 from domain.user import GenderEnum
 from domain.value_objects.cpf import CPF
 from domain.value_objects.crp import CRP
@@ -35,11 +36,11 @@ class CreatePsychologistDTO(BaseModel):
     gender: str
     city_id: UUID
     crp: str
-    description: str
     specialty_ids: list[UUID]
-    approaches: list[str]
+    approach_ids: list[UUID]
     audiences: list[str]
     value_per_appointment: float
+    description: str | None = None
     availabilities: list[AvailabilityDTO] | None = None
     profile_picture: UploadFile | None = None
 
@@ -52,6 +53,7 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
     psychologist_repo: IPsychologistRepo
     city_repo: ICityRepo
     specialty_repo: ISpecialtyRepo
+    approach_repo: IApproachRepo
     file_service: IFileService
     auth_service: IAuthService
 
@@ -60,6 +62,7 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
         user_repo: IUserRepo,
         psychologist_repo: IPsychologistRepo,
         specialty_repo: ISpecialtyRepo,
+        approach_repo: IApproachRepo,
         city_repo: ICityRepo,
         file_service: IFileService,
         auth_service: IAuthService,
@@ -67,6 +70,7 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
         self.user_repo = user_repo
         self.psychologist_repo = psychologist_repo
         self.specialty_repo = specialty_repo
+        self.approach_repo = approach_repo
         self.city_repo = city_repo
         self.file_service = file_service
         self.auth_service = auth_service
@@ -96,7 +100,12 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
         if len(specialties) != len(dto.specialty_ids):
             raise DomainException("One or more specialties were not found.")
 
-        approaches = [ApproachEnum(approach) for approach in dto.approaches]
+        approaches = await self.approach_repo.get_by_ids(
+            [UniqueEntityId(id) for id in dto.approach_ids]
+        )
+        if len(approaches) != len(dto.approach_ids):
+            raise DomainException("One or more approaches were not found.")
+
         audiences = [AudienceEnum(audience) for audience in dto.audiences]
 
         password = Password(value=dto.password)

@@ -10,6 +10,7 @@ from dishka import (
 from pymongo.asynchronous.client_session import AsyncClientSession
 
 from application.repos.iappointment_repo import IAppointmentRepo
+from application.repos.iapproach_repo import IApproachRepo
 from application.repos.icity_repo import ICityRepo
 from application.repos.ipatient_repo import IPatientRepo
 from application.repos.ipsychologist_repo import IPsychologistRepo
@@ -18,6 +19,7 @@ from application.repos.istate_repo import IStateRepo
 from application.repos.iuser_repo import IUserRepo
 from infra.config.mongo_db_manager import MongoManager
 from infra.repos.mongo.appointment_repo import MongoAppointmentRepo
+from infra.repos.mongo.approach_repo import MongoApproachRepo
 from infra.repos.mongo.city_repo import MongoCityRepo
 from infra.repos.mongo.patient_repo import MongoPatientRepo
 from infra.repos.mongo.psychologist_repo import MongoPsychologistRepo
@@ -62,6 +64,10 @@ class MongoDBProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def SpecialtyRepo(self, session: AsyncClientSession) -> ISpecialtyRepo:
         return MongoSpecialtyRepo(session)
+
+    @provide(scope=Scope.REQUEST)
+    def ApproachRepo(self, session: AsyncClientSession) -> IApproachRepo:
+        return MongoApproachRepo(session)
 
     @provide(scope=Scope.REQUEST)
     def AppointmentRepo(self, session: AsyncClientSession) -> IAppointmentRepo:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from application.dtos.approach_dto import ApproachDTO
 from application.dtos.availability_dto import AvailabilityDTO
 from application.dtos.city_dto import CityDTO
 from application.dtos.specialty_dto import SpecialtyDTO
@@ -9,11 +10,11 @@ from domain.psychologist import Psychologist
 
 class PsychologistDTO(UserDTO):
     crp: str
-    description: str
     specialties: list[SpecialtyDTO]
-    approaches: list[str]
+    approaches: list[ApproachDTO]
     audiences: list[str]
     value_per_appointment: float
+    description: str | None = None
     availabilities: list[AvailabilityDTO] | None = None
 
     @staticmethod
@@ -29,7 +30,7 @@ class PsychologistDTO(UserDTO):
             crp=entity.crp.value,
             description=entity.description,
             specialties=[SpecialtyDTO.to_dto(s) for s in entity.specialties],
-            approaches=[approach.value for approach in entity.approaches],
+            approaches=[ApproachDTO.to_dto(approach) for approach in entity.approaches],
             audiences=[audience.value for audience in entity.audiences],
             value_per_appointment=entity.value_per_appointment,
             city=CityDTO.to_dto(entity.city),

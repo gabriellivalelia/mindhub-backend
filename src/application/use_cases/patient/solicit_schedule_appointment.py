@@ -9,9 +9,9 @@ from application.dtos.appointment_dto import AppointmentDTO
 from application.repos.iappointment_repo import IAppointmentRepo
 from application.repos.ipatient_repo import IPatientRepo
 from application.repos.ipsychologist_repo import IPsychologistRepo
+from application.services.ipix_payment_service import IPixPaymentService
 from domain.appointment import Appointment, AppointmentStatusEnum
 from domain.common.unique_entity_id import UniqueEntityId
-from domain.pix_payment import PixPayment
 
 
 class SolicitScheduleAppointmentDTO(BaseModel):
@@ -23,22 +23,25 @@ class SolicitScheduleAppointmentDTO(BaseModel):
         arbitrary_types_allowed = True
 
 
-class ScheduleAppointmentUseCase(
+class SolicitScheduleAppointmentUseCase(
     IUseCase[SolicitScheduleAppointmentDTO, AppointmentDTO]
 ):
     patient_repo: IPatientRepo
     psychologist_repo: IPsychologistRepo
     appointment_repo: IAppointmentRepo
+    pix_payment_service: IPixPaymentService
 
     def __init__(
         self,
         patient_repo: IPatientRepo,
         psychologist_repo: IPsychologistRepo,
         appointment_repo: IAppointmentRepo,
+        pix_payment_service: IPixPaymentService,
     ) -> None:
         self.patient_repo = patient_repo
         self.psychologist_repo = psychologist_repo
         self.appointment_repo = appointment_repo
+        self.pix_payment_service = pix_payment_service
 
     async def execute(self, dto: SolicitScheduleAppointmentDTO) -> AppointmentDTO:
         patient = await self.patient_repo.get_by_id(UniqueEntityId(dto.patient_id))
@@ -53,7 +56,14 @@ class ScheduleAppointmentUseCase(
         if not psychologist:
             raise ApplicationException("Psychologist not found.")
 
+        if dto.date < datetime.now():
+            raise ApplicationException("Cannot schedule appointment for a past date.")
+
         availability_id = psychologist.get_availability_by_date(dto.date)
+
+        pix_payment = await self.pix_payment_service.create_payment(
+            psychologist.value_per_appointment
+        )
 
         appointment = Appointment(
             date=dto.date,
@@ -62,9 +72,7 @@ class ScheduleAppointmentUseCase(
             availability_id=availability_id,
             status=AppointmentStatusEnum.SCHEDULED,
             value=psychologist.value_per_appointment,
-            pix_payment=PixPayment(
-                psychologist.value_per_appointment, "to do", "to do", datetime.now()
-            ),
+            pix_payment=pix_payment,
         )
 
         scheduled_appointment = await self.appointment_repo.create(appointment)

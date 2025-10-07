@@ -20,8 +20,8 @@ from application.use_cases.patient.get_patients import (
     GetPatientsUseCase,
 )
 from application.use_cases.patient.solicit_schedule_appointment import (
-    ScheduleAppointmentUseCase,
     SolicitScheduleAppointmentDTO,
+    SolicitScheduleAppointmentUseCase,
 )
 from application.use_cases.patient.update_patient import (
     UpdatePatientDTO,
@@ -87,7 +87,7 @@ async def solicit_schedule_appointment(
     jwt_data: FromDishka[JWTData],
     appointment_date: Annotated[datetime, Body()],
     psychologist_id: Annotated[UUID, Path()],
-    use_case: FromDishka[ScheduleAppointmentUseCase],
+    use_case: FromDishka[SolicitScheduleAppointmentUseCase],
 ) -> AppointmentDTO | JSONResponse:
     dto = SolicitScheduleAppointmentDTO(
         date=appointment_date, psychologist_id=psychologist_id, patient_id=jwt_data.id

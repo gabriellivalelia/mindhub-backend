@@ -11,12 +11,13 @@ from application.repos.ipsychologist_repo import IPsychologistRepo
 from application.repos.iuser_repo import IUserRepo
 from application.services.iauth_service import IAuthService
 from application.services.ifile_service import IFileService
+from application.services.ipix_payment_service import IPixPaymentService
 from application.use_cases.patient.create_patient import (
     CreatePatientUseCase,
 )
 from application.use_cases.patient.get_patients import GetPatientsUseCase
 from application.use_cases.patient.solicit_schedule_appointment import (
-    ScheduleAppointmentUseCase,
+    SolicitScheduleAppointmentUseCase,
 )
 from application.use_cases.patient.update_patient import UpdatePatientUseCase
 
@@ -69,7 +70,8 @@ class PatientProvider(Provider):
         patient_repo: IPatientRepo,
         psychologist_repo: IPsychologistRepo,
         appointment_repo: IAppointmentRepo,
-    ) -> ScheduleAppointmentUseCase:
-        return ScheduleAppointmentUseCase(
-            patient_repo, psychologist_repo, appointment_repo
+        pix_payment_service: IPixPaymentService,
+    ) -> SolicitScheduleAppointmentUseCase:
+        return SolicitScheduleAppointmentUseCase(
+            patient_repo, psychologist_repo, appointment_repo, pix_payment_service
         )

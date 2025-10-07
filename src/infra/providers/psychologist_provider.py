@@ -4,6 +4,7 @@ from dishka import (
     provide,  # type: ignore
 )
 
+from application.repos.iapproach_repo import IApproachRepo
 from application.repos.icity_repo import ICityRepo
 from application.repos.ipsychologist_repo import IPsychologistRepo
 from application.repos.ispecialty_repo import ISpecialtyRepo
@@ -31,6 +32,7 @@ class PsychologistProvider(Provider):
         user_repo: IUserRepo,
         psychologist_repo: IPsychologistRepo,
         specialty_repo: ISpecialtyRepo,
+        approach_repo: IApproachRepo,
         city_repo: ICityRepo,
         file_service: IFileService,
         auth_service: IAuthService,
@@ -39,6 +41,7 @@ class PsychologistProvider(Provider):
             user_repo=user_repo,
             psychologist_repo=psychologist_repo,
             specialty_repo=specialty_repo,
+            approach_repo=approach_repo,
             city_repo=city_repo,
             file_service=file_service,
             auth_service=auth_service,
@@ -64,6 +67,7 @@ class PsychologistProvider(Provider):
         psychologist_repo: IPsychologistRepo,
         city_repo: ICityRepo,
         specialty_repo: ISpecialtyRepo,
+        approach_repo: IApproachRepo,
         file_service: IFileService,
         auth_service: IAuthService,
     ) -> UpdatePsychologistUseCase:
@@ -72,6 +76,7 @@ class PsychologistProvider(Provider):
             psychologist_repo=psychologist_repo,
             city_repo=city_repo,
             specialty_repo=specialty_repo,
+            approach_repo=approach_repo,
             file_service=file_service,
             auth_service=auth_service,
         )

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator
+from uuid import uuid4
 
 from beanie import init_beanie  # type: ignore
 from pymongo import AsyncMongoClient
@@ -13,6 +14,7 @@ from infra.models.mongo.appointment_document import (
     AppointmentDocument,
     PixPaymentDocument,
 )
+from infra.models.mongo.approach_document import ApproachDocument
 from infra.models.mongo.availability_document import AvailabilityDocument
 from infra.models.mongo.city_document import CityDocument
 from infra.models.mongo.patient_document import PatientDocument
@@ -43,6 +45,7 @@ class MongoManager:
                 PatientDocument,
                 PsychologistDocument,
                 SpecialtyDocument,
+                ApproachDocument,
                 AvailabilityDocument,
                 PixPaymentDocument,
                 AppointmentDocument,
@@ -70,7 +73,8 @@ class MongoManager:
     async def seed(self) -> None:
         total_states = await StateDocument.count()
         total_specialties = await SpecialtyDocument.count()
-        if total_states > 0 and total_specialties > 0:
+        total_approaches = await ApproachDocument.count()
+        if total_states > 0 and total_specialties > 0 and total_approaches > 0:
             return
 
         # # Seed States and Cities using IBGE API
@@ -158,3 +162,134 @@ class MongoManager:
         #         name=specialty_data["name"],
         #         description=specialty_data["description"],
         #     ).save()
+
+        # Seed Approaches - Abordagens Psicológicas Completas
+        approaches_data = [
+            {
+                "name": "Terapia Cognitivo-Comportamental (TCC)",
+                "description": "Abordagem estruturada focada na identificação e modificação de padrões de pensamento disfuncionais e comportamentos inadequados para promover mudanças emocionais positivas",
+            },
+            {
+                "name": "Psicanálise",
+                "description": "Método de investigação psíquica baseado nas teorias freudianas que busca compreender o inconsciente através da interpretação dos sonhos, lapsos e associações livres",
+            },
+            {
+                "name": "Psicanálise Lacaniana",
+                "description": "Abordagem psicanalítica baseada nas teorias de Jacques Lacan, enfatizando a linguagem, o simbólico e a estrutura do sujeito do inconsciente",
+            },
+            {
+                "name": "Gestalt-Terapia",
+                "description": "Abordagem humanística que enfatiza a consciência do momento presente, integração de experiências e responsabilidade pessoal através do contato genuíno",
+            },
+            {
+                "name": "Terapia Humanística",
+                "description": "Abordagem centrada na pessoa que valoriza o potencial humano, a auto-realização e o crescimento pessoal através de um ambiente terapêutico empático e não-diretivo",
+            },
+            {
+                "name": "Terapia Sistêmica Familiar",
+                "description": "Abordagem que considera o indivíduo inserido em sistemas relacionais, focando nos padrões de interação familiar e nas dinâmicas interpessoais",
+            },
+            {
+                "name": "Terapia de Casal",
+                "description": "Modalidade terapêutica especializada em trabalhar conflitos conjugais, comunicação e dinâmicas relacionais entre parceiros íntimos",
+            },
+            {
+                "name": "EMDR (Dessensibilização e Reprocessamento por Movimentos Oculares)",
+                "description": "Técnica específica para tratamento de traumas que utiliza movimentos oculares bilaterais para facilitar o processamento de memórias traumáticas",
+            },
+            {
+                "name": "Terapia Comportamental Dialética (DBT)",
+                "description": "Abordagem que combina técnicas cognitivo-comportamentais com mindfulness, focada no desenvolvimento de habilidades de regulação emocional",
+            },
+            {
+                "name": "Terapia de Aceitação e Compromisso (ACT)",
+                "description": "Abordagem que utiliza mindfulness e valores pessoais para aumentar a flexibilidade psicológica e reduzir o sofrimento emocional",
+            },
+            {
+                "name": "Mindfulness e Meditação",
+                "description": "Práticas de atenção plena derivadas de tradições contemplativas, aplicadas terapeuticamente para redução do estresse e aumento da consciência",
+            },
+            {
+                "name": "Terapia Psicodramática",
+                "description": "Método terapêutico criado por Jacob Moreno que utiliza técnicas de dramatização, role-playing e expressão corporal para explorar questões psicológicas",
+            },
+            {
+                "name": "Arteterapia",
+                "description": "Uso terapêutico de expressões artísticas como pintura, desenho, escultura e outras formas criativas para facilitar a expressão e elaboração emocional",
+            },
+            {
+                "name": "Musicoterapia",
+                "description": "Utilização da música e elementos musicais como meio terapêutico para promover comunicação, expressão e bem-estar emocional",
+            },
+            {
+                "name": "Terapia Narrativa",
+                "description": "Abordagem que ajuda pessoas a re-escrever suas histórias de vida, identificando narrativas dominantes e construindo versões mais capacitadoras",
+            },
+            {
+                "name": "Terapia Focada na Emoção (EFT)",
+                "description": "Abordagem humanística-experiencial que ajuda clientes a acessar, processar e transformar emoções para promover mudanças terapêuticas",
+            },
+            {
+                "name": "Terapia Breve Estratégica",
+                "description": "Modelo terapêutico focado na resolução rápida de problemas através de intervenções estratégicas e mudanças nos padrões comportamentais",
+            },
+            {
+                "name": "Hipnoterapia",
+                "description": "Uso terapêutico do estado de transe hipnótico para acessar recursos inconscientes e promover mudanças comportamentais e emocionais",
+            },
+            {
+                "name": "Terapia Corporal",
+                "description": "Abordagens que integram corpo e mente, utilizando técnicas corporais, respiração e movimento para promover integração e cura",
+            },
+            {
+                "name": "Análise Bioenergética",
+                "description": "Método terapêutico desenvolvido por Alexander Lowen que trabalha a relação entre corpo, energia e caráter psicológico",
+            },
+            {
+                "name": "Terapia Reichiana",
+                "description": "Abordagem baseada nas teorias de Wilhelm Reich que integra trabalho corporal e análise de caráter para liberar bloqueios energéticos",
+            },
+            {
+                "name": "Terapia Existencial",
+                "description": "Abordagem filosófica que explora questões fundamentais da existência humana como liberdade, responsabilidade, morte e significado da vida",
+            },
+            {
+                "name": "Logoterapia",
+                "description": "Método criado por Viktor Frankl focado na busca de sentido e significado como motivação primária do ser humano",
+            },
+            {
+                "name": "Terapia Transpessoal",
+                "description": "Abordagem que integra dimensões espirituais e transcendentes da experiência humana ao processo terapêutico",
+            },
+            {
+                "name": "Constelações Familiares",
+                "description": "Método terapêutico desenvolvido por Bert Hellinger que trabalha dinâmicas familiares sistêmicas através de representações espaciais",
+            },
+            {
+                "name": "Programação Neurolinguística (PNL)",
+                "description": "Conjunto de técnicas que estuda a relação entre linguagem, comportamento e padrões neurológicos para promover mudanças pessoais",
+            },
+            {
+                "name": "Terapia Cognitiva Baseada em Mindfulness (MBCT)",
+                "description": "Integração de técnicas cognitivas com práticas de mindfulness para prevenção de recaídas depressivas e manejo de pensamentos ruminativos",
+            },
+            {
+                "name": "Terapia do Esquema",
+                "description": "Abordagem integrativa que combina elementos cognitivo-comportamentais, gestálticos e relacionais para tratar transtornos de personalidade",
+            },
+            {
+                "name": "Terapia Racional Emotiva Comportamental (TREC)",
+                "description": "Método criado por Albert Ellis que foca na identificação e mudança de crenças irracionais que geram sofrimento emocional",
+            },
+            {
+                "name": "Terapia Interpessoal (TIP)",
+                "description": "Abordagem estruturada que foca nos padrões de relacionamento interpessoal e sua conexão com sintomas psicológicos",
+            },
+        ]
+
+        for approach_data in approaches_data:
+            await ApproachDocument(
+                id=uuid4(),
+                name=approach_data["name"],
+                description=approach_data["description"],
+            ).save()

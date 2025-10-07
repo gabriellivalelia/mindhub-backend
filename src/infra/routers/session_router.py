@@ -71,7 +71,7 @@ async def logout(
         )
 
 
-@router.post(
+@router.get(
     f"{route}/me",
     status_code=status.HTTP_200_OK,
     tags=["sessions"],

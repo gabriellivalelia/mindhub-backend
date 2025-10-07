@@ -1,9 +1,10 @@
 import asyncio
 from datetime import datetime
 
+from domain.approach import Approach
 from domain.availability import Availability
 from domain.common.unique_entity_id import UniqueEntityId
-from domain.psychologist import ApproachEnum, AudienceEnum, Psychologist
+from domain.psychologist import AudienceEnum, Psychologist
 from domain.specialty import Specialty
 from domain.value_objects.cpf import CPF
 from domain.value_objects.crp import CRP
@@ -11,6 +12,7 @@ from domain.value_objects.email import Email
 from domain.value_objects.password import Password
 from domain.value_objects.phone_number import PhoneNumber
 from infra.mappers.imapper import IMapper
+from infra.mappers.mongo.approach_mapper import ApproachMongoMapper
 from infra.mappers.mongo.availability_mapper import AvailabilityMongoMapper
 from infra.mappers.mongo.city_mapper import CityMongoMapper
 from infra.mappers.mongo.specialty_mapper import SpecialtyMongoMapper
@@ -26,6 +28,12 @@ class PsychologistMongoMapper(IMapper[PsychologistDocument, Psychologist]):
             await SpecialtyMongoMapper.to_domain(doc)  # type: ignore
             for doc in model.specialties
         ]
+
+        approaches: list[Approach] = [
+            await ApproachMongoMapper.to_domain(doc)  # type: ignore
+            for doc in model.approaches
+        ]
+
         availabilities: list[Availability] | None = None
         if model.availabilities:
             availabilities = [
@@ -45,7 +53,7 @@ class PsychologistMongoMapper(IMapper[PsychologistDocument, Psychologist]):
             crp=CRP(value=model.crp),
             description=model.description,
             specialties=specialties,
-            approaches=[ApproachEnum(approach) for approach in model.approaches],
+            approaches=approaches,
             audiences=[AudienceEnum(audience) for audience in model.audiences],
             value_per_appointment=model.value_per_appointment,
             availabilities=availabilities,
@@ -71,6 +79,11 @@ class PsychologistMongoMapper(IMapper[PsychologistDocument, Psychologist]):
                 for specialty in entity.specialties
             )
         )
+
+        approaches = await asyncio.gather(
+            *(ApproachMongoMapper.to_model(approach) for approach in entity.approaches)
+        )
+
         city = await CityMongoMapper.to_model(entity.city)
 
         return PsychologistDocument(
@@ -87,7 +100,7 @@ class PsychologistMongoMapper(IMapper[PsychologistDocument, Psychologist]):
             crp=entity.crp.value,
             description=entity.description,
             specialties=specialties,  # type: ignore
-            approaches=[approach.value for approach in entity.approaches],
+            approaches=approaches,  # type: ignore
             audiences=[audience.value for audience in entity.audiences],
             value_per_appointment=entity.value_per_appointment,
             availabilities=availabilities,  # type: ignore

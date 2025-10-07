@@ -66,7 +66,7 @@ class Guard:
             raise GuardException(f"{argument_name} cannot be null or undefined")
 
         if str(argument) == "":
-            raise GuardException(f"{argument_name} cannot be a empty")
+            raise GuardException(f"{argument_name} cannot be empty")
 
     @staticmethod
     def against_empty_str_bulk(args: list[Argument]) -> None:

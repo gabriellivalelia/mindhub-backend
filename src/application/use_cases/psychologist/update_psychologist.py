@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from application.common.exception import ApplicationException
 from application.common.use_case import IUseCase
 from application.dtos.psychologist_dto import PsychologistDTO
+from application.repos.iapproach_repo import IApproachRepo
 from application.repos.icity_repo import ICityRepo
 from application.repos.ipsychologist_repo import IPsychologistRepo
 from application.repos.ispecialty_repo import ISpecialtyRepo
@@ -14,7 +15,7 @@ from application.repos.iuser_repo import IUserRepo
 from application.services.iauth_service import IAuthService
 from application.services.ifile_service import IFileService
 from domain.common.unique_entity_id import UniqueEntityId
-from domain.psychologist import ApproachEnum, AudienceEnum, Psychologist
+from domain.psychologist import AudienceEnum, Psychologist
 from domain.user import GenderEnum
 from domain.value_objects.cpf import CPF
 from domain.value_objects.crp import CRP
@@ -34,7 +35,7 @@ class UpdatePsychologistDTO(BaseModel):
     crp: str | None = None
     description: str | None = None
     specialty_ids: list[UUID] | None = None
-    approaches: list[str] | None = None
+    approach_ids: list[UUID] | None = None
     audiences: list[str] | None = None
     value_per_appointment: float | None = None
     profile_picture: UploadFile | None = None
@@ -49,6 +50,7 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
     psychologist_repo: IPsychologistRepo
     city_repo: ICityRepo
     specialty_repo: ISpecialtyRepo
+    approach_repo: IApproachRepo
     file_service: IFileService
     auth_service: IAuthService
 
@@ -58,6 +60,7 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
         psychologist_repo: IPsychologistRepo,
         city_repo: ICityRepo,
         specialty_repo: ISpecialtyRepo,
+        approach_repo: IApproachRepo,
         file_service: IFileService,
         auth_service: IAuthService,
     ) -> None:
@@ -65,6 +68,7 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
         self.psychologist_repo = psychologist_repo
         self.city_repo = city_repo
         self.specialty_repo = specialty_repo
+        self.approach_repo = approach_repo
         self.file_service = file_service
         self.auth_service = auth_service
 
@@ -94,6 +98,14 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
             )
             if len(specialties) != len(dto.specialty_ids):
                 raise ApplicationException("One or more specialties were not found.")
+
+        approaches = found_psychologist.approaches
+        if dto.approach_ids:
+            approaches = await self.approach_repo.get_by_ids(
+                [UniqueEntityId(id) for id in dto.approach_ids]
+            )
+            if len(approaches) != len(dto.approach_ids):
+                raise ApplicationException("One or more approaches were not found.")
 
         city = found_psychologist.city
         if dto.city_id:
@@ -127,9 +139,7 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
             crp=CRP(value=dto.crp) if dto.crp else found_psychologist.crp,
             description=dto.description or found_psychologist.description,
             specialties=specialties,
-            approaches=[ApproachEnum(approach) for approach in dto.approaches]
-            if dto.approaches
-            else found_psychologist.approaches,
+            approaches=approaches,
             audiences=[AudienceEnum(audience) for audience in dto.audiences]
             if dto.audiences
             else found_psychologist.audiences,

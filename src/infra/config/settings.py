@@ -48,5 +48,5 @@ class Settings(BaseSettings):
     # JWT CONFIG
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_SECRET: str = "accesss_token_secret"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 hours = 1440 minutes
     REFRESH_TOKEN_EXPIRE_SECONDS: int = 86400

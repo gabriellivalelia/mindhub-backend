@@ -40,10 +40,13 @@ class AddAvailabilitiesUseCase(IUseCase[AddAvailabilitiesDTO, PsychologistDTO]):
 
         availabiliies: list[Availability] = []
         for availability_datetime in availability_datetimes:
-            availability = Availability(
-                date=availability_datetime,
-                available=True,
-            )
+            if availability_datetime < datetime.now():
+                raise ApplicationException("Cannot add an availability on a past date.")
+            else:
+                availability = Availability(
+                    date=availability_datetime,
+                    available=True,
+                )
 
             availabiliies.append(availability)
 

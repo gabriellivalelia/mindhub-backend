@@ -1,6 +1,7 @@
 from datetime import date, datetime, timezone
 from enum import Enum
 
+from domain.approach import Approach
 from domain.availability import Availability
 from domain.city import City
 from domain.common.exception import DomainException
@@ -16,12 +17,9 @@ from domain.value_objects.password import Password
 from domain.value_objects.phone_number import PhoneNumber
 
 
-class ApproachEnum(Enum):
-    TCC = "tcc"
-
-
 class AudienceEnum(Enum):
     CHILDREN = "children"
+    ADULTS = "adults"
 
 
 class Psychologist(User):
@@ -36,11 +34,11 @@ class Psychologist(User):
         gender: GenderEnum,
         city: City,
         crp: CRP | str,
-        description: str,
         specialties: list[Specialty],
-        approaches: list[ApproachEnum],
+        approaches: list[Approach],
         audiences: list[AudienceEnum],
         value_per_appointment: float,
+        description: str | None = None,
         availabilities: list[Availability] | None = None,
         profile_picture: FileData | None = None,
         id: UniqueEntityId | None = None,
@@ -64,7 +62,6 @@ class Psychologist(User):
                 {"argument": crp, "argument_name": "crp"},
             ]
         )
-        Guard.against_empty_str(description, "description")
         Guard.against_empty_list_bulk(
             [
                 {"argument": specialties, "argument_name": "specialties"},
@@ -86,7 +83,7 @@ class Psychologist(User):
         return self._crp
 
     @property
-    def description(self) -> str:
+    def description(self) -> str | None:
         return self._description
 
     @property
@@ -94,7 +91,7 @@ class Psychologist(User):
         return self._specialties
 
     @property
-    def approaches(self) -> list[ApproachEnum]:
+    def approaches(self) -> list[Approach]:
         return self._approaches
 
     @property
