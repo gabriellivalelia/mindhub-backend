@@ -15,6 +15,12 @@ from application.use_cases.patient.create_patient import (
     CreatePatientDTO,
     CreatePatientUseCase,
 )
+
+# ...existing code... (delete patient use case removed)
+from application.use_cases.patient.get_patient_by_id import (
+    GetPatientByIdDTO,
+    GetPatientByIdUseCase,
+)
 from application.use_cases.patient.get_patients import (
     GetPatientsDTO,
     GetPatientsUseCase,
@@ -61,6 +67,20 @@ async def create_patient(
         city_id=city_id,
         profile_picture=profile_picture,
     )
+    return await use_case.execute(dto)
+
+
+@router.get(
+    f"{route}/{{patient_id}}",
+    status_code=status.HTTP_200_OK,
+    response_model=PatientDTO,
+    tags=["patients"],
+)
+async def get_patient_by_id(
+    patient_id: Annotated[UUID, Path()],
+    use_case: FromDishka[GetPatientByIdUseCase],
+) -> PatientDTO:
+    dto = GetPatientByIdDTO(patient_id=patient_id)
     return await use_case.execute(dto)
 
 
@@ -125,5 +145,45 @@ async def update_patient(
         city_id=city_id,
         profile_picture=profile_picture,
         delete_profile_picture=delete_profile_picture,
+    )
+    return await use_case.execute(dto)
+
+
+# Patient deletion endpoint intentionally removed. User deletion remains at /users/me
+
+
+@router.post(
+    f"{route}/{{appointment_id}}/cancel",
+    status_code=status.HTTP_200_OK,
+    response_model=AppointmentDTO,
+    tags=["patients"],
+)
+async def cancel_appointment(
+    jwt_data: FromDishka[JWTData],
+    appointment_id: Annotated[UUID, Path()],
+    use_case: FromDishka[CancelAppointmentUseCase],
+) -> AppointmentDTO:
+    dto = CancelAppointmentDTO(
+        appointment_id=appointment_id, requesting_user_id=jwt_data.id
+    )
+    return await use_case.execute(dto)
+
+
+@router.post(
+    f"{route}/{{appointment_id}}/reschedule",
+    status_code=status.HTTP_200_OK,
+    response_model=AppointmentDTO,
+    tags=["patients"],
+)
+async def reschedule_appointment(
+    jwt_data: FromDishka[JWTData],
+    appointment_id: Annotated[UUID, Path()],
+    new_date: Annotated[datetime, Body()],
+    use_case: FromDishka[RescheduleAppointmentUseCase],
+) -> AppointmentDTO:
+    dto = RescheduleAppointmentDTO(
+        appointment_id=appointment_id,
+        new_date=new_date,
+        requesting_user_id=jwt_data.id,
     )
     return await use_case.execute(dto)

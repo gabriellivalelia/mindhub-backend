@@ -9,6 +9,9 @@ from domain.common.unique_entity_id import UniqueEntityId
 
 class IApproachRepo(ABC):
     @abstractmethod
+    async def create(self, entity: Approach) -> Approach: ...
+
+    @abstractmethod
     async def get_by_id(self, id: UniqueEntityId) -> Approach | None: ...
 
     @abstractmethod

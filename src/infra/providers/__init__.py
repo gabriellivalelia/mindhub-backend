@@ -7,6 +7,7 @@ from infra.providers.geography_provider import GeographyProvider
 from infra.providers.patient_provider import PatientProvider
 from infra.providers.session_provider import SessionProvider
 from infra.providers.specialty_provider import SpecialtyProvider
+from infra.providers.user_provider import UserProvider
 
 from .mongo_provider import MongoDBProvider
 from .psychologist_provider import PsychologistProvider
@@ -21,4 +22,5 @@ container = make_async_container(
     GeographyProvider(),
     ApproachProvider(),
     SpecialtyProvider(),
+    UserProvider(),
 )

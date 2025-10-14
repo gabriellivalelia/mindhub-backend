@@ -20,6 +20,11 @@ class MongoApproachRepo(IApproachRepo):
     def __init__(self, session: AsyncClientSession) -> None:
         self._session = session
 
+    async def create(self, entity: Approach) -> Approach:
+        doc = await ApproachMongoMapper.to_model(entity)
+        await doc.save(session=self._session)
+        return await ApproachMongoMapper.to_domain(doc)
+
     async def get_by_id(self, id: UniqueEntityId) -> Approach | None:
         doc = await ApproachDocument.find_one(
             ApproachDocument.id == id.value, session=self._session

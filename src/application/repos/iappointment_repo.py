@@ -12,6 +12,9 @@ class IAppointmentRepo(ABC):
     async def create(self, entity: Appointment) -> Appointment: ...
 
     @abstractmethod
+    async def update(self, entity: Appointment) -> Appointment: ...
+
+    @abstractmethod
     async def get(
         self,
         pageable: Pageable,

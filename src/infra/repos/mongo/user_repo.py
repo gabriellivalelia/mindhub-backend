@@ -59,3 +59,14 @@ class MongoUserRepo(IUserRepo):
 
         await found_doc.fetch_all_links()
         return await UserMongoMapper.to_domain(found_doc)
+
+    async def delete(self, id: UniqueEntityId) -> bool:
+        doc = await UserDocument.get(
+            id.value,
+            session=self._session,
+            with_children=True,
+        )
+        if doc:
+            await doc.delete(session=self._session)
+            return True
+        return False

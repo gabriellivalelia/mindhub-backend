@@ -4,7 +4,7 @@ from uuid import UUID
 
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
-from fastapi import APIRouter, Body, File, Form, Query, UploadFile, status
+from fastapi import APIRouter, Body, File, Form, Path, Query, UploadFile, status
 from fastapi.responses import JSONResponse
 
 from application.common.page import Page
@@ -17,6 +17,10 @@ from application.use_cases.psychologist.add_availabilities import (
 from application.use_cases.psychologist.create_psychologist import (
     CreatePsychologistDTO,
     CreatePsychologistUseCase,
+)
+from application.use_cases.psychologist.get_psychologist_by_id import (
+    GetPsychologistByIdDTO,
+    GetPsychologistByIdUseCase,
 )
 from application.use_cases.psychologist.get_psychologists import (
     GetPsychologistsDTO,
@@ -76,6 +80,20 @@ async def create_psychologist(
         profile_picture=profile_picture,
         value_per_appointment=value_per_appointment,
     )
+    return await use_case.execute(dto)
+
+
+@router.get(
+    f"{route}/{{psychologist_id}}",
+    status_code=status.HTTP_200_OK,
+    response_model=PsychologistDTO,
+    tags=["psychologists"],
+)
+async def get_psychologist_by_id(
+    psychologist_id: Annotated[UUID, Path()],
+    use_case: FromDishka[GetPsychologistByIdUseCase],
+) -> PsychologistDTO:
+    dto = GetPsychologistByIdDTO(psychologist_id=psychologist_id)
     return await use_case.execute(dto)
 
 

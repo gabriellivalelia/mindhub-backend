@@ -23,6 +23,7 @@ from infra.routers.patient_router import router as patient_router
 from infra.routers.psychologist_router import router as psychologist_router
 from infra.routers.session_router import router as session_router
 from infra.routers.specialty_router import router as specialty_router
+from infra.routers.user_router import router as user_router
 
 
 class LifeSpan(TypedDict): ...
@@ -74,6 +75,7 @@ class MindHubApp:
         self.__app.include_router(geography_router)
         self.__app.include_router(approach_router)
         self.__app.include_router(specialty_router)
+        self.__app.include_router(user_router)
 
         if Settings().ENV == "development":
             # Disponibiliza os arquivos salvos na pasta "/temp"

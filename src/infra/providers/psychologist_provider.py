@@ -17,6 +17,9 @@ from application.use_cases.psychologist.add_availabilities import (
 from application.use_cases.psychologist.create_psychologist import (
     CreatePsychologistUseCase,
 )
+from application.use_cases.psychologist.get_psychologist_by_id import (
+    GetPsychologistByIdUseCase,
+)
 from application.use_cases.psychologist.get_psychologists import (
     GetPsychologistsUseCase,
 )
@@ -80,3 +83,10 @@ class PsychologistProvider(Provider):
             file_service=file_service,
             auth_service=auth_service,
         )
+
+    @provide(scope=Scope.REQUEST)
+    def GetPsychologistByIdUseCaseInstance(
+        self,
+        psychologist_repo: IPsychologistRepo,
+    ) -> GetPsychologistByIdUseCase:
+        return GetPsychologistByIdUseCase(psychologist_repo)

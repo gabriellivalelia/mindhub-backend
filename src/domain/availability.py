@@ -26,6 +26,13 @@ class Availability(Entity):
 
         self._available = False
 
+    def unschedule(self) -> None:
+        """Mark availability as available again."""
+        if self.available:
+            raise DomainException("Availability is already available.")
+
+        self._available = True
+
     @property
     def date(self) -> datetime:
         return self._date

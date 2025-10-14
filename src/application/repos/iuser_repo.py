@@ -15,3 +15,6 @@ class IUserRepo(ABC):
 
     @abstractmethod
     async def get_by_email(self, email: str) -> User | None: ...
+
+    @abstractmethod
+    async def delete(self, id: UniqueEntityId) -> bool: ...

@@ -92,6 +92,15 @@ class MongoPatientRepo(IPatientRepo):
             pageable=pageable,
         )
 
+    async def delete(self, id: UniqueEntityId) -> bool:
+        doc = await PatientDocument.find_one(
+            PatientDocument.id == id.value, session=self._session
+        )
+        if doc:
+            await doc.delete(session=self._session)
+            return True
+        return False
+
     async def schedule_appointment(
         self, entity: Patient, date: datetime, psychologist_id: UniqueEntityId
     ) -> Appointment | None:

@@ -34,6 +34,14 @@ class MongoAppointmentRepo(IAppointmentRepo):
 
         return await AppointmentMongoMapper.to_domain(doc) if doc else None
 
+    async def update(self, entity: Appointment) -> Appointment:
+        doc = await AppointmentMongoMapper.to_model(entity)
+        # save will replace the existing document with same id
+        await doc.save(link_rule=WriteRules.WRITE, session=self._session)
+        await doc.fetch_all_links()
+
+        return await AppointmentMongoMapper.to_domain(doc)
+
     async def get(
         self,
         pageable: Pageable,

@@ -23,3 +23,6 @@ class IPatientRepo(ABC):
 
     @abstractmethod
     async def get_by_id(self, id: UniqueEntityId) -> Patient | None: ...
+
+    @abstractmethod
+    async def delete(self, id: UniqueEntityId) -> bool: ...

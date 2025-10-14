@@ -42,11 +42,26 @@ class AddAvailabilitiesUseCase(IUseCase[AddAvailabilitiesDTO, PsychologistDTO]):
         for availability_datetime in availability_datetimes:
             if availability_datetime < datetime.now():
                 raise ApplicationException("Cannot add an availability on a past date.")
-            else:
-                availability = Availability(
-                    date=availability_datetime,
-                    available=True,
+            # Validate that the time is a whole hour (minutes and seconds zero)
+            if (
+                availability_datetime.minute != 0
+                or availability_datetime.second != 0
+                or availability_datetime.microsecond != 0
+            ):
+                raise ApplicationException(
+                    "Availabilities must be on whole hours (e.g. 05:00, 14:00)."
                 )
+
+            # Validate hour range: 05:00 through 22:00 inclusive
+            if not (5 <= availability_datetime.hour <= 22):
+                raise ApplicationException(
+                    "Availabilities must be between 05:00 and 22:00 inclusive."
+                )
+
+            availability = Availability(
+                date=availability_datetime,
+                available=True,
+            )
 
             availabiliies.append(availability)
 
