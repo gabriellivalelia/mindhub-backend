@@ -64,10 +64,20 @@ class UpdatePatientUseCase(IUseCase[UpdatePatientDTO, PatientDTO]):
         if not found_patient:
             raise ApplicationException("Patient not found.")
 
-        if dto.email or dto.cpf:
-            is_duplicated = await self.user_repo.exists_by_email_or_cpf(
-                dto.email, dto.cpf
-            )
+        query_list: list[dict[str, str]] = []
+
+        email = found_patient.email
+        if dto.email and dto.email != email.value:
+            email = Email(value=dto.email)
+            query_list.append({"email": dto.email})
+
+        cpf = found_patient.cpf
+        if dto.cpf and dto.cpf != cpf.value:
+            cpf = CPF(value=dto.cpf)
+            query_list.append({"email": dto.cpf})
+
+        if len(query_list) > 0:
+            is_duplicated = await self.user_repo.exists_by(query_list)
             if is_duplicated:
                 raise ApplicationException("Duplicated e-mail or cpf.")
 
@@ -91,9 +101,9 @@ class UpdatePatientUseCase(IUseCase[UpdatePatientDTO, PatientDTO]):
 
         updated_patient = Patient(
             name=dto.name or found_patient.name,
-            email=Email(value=dto.email) if dto.email else found_patient.email,
+            email=email,
             password=found_patient.password,
-            cpf=CPF(value=dto.cpf) if dto.cpf else found_patient.cpf,
+            cpf=cpf,
             phone_number=PhoneNumber(value=dto.phone_number)
             if dto.phone_number
             else found_patient.phone_number,

@@ -9,9 +9,6 @@ from domain.psychologist import Psychologist
 
 class IPsychologistRepo(ABC):
     @abstractmethod
-    async def exists_by_crp(self, crp: str) -> bool: ...
-
-    @abstractmethod
     async def create(self, entity: Psychologist) -> Psychologist: ...
 
     @abstractmethod

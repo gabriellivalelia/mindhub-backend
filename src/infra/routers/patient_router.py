@@ -33,6 +33,7 @@ from application.use_cases.patient.update_patient import (
     UpdatePatientDTO,
     UpdatePatientUseCase,
 )
+from infra.routers.utils import ConvertEmptyStrToNoneBeforeValidator
 
 router = APIRouter(route_class=DishkaRoute)
 route = "/patients"
@@ -49,12 +50,20 @@ async def create_patient(
     email: Annotated[str, Form(examples=["gabi@gmail.com"])],
     password: Annotated[str, Form(examples=["AcC123456*"])],
     cpf: Annotated[str, Form(examples=["18071991775"])],
-    phone_number: Annotated[str, Form(examples=["71999258225"])],
+    phone_number: Annotated[
+        str, Form(examples=["71999258225"]), ConvertEmptyStrToNoneBeforeValidator
+    ],
     birth_date: Annotated[date, Form(examples=["2025-09-16"])],
     gender: Annotated[str, Form(examples=["male"])],
-    city_id: Annotated[UUID, Form(examples=["c51e05bc-c48b-4229-980e-3841e62ae413"])],
+    city_id: Annotated[
+        UUID,
+        Form(examples=["c51e05bc-c48b-4229-980e-3841e62ae413"]),
+        ConvertEmptyStrToNoneBeforeValidator,
+    ],
     use_case: FromDishka[CreatePatientUseCase],
-    profile_picture: Annotated[UploadFile | None, File(examples=None)] = None,
+    profile_picture: Annotated[
+        UploadFile | None, File(examples=None), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
 ) -> PatientDTO | JSONResponse:
     dto = CreatePatientDTO(
         name=name,
@@ -128,10 +137,16 @@ async def update_patient(
     email: Annotated[str | None, Form(examples=[""])] = None,
     cpf: Annotated[str | None, Form(examples=[""])] = None,
     phone_number: Annotated[str | None, Form(examples=[""])] = None,
-    birth_date: Annotated[date | None, Form(examples=[""])] = None,
+    birth_date: Annotated[
+        date | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
     gender: Annotated[str | None, Form(examples=[""])] = None,
-    city_id: Annotated[UUID | None, Form(examples=[""])] = None,
-    profile_picture: Annotated[UploadFile | None, File(examples=None)] = None,
+    city_id: Annotated[
+        UUID | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
+    profile_picture: Annotated[
+        UploadFile | None, File(examples=None), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
     delete_profile_picture: Annotated[bool, Form(examples=[False])] = False,
 ) -> PatientDTO | JSONResponse:
     dto = UpdatePatientDTO(
@@ -150,40 +165,3 @@ async def update_patient(
 
 
 # Patient deletion endpoint intentionally removed. User deletion remains at /users/me
-
-
-@router.post(
-    f"{route}/{{appointment_id}}/cancel",
-    status_code=status.HTTP_200_OK,
-    response_model=AppointmentDTO,
-    tags=["patients"],
-)
-async def cancel_appointment(
-    jwt_data: FromDishka[JWTData],
-    appointment_id: Annotated[UUID, Path()],
-    use_case: FromDishka[CancelAppointmentUseCase],
-) -> AppointmentDTO:
-    dto = CancelAppointmentDTO(
-        appointment_id=appointment_id, requesting_user_id=jwt_data.id
-    )
-    return await use_case.execute(dto)
-
-
-@router.post(
-    f"{route}/{{appointment_id}}/reschedule",
-    status_code=status.HTTP_200_OK,
-    response_model=AppointmentDTO,
-    tags=["patients"],
-)
-async def reschedule_appointment(
-    jwt_data: FromDishka[JWTData],
-    appointment_id: Annotated[UUID, Path()],
-    new_date: Annotated[datetime, Body()],
-    use_case: FromDishka[RescheduleAppointmentUseCase],
-) -> AppointmentDTO:
-    dto = RescheduleAppointmentDTO(
-        appointment_id=appointment_id,
-        new_date=new_date,
-        requesting_user_id=jwt_data.id,
-    )
-    return await use_case.execute(dto)

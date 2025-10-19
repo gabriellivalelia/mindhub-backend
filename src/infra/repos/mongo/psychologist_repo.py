@@ -20,14 +20,6 @@ class MongoPsychologistRepo(IPsychologistRepo):
     def __init__(self, session: AsyncClientSession) -> None:
         self._session = session
 
-    async def exists_by_crp(self, crp: str) -> bool:
-        docs_num = await PsychologistDocument.find_one(
-            {"crp": crp},
-            session=self._session,
-        ).count()
-
-        return docs_num > 0
-
     async def create(self, entity: Psychologist) -> Psychologist:
         doc = await PsychologistMongoMapper.to_model(entity)
         await doc.save(link_rule=WriteRules.WRITE, session=self._session)

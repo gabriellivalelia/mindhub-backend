@@ -79,17 +79,27 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
         if not found_psychologist:
             raise ApplicationException("Psychologist not found.")
 
-        if dto.email or dto.cpf:
-            is_duplicated = await self.user_repo.exists_by_email_or_cpf(
-                dto.email, dto.cpf
-            )
-            if is_duplicated:
-                raise ApplicationException("Duplicated e-mail or cpf.")
+        query_list: list[dict[str, str]] = []
 
-        if dto.crp and dto.crp != found_psychologist.crp.value:
-            is_duplicated_crp = await self.psychologist_repo.exists_by_crp(dto.crp)
-            if is_duplicated_crp:
-                raise ApplicationException("Duplicated crp.")
+        email = found_psychologist.email
+        if dto.email and dto.email != email.value:
+            email = Email(value=dto.email)
+            query_list.append({"email": dto.email})
+
+        cpf = found_psychologist.cpf
+        if dto.cpf and dto.cpf != cpf.value:
+            cpf = CPF(value=dto.cpf)
+            query_list.append({"email": dto.cpf})
+
+        crp = found_psychologist.crp
+        if dto.crp and dto.crp != crp.value:
+            crp = CRP(value=dto.crp)
+            query_list.append({"crp": dto.crp})
+
+        if len(query_list) > 0:
+            is_duplicated = await self.user_repo.exists_by(query_list)
+            if is_duplicated:
+                raise ApplicationException("Duplicated e-mail, cpf or crp.")
 
         specialties = found_psychologist.specialties
         if dto.specialty_ids:
@@ -127,16 +137,16 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
 
         updated_psychologist = Psychologist(
             name=dto.name or found_psychologist.name,
-            email=Email(value=dto.email) if dto.email else found_psychologist.email,
+            email=email,
             password=found_psychologist.password,
-            cpf=CPF(value=dto.cpf) if dto.cpf else found_psychologist.cpf,
+            cpf=cpf,
             phone_number=PhoneNumber(value=dto.phone_number)
             if dto.phone_number
             else found_psychologist.phone_number,
             birth_date=dto.birth_date or found_psychologist.birth_date,
             gender=GenderEnum(dto.gender) if dto.gender else found_psychologist.gender,
             city=city,
-            crp=CRP(value=dto.crp) if dto.crp else found_psychologist.crp,
+            crp=crp,
             description=dto.description or found_psychologist.description,
             specialties=specialties,
             approaches=approaches,

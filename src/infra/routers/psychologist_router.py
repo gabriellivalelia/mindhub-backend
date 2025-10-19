@@ -30,6 +30,7 @@ from application.use_cases.psychologist.update_psychologist import (
     UpdatePsychologistDTO,
     UpdatePsychologistUseCase,
 )
+from infra.routers.utils import ConvertEmptyStrToNoneBeforeValidator
 
 router = APIRouter(route_class=DishkaRoute)
 route = "/psychologists"
@@ -47,21 +48,37 @@ async def create_psychologist(
     password: Annotated[str, Form(examples=["AcC123456*"])],
     cpf: Annotated[str, Form(examples=["86231101533"])],
     phone_number: Annotated[str, Form(examples=["71999258225"])],
-    birth_date: Annotated[date, Form(examples=["1999-07-28"])],
+    birth_date: Annotated[
+        date, Form(examples=["1999-07-28"]), ConvertEmptyStrToNoneBeforeValidator
+    ],
     gender: Annotated[str, Form(examples=["male"])],
-    city_id: Annotated[UUID, Form(examples=["c51e05bc-c48b-4229-980e-3841e62ae413"])],
+    city_id: Annotated[
+        UUID,
+        Form(examples=["c51e05bc-c48b-4229-980e-3841e62ae413"]),
+        ConvertEmptyStrToNoneBeforeValidator,
+    ],
     crp: Annotated[str, Form(examples=["05/5555"])],
     specialty_ids: Annotated[
-        list[UUID], Form(examples=[["b5a736f6-834f-46ad-94f0-4cab9a7a90f5"]])
+        list[UUID],
+        Form(examples=[["b5a736f6-834f-46ad-94f0-4cab9a7a90f5"]]),
+        ConvertEmptyStrToNoneBeforeValidator,
     ],
     approach_ids: Annotated[
-        list[UUID], Form(examples=[["b5a736f6-834f-46ad-94f0-4cab9a7a90f5"]])
+        list[UUID],
+        Form(examples=[["b5a736f6-834f-46ad-94f0-4cab9a7a90f5"]]),
+        ConvertEmptyStrToNoneBeforeValidator,
     ],
-    audiences: Annotated[list[str], Form(examples=[["children"]])],
+    audiences: Annotated[
+        list[str], Form(examples=[["children"]]), ConvertEmptyStrToNoneBeforeValidator
+    ],
     use_case: FromDishka[CreatePsychologistUseCase],
-    value_per_appointment: Annotated[float, Form(examples=[150.00])],
+    value_per_appointment: Annotated[
+        float, Form(examples=[150.00]), ConvertEmptyStrToNoneBeforeValidator
+    ],
     description: Annotated[str | None, Form(example=[None])] = None,
-    profile_picture: Annotated[UploadFile | None, File()] = None,
+    profile_picture: Annotated[
+        UploadFile | None, File(), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
 ) -> PsychologistDTO | JSONResponse:
     dto = CreatePsychologistDTO(
         name=name,
@@ -153,16 +170,28 @@ async def update_psychologist(
     email: Annotated[str | None, Form(examples=[""])] = None,
     cpf: Annotated[str | None, Form(examples=[""])] = None,
     phone_number: Annotated[str | None, Form(examples=[""])] = None,
-    birth_date: Annotated[date | None, Form(examples=[""])] = None,
+    birth_date: Annotated[
+        date | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
     gender: Annotated[str | None, Form(examples=[""])] = None,
-    city_id: Annotated[UUID | None, Form(examples=[""])] = None,
+    city_id: Annotated[
+        UUID | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
     crp: Annotated[str | None, Form(examples=[""])] = None,
     description: Annotated[str | None, Form(examples=[""])] = None,
-    specialty_ids: Annotated[list[UUID] | None, Form(examples=[[""]])] = None,
-    approach_ids: Annotated[list[UUID] | None, Form(examples=[[""]])] = None,
+    specialty_ids: Annotated[
+        list[UUID] | None, Form(examples=[[""]]), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
+    approach_ids: Annotated[
+        list[UUID] | None, Form(examples=[[""]]), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
     audiences: Annotated[list[str] | None, Form(examples=[[""]])] = None,
-    value_per_appointment: Annotated[float | None, Form(examples=[None])] = None,
-    profile_picture: Annotated[UploadFile | None, File(examples=[None])] = None,
+    value_per_appointment: Annotated[
+        float | None, Form(examples=[None]), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
+    profile_picture: Annotated[
+        UploadFile | None, File(examples=[None]), ConvertEmptyStrToNoneBeforeValidator
+    ] = None,
     delete_profile_picture: Annotated[bool, Form(examples=[False])] = False,
 ) -> PsychologistDTO | JSONResponse:
     dto = UpdatePsychologistDTO(

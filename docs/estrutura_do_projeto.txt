@@ -1,0 +1,250 @@
+.
+├── docker-compose.yml
+├── dockervolume
+│   ├── mongodb
+│   └── redis
+│       └── dump.rdb
+├── docs
+│   └── uml.puml
+├── estrutura_do_projeto.txt
+├── pyproject.toml
+├── README.md
+├── scripts
+│   ├── aws-init.sh
+│   └── mongodb-init.sh
+├── src
+│   ├── application
+│   │   ├── common
+│   │   │   ├── exception.py
+│   │   │   ├── __init__.py
+│   │   │   ├── pageable.py
+│   │   │   ├── page.py
+│   │   │   ├── __pycache__
+│   │   │   └── use_case.py
+│   │   ├── dtos
+│   │   │   ├── appointment_dto.py
+│   │   │   ├── approach_dto.py
+│   │   │   ├── availability_dto.py
+│   │   │   ├── city_dto.py
+│   │   │   ├── __init__.py
+│   │   │   ├── patient_dto.py
+│   │   │   ├── pix_payment_dto.py
+│   │   │   ├── psychologist_dto.py
+│   │   │   ├── __pycache__
+│   │   │   ├── specialty_dto.py
+│   │   │   ├── state_dto.py
+│   │   │   └── user_dto.py
+│   │   ├── filters
+│   │   │   ├── appointment_filters.py
+│   │   │   ├── approach_filters.py
+│   │   │   ├── availability_filters.py
+│   │   │   ├── city_filters.py
+│   │   │   ├── __init__.py
+│   │   │   ├── patient_filters.py
+│   │   │   ├── psychologist_filters.py
+│   │   │   ├── __pycache__
+│   │   │   ├── specialty_filters.py
+│   │   │   └── state_filters.py
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   ├── repos
+│   │   │   ├── iappointment_repo.py
+│   │   │   ├── iapproach_repo.py
+│   │   │   ├── iavailability_repo.py
+│   │   │   ├── icity_repo.py
+│   │   │   ├── __init__.py
+│   │   │   ├── ipatient_repo.py
+│   │   │   ├── ipsychologist_repo.py
+│   │   │   ├── ispecialty_repo.py
+│   │   │   ├── istate_repo.py
+│   │   │   ├── iuser_repo.py
+│   │   │   └── __pycache__
+│   │   ├── services
+│   │   │   ├── iauth_service.py
+│   │   │   ├── ifile_service.py
+│   │   │   ├── __init__.py
+│   │   │   ├── ipix_payment_service.py
+│   │   │   └── __pycache__
+│   │   └── use_cases
+│   │       ├── appointment
+│   │       │   ├── cancel_appointment.py
+│   │       │   ├── create_appointment.py
+│   │       │   ├── get_appointment.py
+│   │       │   ├── __init__.py
+│   │       │   ├── __pycache__
+│   │       │   └── reschedule_appointment.py
+│   │       ├── approach
+│   │       │   ├── create_approach.py
+│   │       │   ├── get_approach_by_id.py
+│   │       │   ├── get_approaches.py
+│   │       │   └── __pycache__
+│   │       ├── geography
+│   │       │   ├── get_cities.py
+│   │       │   ├── get_states.py
+│   │       │   ├── __init__.py
+│   │       │   └── __pycache__
+│   │       ├── patient
+│   │       │   ├── create_patient.py
+│   │       │   ├── delete_patient.py
+│   │       │   ├── get_patient_by_id.py
+│   │       │   ├── get_patients.py
+│   │       │   ├── __init__.py
+│   │       │   ├── __pycache__
+│   │       │   ├── solicit_schedule_appointment.py
+│   │       │   └── update_patient.py
+│   │       ├── psychologist
+│   │       │   ├── add_availabilities.py
+│   │       │   ├── create_psychologist.py
+│   │       │   ├── get_psychologist_by_id.py
+│   │       │   ├── get_psychologists.py
+│   │       │   ├── __init__.py
+│   │       │   ├── __pycache__
+│   │       │   └── update_psychologist.py
+│   │       ├── session
+│   │       │   ├── login.py
+│   │       │   ├── logout.py
+│   │       │   ├── me.py
+│   │       │   └── __pycache__
+│   │       ├── specialty
+│   │       │   ├── create_specialty.py
+│   │       │   ├── get_specialties.py
+│   │       │   ├── get_specialty_by_id.py
+│   │       │   └── __pycache__
+│   │       └── user
+│   │           ├── delete_user.py
+│   │           └── __pycache__
+│   ├── domain
+│   │   ├── appointment.py
+│   │   ├── approach.py
+│   │   ├── availability.py
+│   │   ├── city.py
+│   │   ├── common
+│   │   │   ├── entity.py
+│   │   │   ├── exception.py
+│   │   │   ├── guard.py
+│   │   │   ├── identifier.py
+│   │   │   ├── __init__.py
+│   │   │   ├── __pycache__
+│   │   │   ├── unique_entity_id.py
+│   │   │   └── value_object.py
+│   │   ├── __init__.py
+│   │   ├── patient.py
+│   │   ├── pix_payment.py
+│   │   ├── psychologist.py
+│   │   ├── __pycache__
+│   │   ├── specialty.py
+│   │   ├── state.py
+│   │   ├── user.py
+│   │   └── value_objects
+│   │       ├── cpf.py
+│   │       ├── crp.py
+│   │       ├── email.py
+│   │       ├── file_data.py
+│   │       ├── __init__.py
+│   │       ├── password.py
+│   │       ├── phone_number.py
+│   │       └── __pycache__
+│   ├── infra
+│   │   ├── config
+│   │   │   ├── __init__.py
+│   │   │   ├── logger.py
+│   │   │   ├── mongo_db_manager.py
+│   │   │   ├── __pycache__
+│   │   │   ├── redis.py
+│   │   │   └── settings.py
+│   │   ├── http
+│   │   │   ├── app.py
+│   │   │   ├── __init__.py
+│   │   │   └── __pycache__
+│   │   ├── __init__.py
+│   │   ├── mappers
+│   │   │   ├── imapper.py
+│   │   │   ├── mongo
+│   │   │   │   ├── appointment_mapper.py
+│   │   │   │   ├── approach_mapper.py
+│   │   │   │   ├── availability_mapper.py
+│   │   │   │   ├── city_mapper.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── patient_mapper.py
+│   │   │   │   ├── pix_payment_mapper.py
+│   │   │   │   ├── psychologist_mapper.py
+│   │   │   │   ├── __pycache__
+│   │   │   │   ├── specialty_mapper.py
+│   │   │   │   ├── state_mapper.py
+│   │   │   │   └── user_mapper.py
+│   │   │   └── __pycache__
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── mongo
+│   │   │   │   ├── appointment_document.py
+│   │   │   │   ├── approach_document.py
+│   │   │   │   ├── availability_document.py
+│   │   │   │   ├── city_document.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── patient_document.py
+│   │   │   │   ├── psychologist_document.py
+│   │   │   │   ├── __pycache__
+│   │   │   │   ├── specialty_document.py
+│   │   │   │   ├── state_document.py
+│   │   │   │   └── user_document.py
+│   │   │   └── __pycache__
+│   │   ├── providers
+│   │   │   ├── approach_provider.py
+│   │   │   ├── base_provider.py
+│   │   │   ├── geography_provider.py
+│   │   │   ├── __init__.py
+│   │   │   ├── mongo_provider.py
+│   │   │   ├── patient_provider.py
+│   │   │   ├── psychologist_provider.py
+│   │   │   ├── __pycache__
+│   │   │   ├── session_provider.py
+│   │   │   ├── specialty_provider.py
+│   │   │   └── user_provider.py
+│   │   ├── __pycache__
+│   │   ├── repos
+│   │   │   ├── __init__.py
+│   │   │   ├── in_memory
+│   │   │   │   ├── availability_repo.py
+│   │   │   │   ├── city_repo.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── patient_repo.py
+│   │   │   │   ├── psychologist_repo.py
+│   │   │   │   ├── __pycache__
+│   │   │   │   └── specialty_repo.py
+│   │   │   ├── mongo
+│   │   │   │   ├── appointment_repo.py
+│   │   │   │   ├── approach_repo.py
+│   │   │   │   ├── city_repo.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── patient_repo.py
+│   │   │   │   ├── psychologist_repo.py
+│   │   │   │   ├── __pycache__
+│   │   │   │   ├── specialty_repo.py
+│   │   │   │   ├── state_repo.py
+│   │   │   │   └── user_repo.py
+│   │   │   └── __pycache__
+│   │   ├── routers
+│   │   │   ├── appointment_router.py
+│   │   │   ├── approach_router.py
+│   │   │   ├── geography_router.py
+│   │   │   ├── __init__.py
+│   │   │   ├── patient_router.py
+│   │   │   ├── psychologist_router.py
+│   │   │   ├── __pycache__
+│   │   │   ├── session_router.py
+│   │   │   ├── specialty_router.py
+│   │   │   └── user_router.py
+│   │   └── services
+│   │       ├── default_auth_service.py
+│   │       ├── ibge_service.py
+│   │       ├── __init__.py
+│   │       ├── local_file_service.py
+│   │       ├── pix_payment_service.py
+│   │       └── __pycache__
+│   ├── __init__.py
+│   ├── main.py
+│   └── __pycache__
+├── temp
+└── uv.lock
+
+72 directories, 431 files

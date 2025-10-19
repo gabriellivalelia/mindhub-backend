@@ -99,7 +99,9 @@ class Appointment(Entity):
         """Mark the appointment as completed"""
         self._status = AppointmentStatusEnum.COMPLETED
 
-    def reschedule(self, new_date: datetime, new_availability_id: UniqueEntityId) -> None:
+    def reschedule(
+        self, new_date: datetime, new_availability_id: UniqueEntityId
+    ) -> None:
         """Reschedule appointment to a new date and availability."""
         if new_date < datetime.now():
             raise DomainException("Cannot reschedule to a past date.")
