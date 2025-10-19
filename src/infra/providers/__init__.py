@@ -3,6 +3,7 @@ from dishka.integrations.fastapi import FastapiProvider
 
 from infra.providers.approach_provider import ApproachProvider
 from infra.providers.base_provider import BaseProvider
+from infra.providers.content_provider import ContentProvider
 from infra.providers.geography_provider import GeographyProvider
 from infra.providers.patient_provider import PatientProvider
 from infra.providers.session_provider import SessionProvider
@@ -23,4 +24,5 @@ container = make_async_container(
     ApproachProvider(),
     SpecialtyProvider(),
     UserProvider(),
+    ContentProvider(),
 )

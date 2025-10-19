@@ -61,8 +61,8 @@ class CreatePatientUseCase(IUseCase[CreatePatientDTO, PatientDTO]):
         email = Email(value=dto.email)
         cpf = CPF(value=dto.cpf)
 
-        is_duplicated = await self.user_repo.exists_by_email_or_cpf(
-            email.value, cpf.value
+        is_duplicated = await self.user_repo.exists_by(
+            [{"email": email.value}, {"cpf": cpf.value}]
         )
         if is_duplicated:
             raise ApplicationException("Duplicated e-mail or cpf.")

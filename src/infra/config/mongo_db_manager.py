@@ -17,6 +17,7 @@ from infra.models.mongo.appointment_document import (
 from infra.models.mongo.approach_document import ApproachDocument
 from infra.models.mongo.availability_document import AvailabilityDocument
 from infra.models.mongo.city_document import CityDocument
+from infra.models.mongo.content_document import ContentDocument
 from infra.models.mongo.patient_document import PatientDocument
 from infra.models.mongo.psychologist_document import PsychologistDocument
 from infra.models.mongo.specialty_document import SpecialtyDocument
@@ -49,6 +50,7 @@ class MongoManager:
                 AvailabilityDocument,
                 PixPaymentDocument,
                 AppointmentDocument,
+                ContentDocument,
             ],
         )
 

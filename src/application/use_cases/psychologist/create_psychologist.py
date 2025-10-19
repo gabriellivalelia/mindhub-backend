@@ -80,15 +80,11 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
         cpf = CPF(value=dto.cpf)
         crp = CRP(value=dto.crp)
 
-        is_duplicated_cpf_or_email = await self.user_repo.exists_by_email_or_cpf(
-            email.value, cpf.value
+        is_duplicated = await self.user_repo.exists_by(
+            [{"email": email.value}, {"cpf": cpf.value}, {"crp": crp.value}]
         )
-        if is_duplicated_cpf_or_email:
-            raise ApplicationException("Duplicated e-mail or cpf.")
-
-        is_duplicated_crp = await self.psychologist_repo.exists_by_crp(crp.value)
-        if is_duplicated_crp:
-            raise ApplicationException("Duplicated crp.")
+        if is_duplicated:
+            raise ApplicationException("Duplicated e-mail, cpf or crp.")
 
         city = await self.city_repo.get_by_id(UniqueEntityId(dto.city_id))
         if not city:

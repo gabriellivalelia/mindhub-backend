@@ -10,11 +10,11 @@ from fastapi.responses import JSONResponse
 from application.dtos.appointment_dto import AppointmentDTO
 from application.repos.iuser_repo import IUserRepo
 from application.services.iauth_service import JWTData
-from application.use_cases.appointment.cancel_appointment import (
+from application.use_cases.approach.appointment.cancel_appointment import (
     CancelAppointmentDTO,
     CancelAppointmentUseCase,
 )
-from application.use_cases.appointment.reschedule_appointment import (
+from application.use_cases.approach.appointment.reschedule_appointment import (
     RescheduleAppointmentDTO,
     RescheduleAppointmentUseCase,
 )

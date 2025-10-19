@@ -18,6 +18,7 @@ from domain.common.guard import GuardException
 from infra.config.settings import Settings
 from infra.providers import container
 from infra.routers.approach_router import router as approach_router
+from infra.routers.content_router import router as content_router
 from infra.routers.geography_router import router as geography_router
 from infra.routers.patient_router import router as patient_router
 from infra.routers.psychologist_router import router as psychologist_router
@@ -75,6 +76,7 @@ class MindHubApp:
         self.__app.include_router(geography_router)
         self.__app.include_router(approach_router)
         self.__app.include_router(specialty_router)
+        self.__app.include_router(content_router)
         self.__app.include_router(user_router)
 
         if Settings().ENV == "development":

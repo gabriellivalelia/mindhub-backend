@@ -12,10 +12,10 @@ from application.repos.iuser_repo import IUserRepo
 from application.services.iauth_service import IAuthService
 from application.services.ifile_service import IFileService
 from application.services.ipix_payment_service import IPixPaymentService
-from application.use_cases.appointment.cancel_appointment import (
+from application.use_cases.approach.appointment.cancel_appointment import (
     CancelAppointmentUseCase,
 )
-from application.use_cases.appointment.reschedule_appointment import (
+from application.use_cases.approach.appointment.reschedule_appointment import (
     RescheduleAppointmentUseCase,
 )
 from application.use_cases.patient.create_patient import (
