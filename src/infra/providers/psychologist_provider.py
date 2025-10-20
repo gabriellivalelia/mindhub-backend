@@ -23,6 +23,9 @@ from application.use_cases.psychologist.get_psychologist_by_id import (
 from application.use_cases.psychologist.get_psychologists import (
     GetPsychologistsUseCase,
 )
+from application.use_cases.psychologist.remove_availabilities import (
+    RemoveAvailabilitiesUseCase,
+)
 from application.use_cases.psychologist.update_psychologist import (
     UpdatePsychologistUseCase,
 )
@@ -62,6 +65,12 @@ class PsychologistProvider(Provider):
         self, psychologist_repo: IPsychologistRepo
     ) -> AddAvailabilitiesUseCase:
         return AddAvailabilitiesUseCase(psychologist_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def RemoveAvailabilitiesUseCaseInstance(
+        self, psychologist_repo: IPsychologistRepo
+    ) -> RemoveAvailabilitiesUseCase:
+        return RemoveAvailabilitiesUseCase(psychologist_repo)
 
     @provide(scope=Scope.REQUEST)
     def UpdatePsychologistUseCaseInstance(

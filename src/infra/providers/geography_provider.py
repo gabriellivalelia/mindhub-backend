@@ -6,7 +6,9 @@ from dishka import (
 
 from application.repos.icity_repo import ICityRepo
 from application.repos.istate_repo import IStateRepo
-from application.use_cases.geography.get_cities import GetCitiesUseCase
+from application.use_cases.geography.get_cities_by_state_id import (
+    GetCitiesByStateIdUseCase,
+)
 from application.use_cases.geography.get_states import GetStatesUseCase
 
 
@@ -19,8 +21,8 @@ class GeographyProvider(Provider):
         return GetStatesUseCase(state_repo)
 
     @provide(scope=Scope.REQUEST)
-    def GetCitiesUseCaseInstance(
+    def GetCitiesByStateIdUseCaseInstance(
         self,
         city_repo: ICityRepo,
-    ) -> GetCitiesUseCase:
-        return GetCitiesUseCase(city_repo)
+    ) -> GetCitiesByStateIdUseCase:
+        return GetCitiesByStateIdUseCase(city_repo)

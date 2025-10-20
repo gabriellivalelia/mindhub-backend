@@ -62,7 +62,7 @@ class UpdatePatientUseCase(IUseCase[UpdatePatientDTO, PatientDTO]):
             UniqueEntityId(dto.patient_id)
         )
         if not found_patient:
-            raise ApplicationException("Patient not found.")
+            raise ApplicationException("Paciente não encontrado.")
 
         query_list: list[dict[str, str]] = []
 
@@ -79,13 +79,13 @@ class UpdatePatientUseCase(IUseCase[UpdatePatientDTO, PatientDTO]):
         if len(query_list) > 0:
             is_duplicated = await self.user_repo.exists_by(query_list)
             if is_duplicated:
-                raise ApplicationException("Duplicated e-mail or cpf.")
+                raise ApplicationException("E-mail ou CPF duplicado.")
 
         city = found_patient.city
         if dto.city_id:
             city = await self.city_repo.get_by_id(UniqueEntityId(dto.city_id))
             if not city:
-                raise ApplicationException("City not found.")
+                raise ApplicationException("Cidade não encontrada.")
 
         profile_picture = found_patient.profile_picture
         if dto.delete_profile_picture:

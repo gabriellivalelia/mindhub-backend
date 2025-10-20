@@ -12,7 +12,7 @@ class CPF(ValueObject):
     def validate_cpf(cls, v: str):
         cpf = "".join(filter(str.isdigit, v))
         if len(cpf) != 11 or cpf == cpf[0] * 11:
-            raise DomainException("Invalid CPF format")
+            raise DomainException("Formato de CPF inválido")
 
         def calc_digit(cpf: str, length: int) -> int:
             s: int = sum(int(cpf[i]) * (length + 1 - i) for i in range(length))
@@ -20,6 +20,6 @@ class CPF(ValueObject):
             return d if d < 10 else 0
 
         if calc_digit(cpf, 9) != int(cpf[9]) or calc_digit(cpf, 10) != int(cpf[10]):
-            raise DomainException("Invalid CPF number")
+            raise DomainException("Número de CPF inválido")
 
         return cpf

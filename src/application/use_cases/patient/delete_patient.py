@@ -26,16 +26,16 @@ class DeletePatientUseCase(IUseCase[DeletePatientDTO, bool]):
         # Verify that the patient exists and belongs to the authenticated user
         patient = await self.patient_repo.get_by_id(UniqueEntityId(dto.patient_id))
         if not patient:
-            raise ApplicationException("Patient not found.")
+            raise ApplicationException("Paciente não encontrado.")
 
         # Verify that the authenticated user is the owner of the patient account
         if patient.id.value != dto.requesting_user_id:
-            raise ApplicationException("You can only delete your own account.")
+            raise ApplicationException("Você só pode deletar sua própria conta.")
 
         # Delete the patient
         deleted = await self.patient_repo.delete(UniqueEntityId(dto.patient_id))
 
         if not deleted:
-            raise ApplicationException("Failed to delete patient.")
+            raise ApplicationException("Falha ao deletar paciente.")
 
         return deleted

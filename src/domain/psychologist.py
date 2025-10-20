@@ -1,4 +1,4 @@
-from datetime import date, datetime, timezone
+from datetime import date, datetime
 from enum import Enum
 
 from domain.approach import Approach
@@ -18,8 +18,11 @@ from domain.value_objects.phone_number import PhoneNumber
 
 
 class AudienceEnum(Enum):
-    CHILDREN = "children"
-    ADULTS = "adults"
+    CHILDREN = "children"  # Crianças (0-12 anos)
+    ADOLESCENTS = "adolescents"  # Adolescentes (13-17 anos)
+    ADULTS = "adults"  # Adultos (26-59 anos)
+    ELDERLY = "elderly"  # Idosos (60+ anos)
+    COUPLES = "couples"  # Casais
 
 
 class Psychologist(User):
@@ -107,43 +110,67 @@ class Psychologist(User):
             self._availabilities = []
 
         existing_datetimes = {
-            self._normalize_datetime(availability.date)
-            for availability in self._availabilities
+            availability.normalized_date for availability in self._availabilities
         }
 
         new_availabilities = [
             availability
             for availability in availabilities
-            if self._normalize_datetime(availability.date) not in existing_datetimes
+            if availability.normalized_date not in existing_datetimes
         ]
 
         self._availabilities.extend(new_availabilities)
 
-    def _normalize_datetime(self, dt: datetime) -> datetime:
-        if dt.tzinfo is None:
-            return dt.replace(tzinfo=timezone.utc)
-        else:
-            return dt.astimezone(timezone.utc)
+    def remove_availabilities(self, availability_datetimes: list[datetime]) -> None:
+        """Remove availabilities by their datetime. Only removes if available (not scheduled)."""
+        if not self._availabilities:
+            raise DomainException("O psicólogo não possui disponibilidades.")
+
+        # Normalize datetimes for comparison
+        from domain.availability import Availability as AvailabilityClass
+
+        temp_availability = AvailabilityClass(date=datetime.now(), available=True)
+        normalized_datetimes = {
+            temp_availability._normalize_datetime(dt) for dt in availability_datetimes
+        }
+
+        # Filter out availabilities that match the datetimes AND are available
+        removed_count = 0
+        new_availabilities = []
+        for availability in self._availabilities:
+            if (
+                availability.normalized_date in normalized_datetimes
+                and availability.available
+            ):
+                removed_count += 1
+                # Skip this availability (remove it)
+                continue
+            new_availabilities.append(availability)
+
+        if removed_count == 0:
+            raise DomainException(
+                "Nenhuma disponibilidade válida foi encontrada para remoção."
+            )
+
+        self._availabilities = new_availabilities
 
     def get_availability_by_date(self, availability_date: datetime) -> UniqueEntityId:
         if not self.availabilities:
-            raise DomainException("Psychologist has not availabilities.")
+            raise DomainException("O psicólogo não possui disponibilidades.")
 
         availability = next(
             (
-                item
-                for item in self.availabilities
-                if self._normalize_datetime(item.date)
-                == self._normalize_datetime(availability_date)
+                availability
+                for availability in self.availabilities
+                if availability.is_date_equals_to(availability_date)
             ),
             None,
         )
 
         if not availability:
-            raise DomainException("No availability found for the given date.")
-
-        if not availability.available:
-            raise DomainException("The selected date is not available.")
+            raise DomainException(
+                "Nenhuma disponibilidade encontrada para a data informada."
+            )
 
         availability.schedule()
 

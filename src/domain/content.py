@@ -26,7 +26,7 @@ class Content(Entity):
         super().__init__(id)
 
         if not title.strip():
-            raise DomainException("Title cannot be empty")
+            raise DomainException("O título não pode estar vazio")
 
         self._title = title
         self._body = body
@@ -52,7 +52,7 @@ class Content(Entity):
     def update(self, title: str | None = None, body: str | None = None) -> None:
         if title is not None:
             if not title.strip():
-                raise DomainException("Title cannot be empty")
+                raise DomainException("O título não pode estar vazio")
             self._title = title
 
         if body is not None:

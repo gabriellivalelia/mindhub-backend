@@ -26,6 +26,10 @@ from application.use_cases.psychologist.get_psychologists import (
     GetPsychologistsDTO,
     GetPsychologistsUseCase,
 )
+from application.use_cases.psychologist.remove_availabilities import (
+    RemoveAvailabilitiesDTO,
+    RemoveAvailabilitiesUseCase,
+)
 from application.use_cases.psychologist.update_psychologist import (
     UpdatePsychologistDTO,
     UpdatePsychologistUseCase,
@@ -74,7 +78,7 @@ async def create_psychologist(
     use_case: FromDishka[CreatePsychologistUseCase],
     value_per_appointment: Annotated[
         float, Form(examples=[150.00]), ConvertEmptyStrToNoneBeforeValidator
-    ],
+    ] = 150,
     description: Annotated[str | None, Form(example=[None])] = None,
     profile_picture: Annotated[
         UploadFile | None, File(), ConvertEmptyStrToNoneBeforeValidator
@@ -150,6 +154,36 @@ async def add_availabilities(
     use_case: FromDishka[AddAvailabilitiesUseCase],
 ) -> PsychologistDTO | JSONResponse:
     dto = AddAvailabilitiesDTO(
+        availability_datetimes=request_dto,
+        psychologist_id=jwt_data.id,
+    )
+
+    return await use_case.execute(dto)
+
+
+@router.delete(
+    f"{route}/availabilities",
+    status_code=status.HTTP_200_OK,
+    response_model=PsychologistDTO,
+    tags=["psychologists"],
+)
+async def remove_availabilities(
+    jwt_data: FromDishka[JWTData],
+    request_dto: Annotated[
+        list[datetime],
+        Body(
+            examples=[
+                [
+                    "2025-10-05T18:50:29.022Z",
+                    "2025-10-15T18:50:29.022Z",
+                    "2025-10-25T18:50:29.022Z",
+                ]
+            ]
+        ),
+    ],
+    use_case: FromDishka[RemoveAvailabilitiesUseCase],
+) -> PsychologistDTO | JSONResponse:
+    dto = RemoveAvailabilitiesDTO(
         availability_datetimes=request_dto,
         psychologist_id=jwt_data.id,
     )

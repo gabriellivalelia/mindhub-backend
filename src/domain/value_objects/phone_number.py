@@ -16,5 +16,5 @@ class PhoneNumber(ValueObject):
     def validate_phone_number(cls, v: str):
         phone = v.strip()
         if not re.match(brazilian_phone_number_pattern, phone):
-            raise DomainException("Invalid Brazilian phone number format")
+            raise DomainException("Formato de número de telefone brasileiro inválido")
         return phone

@@ -4,7 +4,7 @@ from application.dtos.approach_dto import ApproachDTO
 from application.dtos.availability_dto import AvailabilityDTO
 from application.dtos.city_dto import CityDTO
 from application.dtos.specialty_dto import SpecialtyDTO
-from application.dtos.user_dto import UserDTO
+from application.dtos.user_dto import UserDTO, UserType
 from domain.psychologist import Psychologist
 
 
@@ -21,6 +21,7 @@ class PsychologistDTO(UserDTO):
     def to_dto(entity: Psychologist) -> PsychologistDTO:
         return PsychologistDTO(
             id=entity.id.value,
+            type=UserType.PSYCHOLOGIST,
             name=entity.name,
             email=entity.email.value,
             cpf=entity.cpf.value,

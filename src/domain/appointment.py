@@ -11,7 +11,7 @@ DEFAULT_DURATION_MIN = 50
 
 
 class AppointmentStatusEnum(Enum):
-    SCHEDULED = "scheduled"
+    WAITING_FOR_PAYMENT = "waiting_for_payment"
     CONFIRMED = "confirmed"
     CANCELED = "canceled"
     COMPLETED = "completed"
@@ -26,7 +26,7 @@ class Appointment(Entity):
         value: float,
         pix_payment: PixPayment,
         duration_min: int = DEFAULT_DURATION_MIN,
-        status: AppointmentStatusEnum = AppointmentStatusEnum.SCHEDULED,
+        status: AppointmentStatusEnum = AppointmentStatusEnum.WAITING_FOR_PAYMENT,
         availability_id: UniqueEntityId | None = None,
         id: UniqueEntityId | None = None,
     ) -> None:
@@ -42,7 +42,7 @@ class Appointment(Entity):
             ]
         )
         if duration_min <= 0:
-            raise DomainException("Duration must be positive")
+            raise DomainException("A duração deve ser positiva")
 
         super().__init__(id)
 
@@ -104,7 +104,7 @@ class Appointment(Entity):
     ) -> None:
         """Reschedule appointment to a new date and availability."""
         if new_date < datetime.now():
-            raise DomainException("Cannot reschedule to a past date.")
+            raise DomainException("Não é possível reagendar para uma data passada.")
 
         self._date = new_date
         self._availability_id = new_availability_id

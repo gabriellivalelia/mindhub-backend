@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from domain.common.entity import Entity
 from domain.common.exception import DomainException
@@ -17,21 +17,44 @@ class Availability(Entity):
 
         super().__init__(id)
 
-        self._date = date
+        # Normalizar data removendo microsegundos para consistência
+        if date.tzinfo is None:
+            self._date = date.replace(tzinfo=timezone.utc, microsecond=0)
+        else:
+            self._date = date.astimezone(timezone.utc).replace(microsecond=0)
         self._available = available
 
     def schedule(self):
         if not self.available:
-            raise DomainException("Appointment is already scheduled.")
+            raise DomainException("A consulta já está agendada.")
+
+        if self._normalize_datetime(self.date) < self._normalize_datetime(
+            datetime.now()
+        ):
+            raise DomainException("Disponibilidade inválida.")
 
         self._available = False
 
     def unschedule(self) -> None:
-        """Mark availability as available again."""
         if self.available:
-            raise DomainException("Availability is already available.")
+            raise DomainException("A disponibilidade já está disponível.")
 
-        self._available = True
+        self._available = False
+
+    def is_date_equals_to(self, i_date: datetime):
+        return self._normalize_datetime(i_date) == self._normalize_datetime(self.date)
+
+    def _normalize_datetime(self, dt: datetime) -> datetime:
+        # Normalizar para UTC e remover microsegundos para comparação
+        if dt.tzinfo is None:
+            normalized = dt.replace(tzinfo=timezone.utc, microsecond=0)
+        else:
+            normalized = dt.astimezone(timezone.utc).replace(microsecond=0)
+        return normalized
+
+    @property
+    def normalized_date(self) -> datetime:
+        return self._normalize_datetime(self._date)
 
     @property
     def date(self) -> datetime:

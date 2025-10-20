@@ -38,13 +38,13 @@ class LoginUseCase(IUseCase[LoginDTO, LoginDTOResponse]):
     async def execute(self, dto: LoginDTO) -> LoginDTOResponse:
         found_user = await self.user_repo.get_by_email(email=dto.email)
         if found_user is None:
-            raise UnauthorizedAccessException("Wrong e-mail or password")
+            raise UnauthorizedAccessException("E-mail ou senha incorretos")
 
         is_match = await self.auth_service.verify_password(
             Password(value=dto.password), found_user.password
         )
         if not is_match:
-            raise UnauthorizedAccessException("Wrong e-mail or password")
+            raise UnauthorizedAccessException("E-mail ou senha incorretos")
         access_token, refresh_token = self.auth_service.sign_jwt_tokens(found_user)
         user_id = str(found_user.id.value)
         await self.auth_service.save_authenticated_user(user_id, refresh_token)

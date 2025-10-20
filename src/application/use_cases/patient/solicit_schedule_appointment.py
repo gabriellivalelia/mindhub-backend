@@ -47,17 +47,19 @@ class SolicitScheduleAppointmentUseCase(
         patient = await self.patient_repo.get_by_id(UniqueEntityId(dto.patient_id))
 
         if not patient:
-            raise ApplicationException("Patient not found.")
+            raise ApplicationException("Paciente não encontrado.")
 
         psychologist = await self.psychologist_repo.get_by_id(
             UniqueEntityId(dto.psychologist_id)
         )
 
         if not psychologist:
-            raise ApplicationException("Psychologist not found.")
+            raise ApplicationException("Psicólogo não encontrado.")
 
         if dto.date < datetime.now():
-            raise ApplicationException("Cannot schedule appointment for a past date.")
+            raise ApplicationException(
+                "Não é possível agendar consulta para uma data passada."
+            )
 
         availability_id = psychologist.get_availability_by_date(dto.date)
 
@@ -70,7 +72,7 @@ class SolicitScheduleAppointmentUseCase(
             psychologist_id=psychologist.id,
             patient_id=patient.id,
             availability_id=availability_id,
-            status=AppointmentStatusEnum.SCHEDULED,
+            status=AppointmentStatusEnum.WAITING_FOR_PAYMENT,
             value=psychologist.value_per_appointment,
             pix_payment=pix_payment,
         )

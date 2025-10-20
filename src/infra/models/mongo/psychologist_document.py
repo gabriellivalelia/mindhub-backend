@@ -10,7 +10,7 @@ from infra.models.mongo.user_document import UserDocument
 
 
 class PsychologistDocument(UserDocument):
-    crp: Annotated[str, Indexed(unique=True)]
+    crp: Annotated[str, Indexed(unique=True, sparse=True)]
     specialties: list[Link[SpecialtyDocument]] = Field(default_factory=list)
     approaches: list[Link[ApproachDocument]] = Field(default_factory=list)
     audiences: list[str] = Field(default_factory=list)

@@ -15,6 +15,10 @@ from application.services.ipix_payment_service import IPixPaymentService
 from application.use_cases.approach.appointment.cancel_appointment import (
     CancelAppointmentUseCase,
 )
+from application.use_cases.approach.appointment.get_appointment import (
+    GetAppointmentByIdUseCase,
+    GetAppointmentsUseCase,
+)
 from application.use_cases.approach.appointment.reschedule_appointment import (
     RescheduleAppointmentUseCase,
 )
@@ -123,3 +127,15 @@ class PatientProvider(Provider):
             psychologist_repo=psychologist_repo,
             patient_repo=patient_repo,
         )
+
+    @provide(scope=Scope.REQUEST)
+    def GetAppointmentsUseCaseInstance(
+        self, appointment_repo: IAppointmentRepo
+    ) -> GetAppointmentsUseCase:
+        return GetAppointmentsUseCase(appointment_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def GetAppointmentByIdUseCaseInstance(
+        self, appointment_repo: IAppointmentRepo
+    ) -> GetAppointmentByIdUseCase:
+        return GetAppointmentByIdUseCase(appointment_repo)

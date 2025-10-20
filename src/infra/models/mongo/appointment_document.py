@@ -4,6 +4,8 @@ from uuid import UUID
 from beanie import Document, Link
 from pydantic import Field
 
+from domain.appointment import AppointmentStatusEnum
+
 
 class PixPaymentDocument(Document):
     id: UUID
@@ -25,7 +27,7 @@ class AppointmentDocument(Document):
     value: float
     pix_payment: Link[PixPaymentDocument]
     duration_min: int = Field(default=50)
-    status: str = Field(default="scheduled")
+    status: str = Field(default=AppointmentStatusEnum.WAITING_FOR_PAYMENT.value)
     availability_id: UUID | None = None
 
     class Settings:

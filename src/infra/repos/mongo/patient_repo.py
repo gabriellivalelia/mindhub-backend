@@ -22,13 +22,6 @@ class MongoPatientRepo(IPatientRepo):
     def __init__(self, session: AsyncClientSession) -> None:
         self._session = session
 
-    async def exists_by_email_or_cpf(self, email: str, cpf: str) -> bool:
-        docs_num = await PatientDocument.find_one(
-            {"$or": [{"email": email}, {"cpf": cpf}]}, session=self._session
-        ).count()
-
-        return docs_num > 0
-
     async def create(self, entity: Patient) -> Patient:
         doc = await PatientMongoMapper.to_model(entity)
         await doc.save(link_rule=WriteRules.WRITE, session=self._session)

@@ -23,6 +23,6 @@ class GetPatientByIdUseCase(IUseCase[GetPatientByIdDTO, PatientDTO]):
         patient = await self.patient_repo.get_by_id(UniqueEntityId(dto.patient_id))
 
         if not patient:
-            raise ApplicationException("Patient not found.")
+            raise ApplicationException("Paciente não encontrado.")
 
         return PatientDTO.to_dto(patient)

@@ -65,11 +65,11 @@ class CreatePatientUseCase(IUseCase[CreatePatientDTO, PatientDTO]):
             [{"email": email.value}, {"cpf": cpf.value}]
         )
         if is_duplicated:
-            raise ApplicationException("Duplicated e-mail or cpf.")
+            raise ApplicationException("E-mail ou CPF duplicado.")
 
         city = await self.city_repo.get_by_id(UniqueEntityId(dto.city_id))
         if not city:
-            raise ApplicationException("City not found.")
+            raise ApplicationException("Cidade não encontrada.")
 
         password = Password(value=dto.password)
         hashed_password = await self.auth_service.hash_password(password)

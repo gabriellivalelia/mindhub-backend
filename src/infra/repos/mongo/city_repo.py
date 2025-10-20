@@ -1,12 +1,8 @@
 import asyncio
 
 from beanie import WriteRules
-from pymongo import ASCENDING, DESCENDING
 from pymongo.asynchronous.client_session import AsyncClientSession
 
-from application.common.page import Page
-from application.common.pageable import Pageable
-from application.filters.city_filters import CityFilters
 from application.repos.icity_repo import ICityRepo
 from domain.city import City
 from domain.common.unique_entity_id import UniqueEntityId
@@ -32,54 +28,57 @@ class MongoCityRepo(ICityRepo):
         )
         return await CityMongoMapper.to_domain(doc) if doc else None
 
-    async def get_all(self) -> list[City]:
-        docs = await CityDocument.find_all(
-            fetch_links=True, session=self._session
-        ).to_list()
-        return await asyncio.gather(*(CityMongoMapper.to_domain(doc) for doc in docs))
-
-    async def get(
-        self,
-        pageable: Pageable,
-        filters: CityFilters | None = None,
-    ) -> Page[City]:
-        query_conditions = {}
-
-        if filters:
-            if filters.name:
-                query_conditions["name"] = {"$regex": filters.name, "$options": "i"}
-            if filters.state_id:
-                query_conditions["state.$id"] = filters.state_id
-
-        total = await CityDocument.find(
-            query_conditions if query_conditions else {}, session=self._session
-        ).count()
-
-        find_query = CityDocument.find(
-            query_conditions if query_conditions else {},
+    async def get_all_by_state_id(self, state_id: UniqueEntityId):
+        docs = await CityDocument.find(
+            CityDocument.state.id == state_id.value,
             fetch_links=True,
             session=self._session,
-        )
+        ).to_list()
 
-        if pageable.sort:
-            direction_dict = {"asc": ASCENDING, "desc": DESCENDING}
-            sort_list = [
-                (field_name, direction_dict[direction.value])
-                for field_name, direction in pageable.sort
-            ]
-            find_query = find_query.sort(sort_list)  # type: ignore
-        else:
-            find_query = find_query.sort([("name", 1)])  # type: ignore (default: alphabetical)
+        return await asyncio.gather(*(CityMongoMapper.to_domain(doc) for doc in docs))
 
-        find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
-        docs = await find_query.to_list()
+    # async def get(
+    #     self,
+    #     pageable: Pageable,
+    #     filters: CityFilters | None = None,
+    # ) -> Page[City]:
+    #     query_conditions = {}
 
-        entities = await asyncio.gather(
-            *(CityMongoMapper.to_domain(doc) for doc in docs)
-        )
+    #     if filters:
+    #         if filters.name:
+    #             query_conditions["name"] = {"$regex": filters.name, "$options": "i"}
+    #         if filters.state_id:
+    #             query_conditions["state.$id"] = filters.state_id
 
-        return Page(
-            items=entities,
-            total=total,
-            pageable=pageable,
-        )
+    #     total = await CityDocument.find(
+    #         query_conditions if query_conditions else {}, session=self._session
+    #     ).count()
+
+    #     find_query = CityDocument.find(
+    #         query_conditions if query_conditions else {},
+    #         fetch_links=True,
+    #         session=self._session,
+    #     )
+
+    #     if pageable.sort:
+    #         direction_dict = {"asc": ASCENDING, "desc": DESCENDING}
+    #         sort_list = [
+    #             (field_name, direction_dict[direction.value])
+    #             for field_name, direction in pageable.sort
+    #         ]
+    #         find_query = find_query.sort(sort_list)  # type: ignore
+    #     else:
+    #         find_query = find_query.sort([("name", 1)])  # type: ignore (default: alphabetical)
+
+    #     find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
+    #     docs = await find_query.to_list()
+
+    #     entities = await asyncio.gather(
+    #         *(CityMongoMapper.to_domain(doc) for doc in docs)
+    #     )
+
+    #     return Page(
+    #         items=entities,
+    #         total=total,
+    #         pageable=pageable,
+    #     )

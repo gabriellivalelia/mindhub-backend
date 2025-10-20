@@ -36,7 +36,7 @@ class PixPayment(Entity):
         )
 
         if amount <= 0:
-            raise DomainException("amount must be positive")
+            raise DomainException("O valor deve ser positivo")
 
         super().__init__(id)
 
