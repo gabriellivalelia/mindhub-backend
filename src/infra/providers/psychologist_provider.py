@@ -15,6 +15,9 @@ from application.services.ifile_service import IFileService
 from application.use_cases.psychologist.add_availabilities import (
     AddAvailabilitiesUseCase,
 )
+from application.use_cases.psychologist.complete_appointment import (
+    CompleteAppointmentUseCase,
+)
 from application.use_cases.psychologist.confirm_payment import ConfirmPaymentUseCase
 from application.use_cases.psychologist.create_psychologist import (
     CreatePsychologistUseCase,
@@ -107,3 +110,9 @@ class PsychologistProvider(Provider):
         self, appointment_repo: IAppointmentRepo
     ) -> ConfirmPaymentUseCase:
         return ConfirmPaymentUseCase(appointment_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def CompleteAppointmentUseCaseInstance(
+        self, appointment_repo: IAppointmentRepo
+    ) -> CompleteAppointmentUseCase:
+        return CompleteAppointmentUseCase(appointment_repo)

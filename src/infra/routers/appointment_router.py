@@ -29,7 +29,7 @@ router = APIRouter(route_class=DishkaRoute)
 route = "/appointments"
 
 
-@router.post(
+@router.patch(
     f"{route}/{{appointment_id}}/cancel",
     status_code=status.HTTP_200_OK,
     response_model=AppointmentDTO,
@@ -46,7 +46,7 @@ async def cancel_appointment(
     return await use_case.execute(dto)
 
 
-@router.post(
+@router.patch(
     f"{route}/{{appointment_id}}/reschedule",
     status_code=status.HTTP_200_OK,
     response_model=AppointmentDTO,

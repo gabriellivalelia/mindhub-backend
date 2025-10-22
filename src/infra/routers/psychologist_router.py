@@ -15,6 +15,10 @@ from application.use_cases.psychologist.add_availabilities import (
     AddAvailabilitiesDTO,
     AddAvailabilitiesUseCase,
 )
+from application.use_cases.psychologist.complete_appointment import (
+    CompleteAppointmentDTO,
+    CompleteAppointmentUseCase,
+)
 from application.use_cases.psychologist.confirm_payment import (
     ConfirmPaymentDTO,
     ConfirmPaymentUseCase,
@@ -268,4 +272,21 @@ async def confirm_payment(
     use_case: FromDishka[ConfirmPaymentUseCase],
 ) -> AppointmentDTO | JSONResponse:
     dto = ConfirmPaymentDTO(appointment_id=appointment_id, psychologist_id=jwt_data.id)
+    return await use_case.execute(dto)
+
+
+@router.post(
+    f"{route}/appointments/{{appointment_id}}/complete",
+    status_code=status.HTTP_200_OK,
+    response_model=AppointmentDTO,
+    tags=["psychologists"],
+)
+async def complete_appointment(
+    jwt_data: FromDishka[JWTData],
+    appointment_id: Annotated[UUID, Path()],
+    use_case: FromDishka[CompleteAppointmentUseCase],
+) -> AppointmentDTO | JSONResponse:
+    dto = CompleteAppointmentDTO(
+        appointment_id=appointment_id, psychologist_id=jwt_data.id
+    )
     return await use_case.execute(dto)

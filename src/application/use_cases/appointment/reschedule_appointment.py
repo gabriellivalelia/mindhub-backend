@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -48,7 +48,15 @@ class RescheduleAppointmentUseCase(IUseCase[RescheduleAppointmentDTO, Appointmen
         ):
             raise ApplicationException("Not authorized to reschedule this appointment.")
 
-        if dto.new_date < datetime.now():
+        # Use timezone-aware comparison (new_date may include tzinfo)
+        now = datetime.now(timezone.utc)
+        # If dto.new_date is naive, assume UTC for comparison by converting
+        new_date = dto.new_date
+        if new_date.tzinfo is None:
+            # attach UTC tzinfo to naive datetimes to compare safely
+            new_date = new_date.replace(tzinfo=timezone.utc)
+
+        if new_date < now:
             raise ApplicationException("Cannot reschedule to a past date.")
 
         # attempt to schedule new availability in psychologist and free old availability

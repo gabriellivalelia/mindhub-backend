@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 from domain.common.entity import Entity
@@ -116,7 +116,11 @@ class Appointment(Entity):
         self, new_date: datetime, new_availability_id: UniqueEntityId
     ) -> None:
         """Reschedule appointment to a new date and availability."""
-        if new_date < datetime.now():
+        now = datetime.now(timezone.utc)
+        nd = new_date
+        if nd.tzinfo is None:
+            nd = nd.replace(tzinfo=timezone.utc)
+        if nd < now:
             raise DomainException("Não é possível reagendar para uma data passada.")
 
         self._date = new_date

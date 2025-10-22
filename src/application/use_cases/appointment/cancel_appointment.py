@@ -8,6 +8,7 @@ from application.dtos.appointment_dto import AppointmentDTO
 from application.repos.iappointment_repo import IAppointmentRepo
 from application.repos.ipatient_repo import IPatientRepo
 from application.repos.ipsychologist_repo import IPsychologistRepo
+from domain.appointment import AppointmentStatusEnum
 from domain.common.unique_entity_id import UniqueEntityId
 
 
@@ -46,6 +47,15 @@ class CancelAppointmentUseCase(IUseCase[CancelAppointmentDTO, AppointmentDTO]):
             and dto.requesting_user_id != appointment.psychologist_id.value
         ):
             raise ApplicationException("Not authorized to cancel this appointment.")
+
+        # Disallow cancelling if already canceled or completed
+        if (
+            appointment.status == AppointmentStatusEnum.CANCELED
+            or appointment.status == AppointmentStatusEnum.COMPLETED
+        ):
+            raise ApplicationException(
+                "Não é possível cancelar uma consulta já concluída ou cancelada."
+            )
 
         # perform cancel
         appointment.cancel()

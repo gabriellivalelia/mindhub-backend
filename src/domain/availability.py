@@ -39,7 +39,8 @@ class Availability(Entity):
         if self.available:
             raise DomainException("A disponibilidade já está disponível.")
 
-        self._available = False
+        # Liberar a disponibilidade (tornar disponível novamente)
+        self._available = True
 
     def is_date_equals_to(self, i_date: datetime):
         return self._normalize_datetime(i_date) == self._normalize_datetime(self.date)
