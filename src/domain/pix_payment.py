@@ -68,3 +68,11 @@ class PixPayment(Entity):
     @property
     def expires_at(self) -> datetime:
         return self._expires_at
+
+    def mark_as_paid(self) -> None:
+        """Mark payment as paid"""
+        self._status = PaymentStatusEnum.PAID
+
+    def mark_as_failed(self) -> None:
+        """Mark payment as failed"""
+        self._status = PaymentStatusEnum.FAILED

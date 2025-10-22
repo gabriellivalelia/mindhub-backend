@@ -12,14 +12,14 @@ from application.repos.iuser_repo import IUserRepo
 from application.services.iauth_service import IAuthService
 from application.services.ifile_service import IFileService
 from application.services.ipix_payment_service import IPixPaymentService
-from application.use_cases.approach.appointment.cancel_appointment import (
+from application.use_cases.appointment.cancel_appointment import (
     CancelAppointmentUseCase,
 )
-from application.use_cases.approach.appointment.get_appointment import (
+from application.use_cases.appointment.get_appointment import (
     GetAppointmentByIdUseCase,
     GetAppointmentsUseCase,
 )
-from application.use_cases.approach.appointment.reschedule_appointment import (
+from application.use_cases.appointment.reschedule_appointment import (
     RescheduleAppointmentUseCase,
 )
 from application.use_cases.patient.create_patient import (
@@ -28,6 +28,7 @@ from application.use_cases.patient.create_patient import (
 from application.use_cases.patient.delete_patient import DeletePatientUseCase
 from application.use_cases.patient.get_patient_by_id import GetPatientByIdUseCase
 from application.use_cases.patient.get_patients import GetPatientsUseCase
+from application.use_cases.patient.mark_payment_sent import MarkPaymentSentUseCase
 from application.use_cases.patient.solicit_schedule_appointment import (
     SolicitScheduleAppointmentUseCase,
 )
@@ -139,3 +140,9 @@ class PatientProvider(Provider):
         self, appointment_repo: IAppointmentRepo
     ) -> GetAppointmentByIdUseCase:
         return GetAppointmentByIdUseCase(appointment_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def MarkPaymentSentUseCaseInstance(
+        self, appointment_repo: IAppointmentRepo
+    ) -> MarkPaymentSentUseCase:
+        return MarkPaymentSentUseCase(appointment_repo)

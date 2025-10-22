@@ -25,6 +25,10 @@ from application.use_cases.patient.get_patients import (
     GetPatientsDTO,
     GetPatientsUseCase,
 )
+from application.use_cases.patient.mark_payment_sent import (
+    MarkPaymentSentDTO,
+    MarkPaymentSentUseCase,
+)
 from application.use_cases.patient.solicit_schedule_appointment import (
     SolicitScheduleAppointmentDTO,
     SolicitScheduleAppointmentUseCase,
@@ -161,6 +165,21 @@ async def update_patient(
         profile_picture=profile_picture,
         delete_profile_picture=delete_profile_picture,
     )
+    return await use_case.execute(dto)
+
+
+@router.post(
+    f"{route}/appointments/{{appointment_id}}/mark-payment-sent",
+    status_code=status.HTTP_200_OK,
+    response_model=AppointmentDTO,
+    tags=["patients"],
+)
+async def mark_payment_sent(
+    jwt_data: FromDishka[JWTData],
+    appointment_id: Annotated[UUID, Path()],
+    use_case: FromDishka[MarkPaymentSentUseCase],
+) -> AppointmentDTO | JSONResponse:
+    dto = MarkPaymentSentDTO(appointment_id=appointment_id, patient_id=jwt_data.id)
     return await use_case.execute(dto)
 
 

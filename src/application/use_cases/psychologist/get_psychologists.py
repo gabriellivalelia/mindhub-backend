@@ -25,7 +25,7 @@ class GetPsychologistsUseCase(IUseCase[GetPsychologistsDTO, Page[PsychologistDTO
             city_id=dto.city_id,
             state_id=dto.state_id,
             specialty_ids=dto.specialty_ids,
-            approaches=dto.approaches,
+            approach_ids=dto.approach_ids,
             audiences=dto.audiences,
             min_price=dto.min_price,
             max_price=dto.max_price,

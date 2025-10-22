@@ -50,14 +50,11 @@ class MongoAppointmentRepo(IAppointmentRepo):
         query_conditions = {}
 
         if filters:
-            # Filtro de range de datas (start_date e end_date)
             if filters.start_date or filters.end_date:
                 date_filter = {}
                 if filters.start_date:
-                    # Appointments a partir da start_date (inclusive)
                     date_filter["$gte"] = filters.start_date
                 if filters.end_date:
-                    # Appointments até a end_date (inclusive)
                     date_filter["$lte"] = filters.end_date
                 if date_filter:
                     query_conditions["date"] = date_filter

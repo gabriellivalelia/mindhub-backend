@@ -12,6 +12,9 @@ DEFAULT_DURATION_MIN = 50
 
 class AppointmentStatusEnum(Enum):
     WAITING_FOR_PAYMENT = "waiting_for_payment"
+    PENDING_CONFIRMATION = (
+        "pending_confirmation"  # Paciente pagou, aguardando confirmação do psicólogo
+    )
     CONFIRMED = "confirmed"
     CANCELED = "canceled"
     COMPLETED = "completed"
@@ -88,8 +91,18 @@ class Appointment(Entity):
         return self._status
 
     def confirm(self) -> None:
-        """Confirm the appointment"""
+        """Confirm the appointment (psychologist confirms payment received)"""
         self._status = AppointmentStatusEnum.CONFIRMED
+        # Marcar pagamento como pago
+        self._pix_payment.mark_as_paid()
+
+    def mark_payment_sent(self) -> None:
+        """Patient marks that payment was sent, waiting for psychologist confirmation"""
+        if self._status != AppointmentStatusEnum.WAITING_FOR_PAYMENT:
+            raise DomainException(
+                "Só é possível marcar pagamento em consultas aguardando pagamento"
+            )
+        self._status = AppointmentStatusEnum.PENDING_CONFIRMATION
 
     def cancel(self) -> None:
         """Cancel the appointment"""

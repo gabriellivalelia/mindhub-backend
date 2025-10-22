@@ -4,6 +4,7 @@ from dishka import (
     provide,  # type: ignore
 )
 
+from application.repos.iappointment_repo import IAppointmentRepo
 from application.repos.iapproach_repo import IApproachRepo
 from application.repos.icity_repo import ICityRepo
 from application.repos.ipsychologist_repo import IPsychologistRepo
@@ -14,6 +15,7 @@ from application.services.ifile_service import IFileService
 from application.use_cases.psychologist.add_availabilities import (
     AddAvailabilitiesUseCase,
 )
+from application.use_cases.psychologist.confirm_payment import ConfirmPaymentUseCase
 from application.use_cases.psychologist.create_psychologist import (
     CreatePsychologistUseCase,
 )
@@ -99,3 +101,9 @@ class PsychologistProvider(Provider):
         psychologist_repo: IPsychologistRepo,
     ) -> GetPsychologistByIdUseCase:
         return GetPsychologistByIdUseCase(psychologist_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def ConfirmPaymentUseCaseInstance(
+        self, appointment_repo: IAppointmentRepo
+    ) -> ConfirmPaymentUseCase:
+        return ConfirmPaymentUseCase(appointment_repo)

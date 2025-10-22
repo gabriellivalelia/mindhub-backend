@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -56,7 +56,9 @@ class SolicitScheduleAppointmentUseCase(
         if not psychologist:
             raise ApplicationException("Psicólogo não encontrado.")
 
-        if dto.date < datetime.now():
+        # Usar datetime com timezone UTC para comparação
+        now = datetime.now(timezone.utc)
+        if dto.date < now:
             raise ApplicationException(
                 "Não é possível agendar consulta para uma data passada."
             )
