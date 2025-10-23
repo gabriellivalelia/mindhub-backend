@@ -22,12 +22,10 @@ class GetPsychologistsUseCase(IUseCase[GetPsychologistsDTO, Page[PsychologistDTO
         pageable = Pageable(page=dto.page, size=dto.size)
         filters = PsychologistFilters(
             name=dto.name,
-            city_id=dto.city_id,
-            state_id=dto.state_id,
+            gender=dto.gender,
             specialty_ids=dto.specialty_ids,
             approach_ids=dto.approach_ids,
             audiences=dto.audiences,
-            min_price=dto.min_price,
             max_price=dto.max_price,
         )
         page = await self.psychologist_repo.get(pageable, filters)
