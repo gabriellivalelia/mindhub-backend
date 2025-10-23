@@ -8,20 +8,11 @@ from fastapi import APIRouter, Body, File, Form, Path, Query, UploadFile, status
 from fastapi.responses import JSONResponse
 
 from application.common.page import Page
-from application.dtos.appointment_dto import AppointmentDTO
 from application.dtos.psychologist_dto import PsychologistDTO
 from application.services.iauth_service import JWTData
 from application.use_cases.psychologist.add_availabilities import (
     AddAvailabilitiesDTO,
     AddAvailabilitiesUseCase,
-)
-from application.use_cases.psychologist.complete_appointment import (
-    CompleteAppointmentDTO,
-    CompleteAppointmentUseCase,
-)
-from application.use_cases.psychologist.confirm_payment import (
-    ConfirmPaymentDTO,
-    ConfirmPaymentUseCase,
 )
 from application.use_cases.psychologist.create_psychologist import (
     CreatePsychologistDTO,
@@ -256,37 +247,5 @@ async def update_psychologist(
         value_per_appointment=value_per_appointment,
         profile_picture=profile_picture,
         delete_profile_picture=delete_profile_picture,
-    )
-    return await use_case.execute(dto)
-
-
-@router.post(
-    f"{route}/appointments/{{appointment_id}}/confirm-payment",
-    status_code=status.HTTP_200_OK,
-    response_model=AppointmentDTO,
-    tags=["psychologists"],
-)
-async def confirm_payment(
-    jwt_data: FromDishka[JWTData],
-    appointment_id: Annotated[UUID, Path()],
-    use_case: FromDishka[ConfirmPaymentUseCase],
-) -> AppointmentDTO | JSONResponse:
-    dto = ConfirmPaymentDTO(appointment_id=appointment_id, psychologist_id=jwt_data.id)
-    return await use_case.execute(dto)
-
-
-@router.post(
-    f"{route}/appointments/{{appointment_id}}/complete",
-    status_code=status.HTTP_200_OK,
-    response_model=AppointmentDTO,
-    tags=["psychologists"],
-)
-async def complete_appointment(
-    jwt_data: FromDishka[JWTData],
-    appointment_id: Annotated[UUID, Path()],
-    use_case: FromDishka[CompleteAppointmentUseCase],
-) -> AppointmentDTO | JSONResponse:
-    dto = CompleteAppointmentDTO(
-        appointment_id=appointment_id, psychologist_id=jwt_data.id
     )
     return await use_case.execute(dto)

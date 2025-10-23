@@ -14,6 +14,10 @@ from application.use_cases.appointment.cancel_appointment import (
     CancelAppointmentDTO,
     CancelAppointmentUseCase,
 )
+from application.use_cases.appointment.complete_appointment import (
+    CompleteAppointmentDTO,
+    CompleteAppointmentUseCase,
+)
 from application.use_cases.appointment.get_appointment import (
     GetAppointmentByIdDTO,
     GetAppointmentByIdUseCase,
@@ -23,6 +27,14 @@ from application.use_cases.appointment.get_appointment import (
 from application.use_cases.appointment.reschedule_appointment import (
     RescheduleAppointmentDTO,
     RescheduleAppointmentUseCase,
+)
+from application.use_cases.patient.mark_payment_sent import (
+    MarkPaymentSentDTO,
+    MarkPaymentSentUseCase,
+)
+from application.use_cases.psychologist.confirm_payment import (
+    ConfirmPaymentDTO,
+    ConfirmPaymentUseCase,
 )
 
 router = APIRouter(route_class=DishkaRoute)
@@ -90,4 +102,51 @@ async def get_appointments(
     dto: Annotated[GetAppointmentsDTO, Query()],
     use_case: FromDishka[GetAppointmentsUseCase],
 ) -> Page[AppointmentDTO]:
+    return await use_case.execute(dto)
+
+
+@router.post(
+    f"{route}/{{appointment_id}}/confirm-payment",
+    status_code=status.HTTP_200_OK,
+    response_model=AppointmentDTO,
+    tags=["appointments"],
+)
+async def confirm_payment(
+    jwt_data: FromDishka[JWTData],
+    appointment_id: Annotated[UUID, Path()],
+    use_case: FromDishka[ConfirmPaymentUseCase],
+) -> AppointmentDTO | JSONResponse:
+    dto = ConfirmPaymentDTO(appointment_id=appointment_id, psychologist_id=jwt_data.id)
+    return await use_case.execute(dto)
+
+
+@router.post(
+    f"{route}/{{appointment_id}}/complete",
+    status_code=status.HTTP_200_OK,
+    response_model=AppointmentDTO,
+    tags=["appointments"],
+)
+async def complete_appointment(
+    jwt_data: FromDishka[JWTData],
+    appointment_id: Annotated[UUID, Path()],
+    use_case: FromDishka[CompleteAppointmentUseCase],
+) -> AppointmentDTO | JSONResponse:
+    dto = CompleteAppointmentDTO(
+        appointment_id=appointment_id, psychologist_id=jwt_data.id
+    )
+    return await use_case.execute(dto)
+
+
+@router.post(
+    f"{route}/{{appointment_id}}/mark-payment-sent",
+    status_code=status.HTTP_200_OK,
+    response_model=AppointmentDTO,
+    tags=["appointments"],
+)
+async def mark_payment_sent(
+    jwt_data: FromDishka[JWTData],
+    appointment_id: Annotated[UUID, Path()],
+    use_case: FromDishka[MarkPaymentSentUseCase],
+) -> AppointmentDTO | JSONResponse:
+    dto = MarkPaymentSentDTO(appointment_id=appointment_id, patient_id=jwt_data.id)
     return await use_case.execute(dto)

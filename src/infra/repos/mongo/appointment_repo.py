@@ -72,24 +72,55 @@ class MongoAppointmentRepo(IAppointmentRepo):
             query_conditions if query_conditions else {}, session=self._session
         ).count()
 
-        find_query = AppointmentDocument.find(
-            query_conditions if query_conditions else {},
-            fetch_links=True,
-            session=self._session,
-        )
-
         if pageable.sort:
+            find_query = AppointmentDocument.find(
+                query_conditions if query_conditions else {},
+                fetch_links=True,
+                session=self._session,
+            )
             direction_dict = {"asc": ASCENDING, "desc": DESCENDING}
             sort_list = [
                 (field_name, direction_dict[direction.value])
                 for field_name, direction in pageable.sort
             ]
             find_query = find_query.sort(sort_list)  # type: ignore
+            find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
+            docs = await find_query.to_list()
         else:
-            find_query = find_query.sort([("date", -1)])  # type: ignore (default: newest first)
+            # Default sort: canceled last, then by date descending (newest first)
+            # Use aggregation pipeline for custom sorting
+            pipeline = [
+                {"$match": query_conditions if query_conditions else {}},
+                {
+                    "$addFields": {
+                        "is_canceled": {
+                            "$cond": {
+                                "if": {"$eq": ["$status", "canceled"]},
+                                "then": 1,
+                                "else": 0,
+                            }
+                        }
+                    }
+                },
+                {"$sort": {"is_canceled": ASCENDING, "date": DESCENDING}},
+                {"$skip": pageable.offset()},
+                {"$limit": pageable.limit()},
+            ]
 
-        find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
-        docs = await find_query.to_list()
+            raw_docs = await AppointmentDocument.aggregate(
+                pipeline, session=self._session
+            ).to_list()
+
+            # Convert raw dicts to AppointmentDocument instances and fetch links
+            docs = []
+            for raw_doc in raw_docs:
+                doc = await AppointmentDocument.find_one(
+                    AppointmentDocument.id == raw_doc["_id"],
+                    fetch_links=True,
+                    session=self._session,
+                )
+                if doc:
+                    docs.append(doc)
 
         entities = await asyncio.gather(
             *(AppointmentMongoMapper.to_domain(doc) for doc in docs)

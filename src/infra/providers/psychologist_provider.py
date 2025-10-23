@@ -12,11 +12,11 @@ from application.repos.ispecialty_repo import ISpecialtyRepo
 from application.repos.iuser_repo import IUserRepo
 from application.services.iauth_service import IAuthService
 from application.services.ifile_service import IFileService
+from application.use_cases.appointment.complete_appointment import (
+    CompleteAppointmentUseCase,
+)
 from application.use_cases.psychologist.add_availabilities import (
     AddAvailabilitiesUseCase,
-)
-from application.use_cases.psychologist.complete_appointment import (
-    CompleteAppointmentUseCase,
 )
 from application.use_cases.psychologist.confirm_payment import ConfirmPaymentUseCase
 from application.use_cases.psychologist.create_psychologist import (
