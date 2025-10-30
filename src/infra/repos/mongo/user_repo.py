@@ -14,9 +14,7 @@ class MongoUserRepo(IUserRepo):
         self._session = session
 
     async def exists_by(self, query_list: list[dict[str, str]]) -> bool:
-        docs_count = await UserDocument.find_one(
-            {"$or": query_list}, session=self._session, with_children=True
-        ).count()
+        docs_count = await UserDocument.find_one({"$or": query_list}, session=self._session, with_children=True).count()
 
         return docs_count > 0
 

@@ -20,9 +20,7 @@ class GetPsychologistByIdUseCase(IUseCase[GetPsychologistByIdDTO, PsychologistDT
         self.psychologist_repo = psychologist_repo
 
     async def execute(self, dto: GetPsychologistByIdDTO) -> PsychologistDTO:
-        psychologist = await self.psychologist_repo.get_by_id(
-            UniqueEntityId(dto.psychologist_id)
-        )
+        psychologist = await self.psychologist_repo.get_by_id(UniqueEntityId(dto.psychologist_id))
 
         if not psychologist:
             raise ApplicationException("Psychologist not found.")

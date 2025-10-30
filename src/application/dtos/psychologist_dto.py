@@ -36,10 +36,7 @@ class PsychologistDTO(UserDTO):
             value_per_appointment=entity.value_per_appointment,
             city=CityDTO.to_dto(entity.city),
             profile_picture=entity.profile_picture,
-            availabilities=[
-                AvailabilityDTO.to_dto(availability)
-                for availability in entity.availabilities
-            ]
+            availabilities=[AvailabilityDTO.to_dto(availability) for availability in entity.availabilities]
             if entity.availabilities
             else None,
         )

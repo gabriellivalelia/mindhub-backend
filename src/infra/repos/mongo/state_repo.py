@@ -26,9 +26,7 @@ class MongoStateRepo(IStateRepo):
         return await StateMongoMapper.to_domain(doc)
 
     async def get_by_id(self, id: UniqueEntityId) -> State | None:
-        doc = await StateDocument.find_one(
-            StateDocument.id == id.value, session=self._session
-        )
+        doc = await StateDocument.find_one(StateDocument.id == id.value, session=self._session)
         return await StateMongoMapper.to_domain(doc) if doc else None
 
     async def get(
@@ -51,10 +49,7 @@ class MongoStateRepo(IStateRepo):
 
         if pageable.sort:
             direction_dict = {"asc": 1, "desc": -1}
-            sort_list = [
-                (field_name, direction_dict[direction.value])
-                for field_name, direction in pageable.sort
-            ]
+            sort_list = [(field_name, direction_dict[direction.value]) for field_name, direction in pageable.sort]
             find_query = find_query.sort(sort_list)  # type: ignore
         else:
             find_query = find_query.sort([("name", 1)])  # type: ignore
@@ -62,9 +57,7 @@ class MongoStateRepo(IStateRepo):
         find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
 
         docs = await find_query.to_list()
-        entities = await asyncio.gather(
-            *(StateMongoMapper.to_domain(doc) for doc in docs)
-        )
+        entities = await asyncio.gather(*(StateMongoMapper.to_domain(doc) for doc in docs))
 
         return Page(
             items=entities,
@@ -73,7 +66,5 @@ class MongoStateRepo(IStateRepo):
         )
 
     async def get_all(self) -> list[State]:
-        docs = await StateDocument.find_all(
-            fetch_links=True, session=self._session
-        ).to_list()
+        docs = await StateDocument.find_all(fetch_links=True, session=self._session).to_list()
         return await asyncio.gather(*(StateMongoMapper.to_domain(doc) for doc in docs))

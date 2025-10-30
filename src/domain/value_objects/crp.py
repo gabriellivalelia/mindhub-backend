@@ -15,8 +15,6 @@ class CRP(ValueObject):
         pattern = r"^\d{2}/\d{4,5}$"
         crp = v.strip()
         if not re.match(pattern, crp):
-            raise DomainException(
-                "Invalid CRP format. Expected format: XX/XXXX or XX/XXXXX"
-            )
+            raise DomainException("Invalid CRP format. Expected format: XX/XXXX or XX/XXXXX")
 
         return crp

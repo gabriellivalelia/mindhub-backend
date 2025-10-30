@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from typing import Annotated, Any, Iterable
 from uuid import UUID
 
@@ -16,8 +16,8 @@ ConvertEmptyStrToNoneBeforeValidator = BeforeValidator(convert_empty_str_to_none
 
 
 class AppointmentFilters(BaseModel):
-    start_date: Annotated[date | None, ConvertEmptyStrToNoneBeforeValidator] = None
-    end_date: Annotated[date | None, ConvertEmptyStrToNoneBeforeValidator] = None
+    start_date: Annotated[datetime | None, ConvertEmptyStrToNoneBeforeValidator] = None
+    end_date: Annotated[datetime | None, ConvertEmptyStrToNoneBeforeValidator] = None
     psychologist_id: UUID | None = None
     patient_id: UUID | None = None
     status: str | None = None

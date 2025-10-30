@@ -20,9 +20,7 @@ class GetSpecialtyByIdUseCase(IUseCase[GetSpecialtyByIdDTO, SpecialtyDTO]):
         self.specialty_repo = specialty_repo
 
     async def execute(self, dto: GetSpecialtyByIdDTO) -> SpecialtyDTO:
-        specialty = await self.specialty_repo.get_by_id(
-            UniqueEntityId(dto.specialty_id)
-        )
+        specialty = await self.specialty_repo.get_by_id(UniqueEntityId(dto.specialty_id))
 
         if not specialty:
             raise ApplicationException("Specialty not found.")

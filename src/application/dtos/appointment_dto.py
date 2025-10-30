@@ -20,9 +20,7 @@ class AppointmentDTO(BaseModel):
     availability_id: UUID | None = None
 
     @field_serializer("id")
-    def serialize_id(
-        self, value: UUID | None, _info: FieldSerializationInfo
-    ) -> str | None:
+    def serialize_id(self, value: UUID | None, _info: FieldSerializationInfo) -> str | None:
         return str(value) if value else None
 
     @staticmethod
@@ -35,7 +33,5 @@ class AppointmentDTO(BaseModel):
             pix_payment=PixPaymentDTO.to_dto(entity.pix_payment),
             duration_min=entity.duration_min,
             status=entity.status.value,
-            availability_id=entity.availability_id.value
-            if entity.availability_id
-            else None,
+            availability_id=entity.availability_id.value if entity.availability_id else None,
         )

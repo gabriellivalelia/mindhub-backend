@@ -52,9 +52,7 @@ async def cancel_appointment(
     appointment_id: Annotated[UUID, Path()],
     use_case: FromDishka[CancelAppointmentUseCase],
 ) -> AppointmentDTO | JSONResponse:
-    dto = CancelAppointmentDTO(
-        appointment_id=appointment_id, requesting_user_id=jwt_data.id
-    )
+    dto = CancelAppointmentDTO(appointment_id=appointment_id, requesting_user_id=jwt_data.id)
     return await use_case.execute(dto)
 
 
@@ -131,9 +129,7 @@ async def complete_appointment(
     appointment_id: Annotated[UUID, Path()],
     use_case: FromDishka[CompleteAppointmentUseCase],
 ) -> AppointmentDTO | JSONResponse:
-    dto = CompleteAppointmentDTO(
-        appointment_id=appointment_id, psychologist_id=jwt_data.id
-    )
+    dto = CompleteAppointmentDTO(appointment_id=appointment_id, psychologist_id=jwt_data.id)
     return await use_case.execute(dto)
 
 

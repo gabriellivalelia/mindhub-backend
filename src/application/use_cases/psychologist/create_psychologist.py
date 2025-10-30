@@ -80,9 +80,7 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
         cpf = CPF(value=dto.cpf)
         crp = CRP(value=dto.crp)
 
-        is_duplicated = await self.user_repo.exists_by(
-            [{"email": email.value}, {"cpf": cpf.value}, {"crp": crp.value}]
-        )
+        is_duplicated = await self.user_repo.exists_by([{"email": email.value}, {"cpf": cpf.value}, {"crp": crp.value}])
         if is_duplicated:
             raise ApplicationException("Duplicated e-mail, cpf or crp.")
 
@@ -90,15 +88,11 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
         if not city:
             raise DomainException("City not found.")
 
-        specialties = await self.specialty_repo.get_by_ids(
-            [UniqueEntityId(id) for id in dto.specialty_ids]
-        )
+        specialties = await self.specialty_repo.get_by_ids([UniqueEntityId(id) for id in dto.specialty_ids])
         if len(specialties) != len(dto.specialty_ids):
             raise DomainException("One or more specialties were not found.")
 
-        approaches = await self.approach_repo.get_by_ids(
-            [UniqueEntityId(id) for id in dto.approach_ids]
-        )
+        approaches = await self.approach_repo.get_by_ids([UniqueEntityId(id) for id in dto.approach_ids])
         if len(approaches) != len(dto.approach_ids):
             raise DomainException("One or more approaches were not found.")
 
@@ -107,9 +101,7 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
         password = Password(value=dto.password)
         hashed_password = await self.auth_service.hash_password(password)
         profile_picture = (
-            await self.file_service.upload(dto.profile_picture)
-            if dto.profile_picture is not None
-            else None
+            await self.file_service.upload(dto.profile_picture) if dto.profile_picture is not None else None
         )
 
         phone_number = PhoneNumber(value=dto.phone_number)

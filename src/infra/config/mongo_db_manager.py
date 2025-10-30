@@ -34,9 +34,7 @@ class MongoManager:
     @asynccontextmanager
     async def connect(cls) -> AsyncGenerator[MongoManager, None]:
         settings = Settings()
-        client = AsyncMongoClient[Any](
-            settings.MONGO_URI, uuidRepresentation="standard"
-        )
+        client = AsyncMongoClient[Any](settings.MONGO_URI, uuidRepresentation="standard")
 
         await init_beanie(
             database=client[settings.MONGO_DATABASE_NAME],

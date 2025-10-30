@@ -25,18 +25,14 @@ class ConfirmPaymentUseCase(IUseCase[ConfirmPaymentDTO, AppointmentDTO]):
 
     async def execute(self, dto: ConfirmPaymentDTO) -> AppointmentDTO:
         # Buscar o agendamento
-        appointment = await self.appointment_repository.get_by_id(
-            UniqueEntityId(dto.appointment_id)
-        )
+        appointment = await self.appointment_repository.get_by_id(UniqueEntityId(dto.appointment_id))
 
         if not appointment:
             raise DomainException("Agendamento não encontrado")
 
         # Verificar se o psicólogo é o dono da consulta
         if appointment.psychologist_id.value != dto.psychologist_id:
-            raise DomainException(
-                "Você não tem permissão para modificar este agendamento"
-            )
+            raise DomainException("Você não tem permissão para modificar este agendamento")
 
         # Confirmar o agendamento
         appointment.confirm()

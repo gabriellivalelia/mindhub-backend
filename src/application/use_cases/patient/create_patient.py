@@ -61,9 +61,7 @@ class CreatePatientUseCase(IUseCase[CreatePatientDTO, PatientDTO]):
         email = Email(value=dto.email)
         cpf = CPF(value=dto.cpf)
 
-        is_duplicated = await self.user_repo.exists_by(
-            [{"email": email.value}, {"cpf": cpf.value}]
-        )
+        is_duplicated = await self.user_repo.exists_by([{"email": email.value}, {"cpf": cpf.value}])
         if is_duplicated:
             raise ApplicationException("E-mail ou CPF duplicado.")
 
@@ -74,9 +72,7 @@ class CreatePatientUseCase(IUseCase[CreatePatientDTO, PatientDTO]):
         password = Password(value=dto.password)
         hashed_password = await self.auth_service.hash_password(password)
         profile_picture = (
-            await self.file_service.upload(dto.profile_picture)
-            if dto.profile_picture is not None
-            else None
+            await self.file_service.upload(dto.profile_picture) if dto.profile_picture is not None else None
         )
 
         phone_number = PhoneNumber(value=dto.phone_number)

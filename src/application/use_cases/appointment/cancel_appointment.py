@@ -33,9 +33,7 @@ class CancelAppointmentUseCase(IUseCase[CancelAppointmentDTO, AppointmentDTO]):
         self.patient_repo = patient_repo
 
     async def execute(self, dto: CancelAppointmentDTO) -> AppointmentDTO:
-        appointment = await self.appointment_repo.get_by_id(
-            UniqueEntityId(dto.appointment_id)
-        )
+        appointment = await self.appointment_repo.get_by_id(UniqueEntityId(dto.appointment_id))
 
         if not appointment:
             raise ApplicationException("Appointment not found.")
@@ -53,18 +51,14 @@ class CancelAppointmentUseCase(IUseCase[CancelAppointmentDTO, AppointmentDTO]):
             appointment.status == AppointmentStatusEnum.CANCELED
             or appointment.status == AppointmentStatusEnum.COMPLETED
         ):
-            raise ApplicationException(
-                "Não é possível cancelar uma consulta já concluída ou cancelada."
-            )
+            raise ApplicationException("Não é possível cancelar uma consulta já concluída ou cancelada.")
 
         # perform cancel
         appointment.cancel()
 
         # if appointment had an availability reserved, unschedule it on psychologist
         if appointment.availability_id:
-            psychologist = await self.psychologist_repo.get_by_id(
-                appointment.psychologist_id
-            )
+            psychologist = await self.psychologist_repo.get_by_id(appointment.psychologist_id)
             if psychologist and psychologist.availabilities:
                 # find availability and unschedule
                 for av in psychologist.availabilities:

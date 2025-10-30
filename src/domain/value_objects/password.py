@@ -27,9 +27,7 @@ class Password(ValueObject):
             return v
 
         if len(v) < MIN_LENGTH or len(v) > MAX_LENGTH:
-            raise DomainException(
-                f"A senha deve ter entre {MIN_LENGTH} e {MAX_LENGTH} caracteres"
-            )
+            raise DomainException(f"A senha deve ter entre {MIN_LENGTH} e {MAX_LENGTH} caracteres")
 
         if INCLUDES_NUMBERS and not any(c.isdigit() for c in v):
             raise DomainException("A senha deve incluir pelo menos um número")
@@ -42,8 +40,7 @@ class Password(ValueObject):
 
         if INCLUDES_SPECIAL_CHARS and not any(c in SPECIAL_CHARS for c in v):
             raise DomainException(
-                f"A senha deve incluir pelo menos um caractere especial: "
-                f"{''.join(sorted(SPECIAL_CHARS))}"
+                f"A senha deve incluir pelo menos um caractere especial: {''.join(sorted(SPECIAL_CHARS))}"
             )
 
         return v

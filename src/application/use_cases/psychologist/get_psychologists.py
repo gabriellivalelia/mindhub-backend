@@ -21,7 +21,6 @@ class GetPsychologistsUseCase(IUseCase[GetPsychologistsDTO, Page[PsychologistDTO
     async def execute(self, dto: GetPsychologistsDTO) -> Page[PsychologistDTO]:
         pageable = Pageable(page=dto.page, size=dto.size)
         filters = PsychologistFilters(
-            name=dto.name,
             gender=dto.gender,
             specialty_ids=dto.specialty_ids,
             approach_ids=dto.approach_ids,

@@ -30,6 +30,7 @@ dev = "uv run python src/main.py"
 start-dev = ["format", "dev"]
 
 [tool.ruff]
+line-length = 120
 exclude = [
   "venv",
   ".venv",

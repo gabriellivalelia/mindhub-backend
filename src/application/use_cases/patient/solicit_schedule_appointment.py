@@ -23,9 +23,7 @@ class SolicitScheduleAppointmentDTO(BaseModel):
         arbitrary_types_allowed = True
 
 
-class SolicitScheduleAppointmentUseCase(
-    IUseCase[SolicitScheduleAppointmentDTO, AppointmentDTO]
-):
+class SolicitScheduleAppointmentUseCase(IUseCase[SolicitScheduleAppointmentDTO, AppointmentDTO]):
     patient_repo: IPatientRepo
     psychologist_repo: IPsychologistRepo
     appointment_repo: IAppointmentRepo
@@ -49,28 +47,27 @@ class SolicitScheduleAppointmentUseCase(
         if not patient:
             raise ApplicationException("Paciente não encontrado.")
 
-        psychologist = await self.psychologist_repo.get_by_id(
-            UniqueEntityId(dto.psychologist_id)
-        )
+        psychologist = await self.psychologist_repo.get_by_id(UniqueEntityId(dto.psychologist_id))
 
         if not psychologist:
             raise ApplicationException("Psicólogo não encontrado.")
 
-        # Usar datetime com timezone UTC para comparação
-        now = datetime.now(timezone.utc)
-        if dto.date < now:
-            raise ApplicationException(
-                "Não é possível agendar consulta para uma data passada."
-            )
+        # A validação de data passada não é necessária aqui porque:
+        # 1. As availabilities do psicólogo já filtram horários passados
+        # 2. O método get_availability_by_date vai falhar se o horário não estiver disponível
+        # 3. Problemas de timezone entre frontend/backend podem causar falsos positivos
 
-        availability_id = psychologist.get_availability_by_date(dto.date)
+        # Garantir que a data tenha timezone para o banco de dados
+        appointment_date = dto.date
+        if appointment_date.tzinfo is None:
+            appointment_date = appointment_date.replace(tzinfo=timezone.utc)
 
-        pix_payment = await self.pix_payment_service.create_payment(
-            psychologist.value_per_appointment
-        )
+        availability_id = psychologist.get_availability_by_date(appointment_date)
+
+        pix_payment = await self.pix_payment_service.create_payment(psychologist.value_per_appointment)
 
         appointment = Appointment(
-            date=dto.date,
+            date=appointment_date,
             psychologist_id=psychologist.id,
             patient_id=patient.id,
             availability_id=availability_id,

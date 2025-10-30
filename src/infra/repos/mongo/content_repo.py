@@ -26,22 +26,16 @@ class MongoContentRepo(IContentRepo):
         return await ContentMongoMapper.to_domain(doc)
 
     async def get_by_id(self, id: UniqueEntityId) -> Content | None:
-        doc = await ContentDocument.find_one(
-            ContentDocument.id == id.value, fetch_links=True, session=self._session
-        )
+        doc = await ContentDocument.find_one(ContentDocument.id == id.value, fetch_links=True, session=self._session)
 
         return await ContentMongoMapper.to_domain(doc) if doc else None
 
-    async def get(
-        self, pageable: Pageable, filters: ContentFilters | None = None
-    ) -> Page[Content]:
-        find_query = ContentDocument.find(session=self._session)
+    async def get(self, pageable: Pageable, filters: ContentFilters | None = None) -> Page[Content]:
+        find_query = ContentDocument.find(fetch_links=True, session=self._session)
 
         if filters:
             if filters.title:
-                find_query = find_query.find(
-                    {"title": {"$regex": filters.title, "$options": "i"}}
-                )
+                find_query = find_query.find({"title": {"$regex": filters.title, "$options": "i"}})
             if filters.author_id:
                 find_query = find_query.find({"author_id": filters.author_id})
 
@@ -49,10 +43,7 @@ class MongoContentRepo(IContentRepo):
 
         if pageable.sort:
             direction_dict = {"asc": ASCENDING, "desc": DESCENDING}
-            sort_list = [
-                (field_name, direction_dict[direction.value])
-                for field_name, direction in pageable.sort
-            ]
+            sort_list = [(field_name, direction_dict[direction.value]) for field_name, direction in pageable.sort]
             find_query = find_query.sort(sort_list)  # type: ignore
         else:
             find_query = find_query.sort([("created_at", -1)])  # type: ignore
@@ -76,9 +67,7 @@ class MongoContentRepo(IContentRepo):
         return await ContentMongoMapper.to_domain(doc)
 
     async def delete(self, id: UniqueEntityId) -> bool:
-        result = await ContentDocument.find_one(
-            ContentDocument.id == id.value, session=self._session
-        )
+        result = await ContentDocument.find_one(ContentDocument.id == id.value, session=self._session)
         if not result:
             return False
         await result.delete()

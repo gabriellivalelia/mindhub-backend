@@ -40,9 +40,7 @@ class LoginUseCase(IUseCase[LoginDTO, LoginDTOResponse]):
         if found_user is None:
             raise UnauthorizedAccessException("E-mail ou senha incorretos")
 
-        is_match = await self.auth_service.verify_password(
-            Password(value=dto.password), found_user.password
-        )
+        is_match = await self.auth_service.verify_password(Password(value=dto.password), found_user.password)
         if not is_match:
             raise UnauthorizedAccessException("E-mail ou senha incorretos")
         access_token, refresh_token = self.auth_service.sign_jwt_tokens(found_user)

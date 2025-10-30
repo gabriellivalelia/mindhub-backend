@@ -18,9 +18,7 @@ class InMemoryPatientRepo(IPatientRepo):
         InMemoryPatientRepo.items.append(entity)
         return entity
 
-    async def get(
-        self, pageable: Pageable, filters: PatientFilters | None = None
-    ) -> Page[Patient]:
+    async def get(self, pageable: Pageable, filters: PatientFilters | None = None) -> Page[Patient]:
         items = InMemoryPatientRepo.items
         if filters:
             if filters.name:

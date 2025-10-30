@@ -66,15 +66,11 @@ class PsychologistProvider(Provider):
         return GetPsychologistsUseCase(psychologist_repo)
 
     @provide(scope=Scope.REQUEST)
-    def AddAvailabilitiesUseCaseInstance(
-        self, psychologist_repo: IPsychologistRepo
-    ) -> AddAvailabilitiesUseCase:
+    def AddAvailabilitiesUseCaseInstance(self, psychologist_repo: IPsychologistRepo) -> AddAvailabilitiesUseCase:
         return AddAvailabilitiesUseCase(psychologist_repo)
 
     @provide(scope=Scope.REQUEST)
-    def RemoveAvailabilitiesUseCaseInstance(
-        self, psychologist_repo: IPsychologistRepo
-    ) -> RemoveAvailabilitiesUseCase:
+    def RemoveAvailabilitiesUseCaseInstance(self, psychologist_repo: IPsychologistRepo) -> RemoveAvailabilitiesUseCase:
         return RemoveAvailabilitiesUseCase(psychologist_repo)
 
     @provide(scope=Scope.REQUEST)
@@ -106,13 +102,9 @@ class PsychologistProvider(Provider):
         return GetPsychologistByIdUseCase(psychologist_repo)
 
     @provide(scope=Scope.REQUEST)
-    def ConfirmPaymentUseCaseInstance(
-        self, appointment_repo: IAppointmentRepo
-    ) -> ConfirmPaymentUseCase:
+    def ConfirmPaymentUseCaseInstance(self, appointment_repo: IAppointmentRepo) -> ConfirmPaymentUseCase:
         return ConfirmPaymentUseCase(appointment_repo)
 
     @provide(scope=Scope.REQUEST)
-    def CompleteAppointmentUseCaseInstance(
-        self, appointment_repo: IAppointmentRepo
-    ) -> CompleteAppointmentUseCase:
+    def CompleteAppointmentUseCaseInstance(self, appointment_repo: IAppointmentRepo) -> CompleteAppointmentUseCase:
         return CompleteAppointmentUseCase(appointment_repo)

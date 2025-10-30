@@ -4,9 +4,7 @@ from domain.common.unique_entity_id import UniqueEntityId
 
 
 class Approach(Entity):
-    def __init__(
-        self, name: str, description: str, id: UniqueEntityId | None = None
-    ) -> None:
+    def __init__(self, name: str, description: str, id: UniqueEntityId | None = None) -> None:
         Guard.against_empty_str_bulk(
             [
                 {"argument": name, "argument_name": "name"},

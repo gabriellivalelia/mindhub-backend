@@ -12,19 +12,13 @@ from application.use_cases.specialty.get_specialty_by_id import GetSpecialtyById
 
 class SpecialtyProvider(Provider):
     @provide(scope=Scope.REQUEST)
-    def CreateSpecialtyUseCaseInstance(
-        self, specialty_repo: ISpecialtyRepo
-    ) -> CreateSpecialtyUseCase:
+    def CreateSpecialtyUseCaseInstance(self, specialty_repo: ISpecialtyRepo) -> CreateSpecialtyUseCase:
         return CreateSpecialtyUseCase(specialty_repo)
 
     @provide(scope=Scope.REQUEST)
-    def GetSpecialtiesUseCaseInstance(
-        self, specialty_repo: ISpecialtyRepo
-    ) -> GetSpecialtiesUseCase:
+    def GetSpecialtiesUseCaseInstance(self, specialty_repo: ISpecialtyRepo) -> GetSpecialtiesUseCase:
         return GetSpecialtiesUseCase(specialty_repo)
 
     @provide(scope=Scope.REQUEST)
-    def GetSpecialtyByIdUseCase(
-        self, specialty_repo: ISpecialtyRepo
-    ) -> GetSpecialtyByIdUseCase:
+    def GetSpecialtyByIdUseCase(self, specialty_repo: ISpecialtyRepo) -> GetSpecialtyByIdUseCase:
         return GetSpecialtyByIdUseCase(specialty_repo)

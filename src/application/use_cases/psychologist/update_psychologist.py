@@ -73,9 +73,7 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
         self.auth_service = auth_service
 
     async def execute(self, dto: UpdatePsychologistDTO) -> PsychologistDTO:
-        found_psychologist = await self.psychologist_repo.get_by_id(
-            UniqueEntityId(dto.psychologist_id)
-        )
+        found_psychologist = await self.psychologist_repo.get_by_id(UniqueEntityId(dto.psychologist_id))
         if not found_psychologist:
             raise ApplicationException("Psychologist not found.")
 
@@ -103,17 +101,13 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
 
         specialties = found_psychologist.specialties
         if dto.specialty_ids:
-            specialties = await self.specialty_repo.get_by_ids(
-                [UniqueEntityId(id) for id in dto.specialty_ids]
-            )
+            specialties = await self.specialty_repo.get_by_ids([UniqueEntityId(id) for id in dto.specialty_ids])
             if len(specialties) != len(dto.specialty_ids):
                 raise ApplicationException("One or more specialties were not found.")
 
         approaches = found_psychologist.approaches
         if dto.approach_ids:
-            approaches = await self.approach_repo.get_by_ids(
-                [UniqueEntityId(id) for id in dto.approach_ids]
-            )
+            approaches = await self.approach_repo.get_by_ids([UniqueEntityId(id) for id in dto.approach_ids])
             if len(approaches) != len(dto.approach_ids):
                 raise ApplicationException("One or more approaches were not found.")
 
@@ -140,9 +134,7 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
             email=email,
             password=found_psychologist.password,
             cpf=cpf,
-            phone_number=PhoneNumber(value=dto.phone_number)
-            if dto.phone_number
-            else found_psychologist.phone_number,
+            phone_number=PhoneNumber(value=dto.phone_number) if dto.phone_number else found_psychologist.phone_number,
             birth_date=dto.birth_date or found_psychologist.birth_date,
             gender=GenderEnum(dto.gender) if dto.gender else found_psychologist.gender,
             city=city,

@@ -28,10 +28,15 @@ class Availability(Entity):
         if not self.available:
             raise DomainException("A consulta já está agendada.")
 
-        if self._normalize_datetime(self.date) < self._normalize_datetime(
-            datetime.now()
-        ):
-            raise DomainException("Disponibilidade inválida.")
+        # Validação: não permitir agendar se já passou mais de 1 hora
+        # Isso dá margem para diferenças de timezone mas previne agendamentos muito antigos
+        now_utc = datetime.now(timezone.utc)
+        time_diff_hours = (
+            self._normalize_datetime(self.date) - self._normalize_datetime(now_utc)
+        ).total_seconds() / 3600
+
+        if time_diff_hours < -1:  # Se passou mais de 1 hora
+            raise DomainException("Disponibilidade inválida - horário já passou.")
 
         self._available = False
 

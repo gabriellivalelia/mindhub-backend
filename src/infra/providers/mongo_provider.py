@@ -37,9 +37,7 @@ class MongoDBProvider(Provider):
             yield db_manager
 
     @provide(scope=Scope.REQUEST)
-    async def MongoDBSession(
-        self, db_manager: MongoManager
-    ) -> AsyncGenerator[AsyncClientSession]:
+    async def MongoDBSession(self, db_manager: MongoManager) -> AsyncGenerator[AsyncClientSession]:
         async with db_manager.get_session() as session:
             yield session
 

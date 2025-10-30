@@ -24,6 +24,4 @@ class InMemorySpecialtyRepo(ISpecialtyRepo):
         return [item for item in InMemorySpecialtyRepo.items if item.id in ids]
 
     async def get_by_id(self, id: UniqueEntityId) -> Specialty | None:
-        return next(
-            (item for item in InMemorySpecialtyRepo.items if item.id == id), None
-        )
+        return next((item for item in InMemorySpecialtyRepo.items if item.id == id), None)

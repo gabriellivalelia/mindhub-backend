@@ -33,9 +33,7 @@ class DefaultAuthService(IAuthService):
 
     def sign_jwt_tokens(self, user: User) -> tuple[str, str]:
         access_token_data = JWTData(id=user.id.value).model_dump()
-        access_token_expire = datetime.now(timezone.utc) + timedelta(
-            minutes=Settings().ACCESS_TOKEN_EXPIRE_MINUTES
-        )
+        access_token_expire = datetime.now(timezone.utc) + timedelta(minutes=Settings().ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token_data.update({"exp": access_token_expire})
         access_token = jwt.encode(  # type: ignore
             access_token_data, Settings().ACCESS_TOKEN_SECRET, Settings().ALGORITHM
@@ -68,9 +66,5 @@ class DefaultAuthService(IAuthService):
         hashed = bcrypt.hashpw(password.value.encode("utf-8"), bcrypt.gensalt())
         return Password(value=hashed.decode("utf-8"), hashed=True)
 
-    async def verify_password(
-        self, password: Password, hashed_password: Password
-    ) -> bool:
-        return bcrypt.checkpw(
-            password.value.encode("utf-8"), hashed_password.value.encode("utf-8")
-        )
+    async def verify_password(self, password: Password, hashed_password: Password) -> bool:
+        return bcrypt.checkpw(password.value.encode("utf-8"), hashed_password.value.encode("utf-8"))

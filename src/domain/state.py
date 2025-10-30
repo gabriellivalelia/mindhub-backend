@@ -4,9 +4,7 @@ from domain.common.unique_entity_id import UniqueEntityId
 
 
 class State(Entity):
-    def __init__(
-        self, name: str, abbreviation: str, id: UniqueEntityId | None = None
-    ) -> None:
+    def __init__(self, name: str, abbreviation: str, id: UniqueEntityId | None = None) -> None:
         Guard.against_undefined_bulk(
             [
                 {"argument": name, "argument_name": "name"},

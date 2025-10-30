@@ -84,15 +84,11 @@ class MindHubApp:
         if Settings().ENV == "development":
             # Disponibiliza os arquivos salvos na pasta "/temp"
             os.makedirs(Settings().FILES_PATH, exist_ok=True)
-            self.__app.mount(
-                "/files", StaticFiles(directory=Settings().FILES_PATH), name="files"
-            )
+            self.__app.mount("/files", StaticFiles(directory=Settings().FILES_PATH), name="files")
 
     def _set_exception_handlers(self) -> None:
         @self.__app.exception_handler(RequestValidationError)
-        async def validation_exception_handler(
-            request: Request, exc: RequestValidationError
-        ):
+        async def validation_exception_handler(request: Request, exc: RequestValidationError):
             errors = []
             for err in exc.errors():
                 loc = err.get("loc", [])
@@ -134,9 +130,7 @@ class MindHubApp:
             )
 
         @self.__app.exception_handler(ApplicationException)
-        async def application_exception_handler(
-            request: Request, exc: ApplicationException
-        ):
+        async def application_exception_handler(request: Request, exc: ApplicationException):
             return JSONResponse(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 content={
@@ -146,9 +140,7 @@ class MindHubApp:
             )
 
         @self.__app.exception_handler(ValidationError)
-        async def pydantic_validation_exception_handler(
-            request: Request, exc: ValidationError
-        ):
+        async def pydantic_validation_exception_handler(request: Request, exc: ValidationError):
             return JSONResponse(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 content={

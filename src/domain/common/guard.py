@@ -43,9 +43,7 @@ class Guard:
         Raises GuardException if actual_value is NOT strictly greater than min_value.
         """
         if not (actual_value > min_value):
-            raise GuardException(
-                f"Number given ({actual_value}) is not greater than ({min_value})"
-            )
+            raise GuardException(f"Number given ({actual_value}) is not greater than ({min_value})")
 
     @staticmethod
     def greater_equal_than(min_value: float, actual_value: float) -> None:
@@ -53,9 +51,7 @@ class Guard:
         Raises GuardException if actual_value is not greater or equal than min_value.
         """
         if not (actual_value >= min_value):
-            raise GuardException(
-                f"Number given ({actual_value}) is not greater than ({min_value})"
-            )
+            raise GuardException(f"Number given ({actual_value}) is not greater than ({min_value})")
 
     @staticmethod
     def against_empty_str(argument: Any, argument_name: str) -> None:
@@ -127,9 +123,7 @@ class Guard:
         Raises GuardException if value is not in the list of valid_values.
         """
         if value not in valid_values:
-            raise GuardException(
-                f'{argument_name} must be one of {valid_values}. Got "{value}"'
-            )
+            raise GuardException(f'{argument_name} must be one of {valid_values}. Got "{value}"')
 
     @staticmethod
     def is_one_of_enum(value: Any, enum_class: Type[Enum], argument_name: str) -> None:
@@ -138,26 +132,18 @@ class Guard:
         """
         values = set(item.value for item in enum_class)
         if value not in values:
-            raise GuardException(
-                f'{argument_name} must be one of {values}. Got "{value}"'
-            )
+            raise GuardException(f'{argument_name} must be one of {values}. Got "{value}"')
 
     @staticmethod
-    def in_range(
-        num: float, min_value: float, max_value: float, argument_name: str
-    ) -> None:
+    def in_range(num: float, min_value: float, max_value: float, argument_name: str) -> None:
         """
         Raises GuardException if num is not between [min_value, max_value].
         """
         if not (min_value <= num <= max_value):
-            raise GuardException(
-                f"{argument_name} is not within range [{min_value}, {max_value}]"
-            )
+            raise GuardException(f"{argument_name} is not within range [{min_value}, {max_value}]")
 
     @staticmethod
-    def all_in_range(
-        numbers: list[float], min_value: float, max_value: float, argument_name: str
-    ) -> None:
+    def all_in_range(numbers: list[float], min_value: float, max_value: float, argument_name: str) -> None:
         """
         Raises GuardException if any number in the list is out of [min_value, max_value].
         """

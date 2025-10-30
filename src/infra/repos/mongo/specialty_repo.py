@@ -28,9 +28,7 @@ class MongoSpecialtyRepo(ISpecialtyRepo):
         return await SpecialtyMongoMapper.to_domain(doc)
 
     async def get_by_id(self, id: UniqueEntityId) -> Specialty | None:
-        doc = await SpecialtyDocument.find_one(
-            SpecialtyDocument.id == id.value, session=self._session
-        )
+        doc = await SpecialtyDocument.find_one(SpecialtyDocument.id == id.value, session=self._session)
 
         return await SpecialtyMongoMapper.to_domain(doc) if doc else None
 
@@ -38,19 +36,13 @@ class MongoSpecialtyRepo(ISpecialtyRepo):
         docs = await SpecialtyDocument.find(
             In(SpecialtyDocument.id, [id.value for id in ids]), session=self._session
         ).to_list()
-        return await asyncio.gather(
-            *(SpecialtyMongoMapper.to_domain(doc) for doc in docs)
-        )
+        return await asyncio.gather(*(SpecialtyMongoMapper.to_domain(doc) for doc in docs))
 
     async def get_all(self) -> list[Specialty]:
         docs = await SpecialtyDocument.find_all(session=self._session).to_list()
-        return await asyncio.gather(
-            *(SpecialtyMongoMapper.to_domain(doc) for doc in docs)
-        )
+        return await asyncio.gather(*(SpecialtyMongoMapper.to_domain(doc) for doc in docs))
 
-    async def get(
-        self, pageable: Pageable, filters: SpecialtyFilters
-    ) -> Page[Specialty]:
+    async def get(self, pageable: Pageable, filters: SpecialtyFilters) -> Page[Specialty]:
         query_conditions = {}
 
         if filters.name:
@@ -67,10 +59,7 @@ class MongoSpecialtyRepo(ISpecialtyRepo):
 
         if pageable.sort:
             direction_dict = {"asc": ASCENDING, "desc": DESCENDING}
-            sort_list = [
-                (field_name, direction_dict[direction.value])
-                for field_name, direction in pageable.sort
-            ]
+            sort_list = [(field_name, direction_dict[direction.value]) for field_name, direction in pageable.sort]
             find_query = find_query.sort(sort_list)  # type: ignore
         else:
             find_query = find_query.sort([("name", 1)])  # type: ignore (default: alphabetical)
@@ -78,9 +67,7 @@ class MongoSpecialtyRepo(ISpecialtyRepo):
         find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
         docs = await find_query.to_list()
 
-        entities = await asyncio.gather(
-            *(SpecialtyMongoMapper.to_domain(doc) for doc in docs)
-        )
+        entities = await asyncio.gather(*(SpecialtyMongoMapper.to_domain(doc) for doc in docs))
 
         return Page(
             items=entities,

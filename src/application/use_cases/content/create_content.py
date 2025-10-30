@@ -31,9 +31,7 @@ class CreateContentUseCase(IUseCase[CreateContentDTO, ContentDTO]):
 
     async def execute(self, dto: CreateContentDTO) -> ContentDTO:
         # Verifica se o autor é um psicólogo
-        psychologist = await self.psychologist_repo.get_by_id(
-            UniqueEntityId(dto.author_id)
-        )
+        psychologist = await self.psychologist_repo.get_by_id(UniqueEntityId(dto.author_id))
         if not psychologist:
             raise ApplicationException("Only psychologists can create content")
 

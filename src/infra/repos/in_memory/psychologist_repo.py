@@ -37,31 +37,15 @@ class InMemoryPsychologistRepo(IPsychologistRepo):
             if filters.city_id:
                 items = [p for p in items if str(p.city.id) == str(filters.city_id)]
             if filters.specialty_ids:
-                items = [
-                    p
-                    for p in items
-                    if any(str(s.id) in filters.specialty_ids for s in p.specialties)
-                ]
+                items = [p for p in items if any(str(s.id) in filters.specialty_ids for s in p.specialties)]
             if filters.approaches and len(filters.approaches) > 0:
-                items = [
-                    p
-                    for p in items
-                    if any(a.value in filters.approaches for a in p.approaches)
-                ]
+                items = [p for p in items if any(a.value in filters.approaches for a in p.approaches)]
             if filters.audiences and len(filters.audiences) > 0:
-                items = [
-                    p
-                    for p in items
-                    if any(a.value in filters.audiences for a in p.audiences)
-                ]
+                items = [p for p in items if any(a.value in filters.audiences for a in p.audiences)]
             if filters.min_price is not None:
-                items = [
-                    p for p in items if p.value_per_appointment >= filters.min_price
-                ]
+                items = [p for p in items if p.value_per_appointment >= filters.min_price]
             if filters.max_price is not None:
-                items = [
-                    p for p in items if p.value_per_appointment <= filters.max_price
-                ]
+                items = [p for p in items if p.value_per_appointment <= filters.max_price]
 
         start = pageable.offset()
         end = start + pageable.size
@@ -90,11 +74,7 @@ class InMemoryPsychologistRepo(IPsychologistRepo):
         availabilities_to_add = []
         for availability_id in availability_ids:
             availability = next(
-                (
-                    item
-                    for item in InMemoryAvailabilityRepo.items
-                    if item.id == availability_id
-                ),
+                (item for item in InMemoryAvailabilityRepo.items if item.id == availability_id),
                 None,
             )
             if availability:

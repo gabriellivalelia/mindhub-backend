@@ -18,6 +18,4 @@ class StateDTO(BaseModel):
 
     @staticmethod
     def to_dto(entity: State) -> StateDTO:
-        return StateDTO(
-            id=entity.id.value, name=entity.name, abbreviation=entity.abbreviation
-        )
+        return StateDTO(id=entity.id.value, name=entity.name, abbreviation=entity.abbreviation)

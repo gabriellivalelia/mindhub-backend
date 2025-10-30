@@ -50,17 +50,11 @@ class User(Entity, ABC):
 
         self._name = name
         self._email = email if isinstance(email, Email) else Email(value=email)
-        self._password = (
-            password if isinstance(password, Password) else Password(value=password)
-        )
+        self._password = password if isinstance(password, Password) else Password(value=password)
         self._cpf = cpf if isinstance(cpf, CPF) else CPF(value=cpf)
         self._birth_date = birth_date
         self._gender = gender
-        self._phone_number = (
-            phone_number
-            if isinstance(phone_number, PhoneNumber)
-            else PhoneNumber(value=phone_number)
-        )
+        self._phone_number = phone_number if isinstance(phone_number, PhoneNumber) else PhoneNumber(value=phone_number)
         self._profile_picture = profile_picture
         self._state = city.state
         self._city = city
@@ -107,11 +101,7 @@ class User(Entity, ABC):
 
     @phone_number.setter
     def phone_number(self, phone_number: str | PhoneNumber) -> None:
-        self._phone_number = (
-            phone_number
-            if isinstance(phone_number, PhoneNumber)
-            else PhoneNumber(value=phone_number)
-        )
+        self._phone_number = phone_number if isinstance(phone_number, PhoneNumber) else PhoneNumber(value=phone_number)
 
     @profile_picture.setter
     def profile_picture(self, profile_picture: FileData | None) -> None:

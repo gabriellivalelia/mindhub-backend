@@ -7,7 +7,6 @@ from domain.user import GenderEnum
 
 
 class PsychologistFilters(BaseModel):
-    name: str | None = None
     gender: GenderEnum | None = None
     specialty_ids: set[UUID] | None = None
     approach_ids: set[UUID] | None = None

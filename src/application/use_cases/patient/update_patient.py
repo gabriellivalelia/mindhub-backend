@@ -58,9 +58,7 @@ class UpdatePatientUseCase(IUseCase[UpdatePatientDTO, PatientDTO]):
         self.auth_service = auth_service
 
     async def execute(self, dto: UpdatePatientDTO) -> PatientDTO:
-        found_patient = await self.patient_repo.get_by_id(
-            UniqueEntityId(dto.patient_id)
-        )
+        found_patient = await self.patient_repo.get_by_id(UniqueEntityId(dto.patient_id))
         if not found_patient:
             raise ApplicationException("Paciente não encontrado.")
 
@@ -104,9 +102,7 @@ class UpdatePatientUseCase(IUseCase[UpdatePatientDTO, PatientDTO]):
             email=email,
             password=found_patient.password,
             cpf=cpf,
-            phone_number=PhoneNumber(value=dto.phone_number)
-            if dto.phone_number
-            else found_patient.phone_number,
+            phone_number=PhoneNumber(value=dto.phone_number) if dto.phone_number else found_patient.phone_number,
             birth_date=dto.birth_date or found_patient.birth_date,
             gender=GenderEnum(dto.gender) if dto.gender else found_patient.gender,
             city=city,

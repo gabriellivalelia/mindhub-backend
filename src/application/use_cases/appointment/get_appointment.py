@@ -23,9 +23,7 @@ class GetAppointmentByIdUseCase(IUseCase[GetAppointmentByIdDTO, AppointmentDTO])
         self.appointment_repo = appointment_repo
 
     async def execute(self, dto: GetAppointmentByIdDTO) -> AppointmentDTO:
-        appointment = await self.appointment_repo.get_by_id(
-            UniqueEntityId(dto.appointment_id)
-        )
+        appointment = await self.appointment_repo.get_by_id(UniqueEntityId(dto.appointment_id))
 
         if not appointment:
             raise ApplicationException("Appointment not found")

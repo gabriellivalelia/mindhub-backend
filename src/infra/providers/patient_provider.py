@@ -85,9 +85,7 @@ class PatientProvider(Provider):
         appointment_repo: IAppointmentRepo,
         pix_payment_service: IPixPaymentService,
     ) -> SolicitScheduleAppointmentUseCase:
-        return SolicitScheduleAppointmentUseCase(
-            patient_repo, psychologist_repo, appointment_repo, pix_payment_service
-        )
+        return SolicitScheduleAppointmentUseCase(patient_repo, psychologist_repo, appointment_repo, pix_payment_service)
 
     @provide(scope=Scope.REQUEST)
     def DeletePatientUseCaseInstance(
@@ -130,19 +128,13 @@ class PatientProvider(Provider):
         )
 
     @provide(scope=Scope.REQUEST)
-    def GetAppointmentsUseCaseInstance(
-        self, appointment_repo: IAppointmentRepo
-    ) -> GetAppointmentsUseCase:
+    def GetAppointmentsUseCaseInstance(self, appointment_repo: IAppointmentRepo) -> GetAppointmentsUseCase:
         return GetAppointmentsUseCase(appointment_repo)
 
     @provide(scope=Scope.REQUEST)
-    def GetAppointmentByIdUseCaseInstance(
-        self, appointment_repo: IAppointmentRepo
-    ) -> GetAppointmentByIdUseCase:
+    def GetAppointmentByIdUseCaseInstance(self, appointment_repo: IAppointmentRepo) -> GetAppointmentByIdUseCase:
         return GetAppointmentByIdUseCase(appointment_repo)
 
     @provide(scope=Scope.REQUEST)
-    def MarkPaymentSentUseCaseInstance(
-        self, appointment_repo: IAppointmentRepo
-    ) -> MarkPaymentSentUseCase:
+    def MarkPaymentSentUseCaseInstance(self, appointment_repo: IAppointmentRepo) -> MarkPaymentSentUseCase:
         return MarkPaymentSentUseCase(appointment_repo)

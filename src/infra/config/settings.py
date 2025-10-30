@@ -2,9 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        case_sensitive=False, env_file=".env", env_file_encoding="utf-8"
-    )
+    model_config = SettingsConfigDict(case_sensitive=False, env_file=".env", env_file_encoding="utf-8")
 
     # APP CONFIG
     APP_VERSION: int = 1

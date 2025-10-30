@@ -18,9 +18,7 @@ class AppointmentMongoMapper(IMapper[AppointmentDocument, Appointment]):
             pix_payment=pix_payment,
             duration_min=model.duration_min,
             status=AppointmentStatusEnum(model.status),
-            availability_id=UniqueEntityId(model.availability_id)
-            if model.availability_id
-            else None,
+            availability_id=UniqueEntityId(model.availability_id) if model.availability_id else None,
             id=UniqueEntityId(model.id),
         )
 
@@ -37,7 +35,5 @@ class AppointmentMongoMapper(IMapper[AppointmentDocument, Appointment]):
             pix_payment=pix_payment_doc,  # type: ignore
             duration_min=entity.duration_min,
             status=entity.status.value,
-            availability_id=entity.availability_id.value
-            if entity.availability_id
-            else None,
+            availability_id=entity.availability_id.value if entity.availability_id else None,
         )

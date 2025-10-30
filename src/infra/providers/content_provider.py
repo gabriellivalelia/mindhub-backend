@@ -24,24 +24,20 @@ class ContentProvider(Provider):
 
     @provide(scope=Scope.REQUEST)
     def GetContentsUseCaseInstance(
-        self, content_repo: IContentRepo
+        self, content_repo: IContentRepo, psychologist_repo: IPsychologistRepo
     ) -> GetContentsUseCase:
-        return GetContentsUseCase(content_repo)
+        return GetContentsUseCase(content_repo, psychologist_repo)
 
     @provide(scope=Scope.REQUEST)
     def GetContentByIdUseCaseInstance(
-        self, content_repo: IContentRepo
+        self, content_repo: IContentRepo, psychologist_repo: IPsychologistRepo
     ) -> GetContentByIdUseCase:
-        return GetContentByIdUseCase(content_repo)
+        return GetContentByIdUseCase(content_repo, psychologist_repo)
 
     @provide(scope=Scope.REQUEST)
-    def UpdateContentUseCaseInstance(
-        self, content_repo: IContentRepo
-    ) -> UpdateContentUseCase:
+    def UpdateContentUseCaseInstance(self, content_repo: IContentRepo) -> UpdateContentUseCase:
         return UpdateContentUseCase(content_repo)
 
     @provide(scope=Scope.REQUEST)
-    def DeleteContentUseCaseInstance(
-        self, content_repo: IContentRepo
-    ) -> DeleteContentUseCase:
+    def DeleteContentUseCaseInstance(self, content_repo: IContentRepo) -> DeleteContentUseCase:
         return DeleteContentUseCase(content_repo)

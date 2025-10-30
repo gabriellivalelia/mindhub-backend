@@ -2,7 +2,7 @@ from uuid import UUID
 
 from beanie import Document, Link
 from pydantic import EmailStr
-from pymongo import IndexModel
+from pymongo import TEXT, IndexModel
 
 from domain.user import GenderEnum
 from domain.value_objects.file_data import FileData
@@ -27,4 +27,5 @@ class UserDocument(Document):
         indexes = [
             IndexModel("email", unique=True),
             IndexModel("cpf", unique=True),
+            IndexModel([("name", TEXT)]),
         ]

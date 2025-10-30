@@ -62,13 +62,9 @@ async def logout(
 ) -> JSONResponse:
     try:
         await use_case.execute(jwt_data.id)
-        return JSONResponse(
-            status_code=status.HTTP_200_OK, content={"message": "User is logged out"}
-        )
+        return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "User is logged out"})
     except UserNotFoundException as exc:
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND, content={"message": str(exc)}
-        )
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content={"message": str(exc)})
 
 
 @router.get(

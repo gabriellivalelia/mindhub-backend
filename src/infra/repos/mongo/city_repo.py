@@ -23,9 +23,7 @@ class MongoCityRepo(ICityRepo):
         return await CityMongoMapper.to_domain(doc)
 
     async def get_by_id(self, id: UniqueEntityId) -> City | None:
-        doc = await CityDocument.find_one(
-            CityDocument.id == id.value, fetch_links=True, session=self._session
-        )
+        doc = await CityDocument.find_one(CityDocument.id == id.value, fetch_links=True, session=self._session)
         return await CityMongoMapper.to_domain(doc) if doc else None
 
     async def get_all_by_state_id(self, state_id: UniqueEntityId):

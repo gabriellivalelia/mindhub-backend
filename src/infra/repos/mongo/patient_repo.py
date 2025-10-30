@@ -37,9 +37,7 @@ class MongoPatientRepo(IPatientRepo):
         return await PatientMongoMapper.to_domain(doc)
 
     async def get_by_id(self, id: UniqueEntityId) -> Patient | None:
-        doc = await PatientDocument.find_one(
-            PatientDocument.id == id.value, fetch_links=True, session=self._session
-        )
+        doc = await PatientDocument.find_one(PatientDocument.id == id.value, fetch_links=True, session=self._session)
 
         return await PatientMongoMapper.to_domain(doc) if doc else None
 
@@ -65,10 +63,7 @@ class MongoPatientRepo(IPatientRepo):
         )
         if pageable.sort:
             direction_dict = {"asc": ASCENDING, "desc": DESCENDING}
-            sort_list = [
-                (field_name, direction_dict[direction.value])
-                for field_name, direction in pageable.sort
-            ]
+            sort_list = [(field_name, direction_dict[direction.value]) for field_name, direction in pageable.sort]
             find_query = find_query.sort(sort_list)  # type: ignore
         else:
             find_query = find_query.sort([("name", 1)])  # type: ignore
@@ -76,9 +71,7 @@ class MongoPatientRepo(IPatientRepo):
         find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
         docs = await find_query.to_list()
 
-        entities = await asyncio.gather(
-            *(PatientMongoMapper.to_domain(doc) for doc in docs)
-        )
+        entities = await asyncio.gather(*(PatientMongoMapper.to_domain(doc) for doc in docs))
         return Page(
             items=entities,
             total=total,
@@ -86,9 +79,7 @@ class MongoPatientRepo(IPatientRepo):
         )
 
     async def delete(self, id: UniqueEntityId) -> bool:
-        doc = await PatientDocument.find_one(
-            PatientDocument.id == id.value, session=self._session
-        )
+        doc = await PatientDocument.find_one(PatientDocument.id == id.value, session=self._session)
         if doc:
             await doc.delete(session=self._session)
             return True

@@ -79,10 +79,7 @@ class MongoAppointmentRepo(IAppointmentRepo):
                 session=self._session,
             )
             direction_dict = {"asc": ASCENDING, "desc": DESCENDING}
-            sort_list = [
-                (field_name, direction_dict[direction.value])
-                for field_name, direction in pageable.sort
-            ]
+            sort_list = [(field_name, direction_dict[direction.value]) for field_name, direction in pageable.sort]
             find_query = find_query.sort(sort_list)  # type: ignore
             find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
             docs = await find_query.to_list()
@@ -107,9 +104,7 @@ class MongoAppointmentRepo(IAppointmentRepo):
                 {"$limit": pageable.limit()},
             ]
 
-            raw_docs = await AppointmentDocument.aggregate(
-                pipeline, session=self._session
-            ).to_list()
+            raw_docs = await AppointmentDocument.aggregate(pipeline, session=self._session).to_list()
 
             # Convert raw dicts to AppointmentDocument instances and fetch links
             docs = []
@@ -122,9 +117,7 @@ class MongoAppointmentRepo(IAppointmentRepo):
                 if doc:
                     docs.append(doc)
 
-        entities = await asyncio.gather(
-            *(AppointmentMongoMapper.to_domain(doc) for doc in docs)
-        )
+        entities = await asyncio.gather(*(AppointmentMongoMapper.to_domain(doc) for doc in docs))
 
         return Page(
             items=entities,

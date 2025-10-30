@@ -14,9 +14,7 @@ class AvailabilityDTO(BaseModel):
     available: bool
 
     @field_serializer("id")
-    def serialize_id(
-        self, value: UUID | None, _info: FieldSerializationInfo
-    ) -> str | None:
+    def serialize_id(self, value: UUID | None, _info: FieldSerializationInfo) -> str | None:
         return str(value) if value else None
 
     @staticmethod

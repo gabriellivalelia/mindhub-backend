@@ -25,18 +25,14 @@ class MarkPaymentSentUseCase(IUseCase[MarkPaymentSentDTO, AppointmentDTO]):
 
     async def execute(self, dto: MarkPaymentSentDTO) -> AppointmentDTO:
         # Buscar o agendamento
-        appointment = await self.appointment_repository.get_by_id(
-            UniqueEntityId(dto.appointment_id)
-        )
+        appointment = await self.appointment_repository.get_by_id(UniqueEntityId(dto.appointment_id))
 
         if not appointment:
             raise DomainException("Agendamento não encontrado")
 
         # Verificar se o paciente é o dono da consulta
         if appointment.patient_id.value != dto.patient_id:
-            raise DomainException(
-                "Você não tem permissão para modificar este agendamento"
-            )
+            raise DomainException("Você não tem permissão para modificar este agendamento")
 
         # Marcar pagamento como enviado
         appointment.mark_payment_sent()

@@ -65,24 +65,16 @@ class PsychologistMongoMapper(IMapper[PsychologistDocument, Psychologist]):
     async def to_model(entity: Psychologist) -> PsychologistDocument:
         availabilities = (
             await asyncio.gather(
-                *(
-                    AvailabilityMongoMapper.to_model(availability)
-                    for availability in entity.availabilities
-                )
+                *(AvailabilityMongoMapper.to_model(availability) for availability in entity.availabilities)
             )
             if entity.availabilities is not None
             else None
         )
         specialties = await asyncio.gather(
-            *(
-                SpecialtyMongoMapper.to_model(specialty)
-                for specialty in entity.specialties
-            )
+            *(SpecialtyMongoMapper.to_model(specialty) for specialty in entity.specialties)
         )
 
-        approaches = await asyncio.gather(
-            *(ApproachMongoMapper.to_model(approach) for approach in entity.approaches)
-        )
+        approaches = await asyncio.gather(*(ApproachMongoMapper.to_model(approach) for approach in entity.approaches))
 
         city = await CityMongoMapper.to_model(entity.city)
 

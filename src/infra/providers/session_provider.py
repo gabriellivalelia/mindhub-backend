@@ -15,15 +15,11 @@ from application.use_cases.session.me import MeUseCase
 
 class SessionProvider(Provider):
     @provide(scope=Scope.REQUEST)
-    def LoginUseCaseInstance(
-        self, user_repo: IUserRepo, auth_service: IAuthService
-    ) -> LoginUseCase:
+    def LoginUseCaseInstance(self, user_repo: IUserRepo, auth_service: IAuthService) -> LoginUseCase:
         return LoginUseCase(user_repo, auth_service)
 
     @provide(scope=Scope.REQUEST)
-    def LogoutUseCaseInstance(
-        self, user_repo: IUserRepo, auth_service: IAuthService
-    ) -> LogoutUseCase:
+    def LogoutUseCaseInstance(self, user_repo: IUserRepo, auth_service: IAuthService) -> LogoutUseCase:
         return LogoutUseCase(user_repo, auth_service)
 
     @provide(scope=Scope.REQUEST)
@@ -31,9 +27,7 @@ class SessionProvider(Provider):
         return MeUseCase(user_repo)
 
     @provide(scope=Scope.REQUEST)
-    async def AuthMiddleware(
-        self, request: Request, auth_service: IAuthService
-    ) -> JWTData:
+    async def AuthMiddleware(self, request: Request, auth_service: IAuthService) -> JWTData:
         credentials = await HTTPBearer(auto_error=True)(request)
         if credentials is None:
             raise HTTPException(

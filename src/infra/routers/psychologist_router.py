@@ -52,9 +52,7 @@ async def create_psychologist(
     password: Annotated[str, Form(examples=["AcC123456*"])],
     cpf: Annotated[str, Form(examples=["86231101533"])],
     phone_number: Annotated[str, Form(examples=["71999258225"])],
-    birth_date: Annotated[
-        date, Form(examples=["1999-07-28"]), ConvertEmptyStrToNoneBeforeValidator
-    ],
+    birth_date: Annotated[date, Form(examples=["1999-07-28"]), ConvertEmptyStrToNoneBeforeValidator],
     gender: Annotated[str, Form(examples=["male"])],
     city_id: Annotated[
         UUID,
@@ -72,17 +70,11 @@ async def create_psychologist(
         Form(examples=[["b5a736f6-834f-46ad-94f0-4cab9a7a90f5"]]),
         ConvertEmptyStrToNoneBeforeValidator,
     ],
-    audiences: Annotated[
-        list[str], Form(examples=[["children"]]), ConvertEmptyStrToNoneBeforeValidator
-    ],
+    audiences: Annotated[list[str], Form(examples=[["children"]]), ConvertEmptyStrToNoneBeforeValidator],
     use_case: FromDishka[CreatePsychologistUseCase],
-    value_per_appointment: Annotated[
-        float, Form(examples=[150.00]), ConvertEmptyStrToNoneBeforeValidator
-    ] = 150,
+    value_per_appointment: Annotated[float, Form(examples=[150.00]), ConvertEmptyStrToNoneBeforeValidator] = 150,
     description: Annotated[str | None, Form(example=[None])] = None,
-    profile_picture: Annotated[
-        UploadFile | None, File(), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
+    profile_picture: Annotated[UploadFile | None, File(), ConvertEmptyStrToNoneBeforeValidator] = None,
 ) -> PsychologistDTO | JSONResponse:
     dto = CreatePsychologistDTO(
         name=name,
@@ -204,30 +196,16 @@ async def update_psychologist(
     email: Annotated[str | None, Form(examples=[""])] = None,
     cpf: Annotated[str | None, Form(examples=[""])] = None,
     phone_number: Annotated[str | None, Form(examples=[""])] = None,
-    birth_date: Annotated[
-        date | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
+    birth_date: Annotated[date | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator] = None,
     gender: Annotated[str | None, Form(examples=[""])] = None,
-    city_id: Annotated[
-        UUID | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
+    city_id: Annotated[UUID | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator] = None,
     crp: Annotated[str | None, Form(examples=[""])] = None,
     description: Annotated[str | None, Form(examples=[""])] = None,
-    specialty_ids: Annotated[
-        list[UUID] | None, Form(examples=[[""]]), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
-    approach_ids: Annotated[
-        list[UUID] | None, Form(examples=[[""]]), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
-    audiences: Annotated[
-        list[str] | None, Form(examples=[[""]]), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
-    value_per_appointment: Annotated[
-        float | None, Form(examples=[None]), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
-    profile_picture: Annotated[
-        UploadFile | None, File(examples=[None]), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
+    specialty_ids: Annotated[list[UUID] | None, Form(examples=[[""]]), ConvertEmptyStrToNoneBeforeValidator] = None,
+    approach_ids: Annotated[list[UUID] | None, Form(examples=[[""]]), ConvertEmptyStrToNoneBeforeValidator] = None,
+    audiences: Annotated[list[str] | None, Form(examples=[[""]]), ConvertEmptyStrToNoneBeforeValidator] = None,
+    value_per_appointment: Annotated[float | None, Form(examples=[None]), ConvertEmptyStrToNoneBeforeValidator] = None,
+    profile_picture: Annotated[UploadFile | None, File(examples=[None]), ConvertEmptyStrToNoneBeforeValidator] = None,
     delete_profile_picture: Annotated[bool, Form(examples=[False])] = False,
 ) -> PsychologistDTO | JSONResponse:
     dto = UpdatePsychologistDTO(

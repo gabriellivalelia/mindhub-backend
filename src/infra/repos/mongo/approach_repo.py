@@ -26,9 +26,7 @@ class MongoApproachRepo(IApproachRepo):
         return await ApproachMongoMapper.to_domain(doc)
 
     async def get_by_id(self, id: UniqueEntityId) -> Approach | None:
-        doc = await ApproachDocument.find_one(
-            ApproachDocument.id == id.value, session=self._session
-        )
+        doc = await ApproachDocument.find_one(ApproachDocument.id == id.value, session=self._session)
         return await ApproachMongoMapper.to_domain(doc) if doc else None
 
     async def get_by_ids(self, ids: list[UniqueEntityId]) -> list[Approach]:
@@ -36,9 +34,7 @@ class MongoApproachRepo(IApproachRepo):
             In(ApproachDocument.id, [id.value for id in ids]), session=self._session
         ).to_list()
 
-        return await asyncio.gather(
-            *(ApproachMongoMapper.to_domain(doc) for doc in docs)
-        )
+        return await asyncio.gather(*(ApproachMongoMapper.to_domain(doc) for doc in docs))
 
     async def get(
         self,
@@ -51,9 +47,7 @@ class MongoApproachRepo(IApproachRepo):
             if filters.name:
                 query_conditions["name"] = {"$regex": filters.name, "$options": "i"}
 
-        total = await ApproachDocument.find(
-            query_conditions if query_conditions else {}, session=self._session
-        ).count()
+        total = await ApproachDocument.find(query_conditions if query_conditions else {}, session=self._session).count()
 
         find_query = ApproachDocument.find(
             query_conditions if query_conditions else {},
@@ -62,10 +56,7 @@ class MongoApproachRepo(IApproachRepo):
 
         if pageable.sort:
             direction_dict = {"asc": ASCENDING, "desc": DESCENDING}
-            sort_list = [
-                (field_name, direction_dict[direction.value])
-                for field_name, direction in pageable.sort
-            ]
+            sort_list = [(field_name, direction_dict[direction.value]) for field_name, direction in pageable.sort]
             find_query = find_query.sort(sort_list)  # type: ignore
         else:
             find_query = find_query.sort([("name", 1)])  # type: ignore (default: alphabetical)
@@ -73,9 +64,7 @@ class MongoApproachRepo(IApproachRepo):
         find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
         docs = await find_query.to_list()
 
-        entities = await asyncio.gather(
-            *(ApproachMongoMapper.to_domain(doc) for doc in docs)
-        )
+        entities = await asyncio.gather(*(ApproachMongoMapper.to_domain(doc) for doc in docs))
 
         return Page(
             items=entities,

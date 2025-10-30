@@ -12,9 +12,7 @@ DEFAULT_DURATION_MIN = 50
 
 class AppointmentStatusEnum(Enum):
     WAITING_FOR_PAYMENT = "waiting_for_payment"
-    PENDING_CONFIRMATION = (
-        "pending_confirmation"  # Paciente pagou, aguardando confirmação do psicólogo
-    )
+    PENDING_CONFIRMATION = "pending_confirmation"
     CONFIRMED = "confirmed"
     CANCELED = "canceled"
     COMPLETED = "completed"
@@ -92,30 +90,34 @@ class Appointment(Entity):
 
     def confirm(self) -> None:
         """Confirm the appointment (psychologist confirms payment received)"""
+        if self._status != AppointmentStatusEnum.PENDING_CONFIRMATION:
+            raise DomainException("Só é possível confirmar consultas com pagamento pendente de confirmação")
         self._status = AppointmentStatusEnum.CONFIRMED
-        # Marcar pagamento como pago
         self._pix_payment.mark_as_paid()
 
     def mark_payment_sent(self) -> None:
         """Patient marks that payment was sent, waiting for psychologist confirmation"""
         if self._status != AppointmentStatusEnum.WAITING_FOR_PAYMENT:
-            raise DomainException(
-                "Só é possível marcar pagamento em consultas aguardando pagamento"
-            )
+            raise DomainException("Só é possível marcar pagamento em consultas aguardando pagamento")
         self._status = AppointmentStatusEnum.PENDING_CONFIRMATION
 
     def cancel(self) -> None:
         """Cancel the appointment"""
+        if self._status in [AppointmentStatusEnum.CANCELED, AppointmentStatusEnum.COMPLETED]:
+            raise DomainException("Não é possível cancelar consultas já canceladas ou finalizadas")
         self._status = AppointmentStatusEnum.CANCELED
 
     def complete(self) -> None:
         """Mark the appointment as completed"""
+        if self._status != AppointmentStatusEnum.CONFIRMED:
+            raise DomainException("Só é possível finalizar consultas confirmadas")
         self._status = AppointmentStatusEnum.COMPLETED
 
-    def reschedule(
-        self, new_date: datetime, new_availability_id: UniqueEntityId
-    ) -> None:
+    def reschedule(self, new_date: datetime, new_availability_id: UniqueEntityId) -> None:
         """Reschedule appointment to a new date and availability."""
+        if self._status in [AppointmentStatusEnum.CANCELED, AppointmentStatusEnum.COMPLETED]:
+            raise DomainException("Não é possível reagendar consultas canceladas ou finalizadas")
+
         now = datetime.now(timezone.utc)
         nd = new_date
         if nd.tzinfo is None:

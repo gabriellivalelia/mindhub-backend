@@ -52,9 +52,7 @@ class IBGEService:
             List of city data dictionaries
         """
         try:
-            response = await self.client.get(
-                f"{self.BASE_URL}/estados/{state_id}/municipios"
-            )
+            response = await self.client.get(f"{self.BASE_URL}/estados/{state_id}/municipios")
             response.raise_for_status()
             return response.json()
         except httpx.HTTPError as e:
@@ -72,9 +70,7 @@ class IBGEService:
         state_documents = []
 
         for state_data in states_data:
-            state_document = StateDocument(
-                id=uuid4(), name=state_data["nome"], abbreviation=state_data["sigla"]
-            )
+            state_document = StateDocument(id=uuid4(), name=state_data["nome"], abbreviation=state_data["sigla"])
             state_documents.append(state_document)
             # Store mapping for city creation
             self.state_map[state_data["id"]] = state_document
@@ -110,8 +106,7 @@ class IBGEService:
 
         # Fetch cities for all states concurrently
         tasks = [
-            fetch_cities_for_state(ibge_state_id, state_doc)
-            for ibge_state_id, state_doc in self.state_map.items()
+            fetch_cities_for_state(ibge_state_id, state_doc) for ibge_state_id, state_doc in self.state_map.items()
         ]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 

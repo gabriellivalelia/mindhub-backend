@@ -50,9 +50,7 @@ async def create_patient(
     email: Annotated[str, Form(examples=["gabi@gmail.com"])],
     password: Annotated[str, Form(examples=["AcC123456*"])],
     cpf: Annotated[str, Form(examples=["18071991775"])],
-    phone_number: Annotated[
-        str, Form(examples=["71999258225"]), ConvertEmptyStrToNoneBeforeValidator
-    ],
+    phone_number: Annotated[str, Form(examples=["71999258225"]), ConvertEmptyStrToNoneBeforeValidator],
     birth_date: Annotated[date, Form(examples=["2025-09-16"])],
     gender: Annotated[str, Form(examples=["male"])],
     city_id: Annotated[
@@ -61,9 +59,7 @@ async def create_patient(
         ConvertEmptyStrToNoneBeforeValidator,
     ],
     use_case: FromDishka[CreatePatientUseCase],
-    profile_picture: Annotated[
-        UploadFile | None, File(examples=None), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
+    profile_picture: Annotated[UploadFile | None, File(examples=None), ConvertEmptyStrToNoneBeforeValidator] = None,
 ) -> PatientDTO | JSONResponse:
     dto = CreatePatientDTO(
         name=name,
@@ -118,9 +114,7 @@ async def solicit_schedule_appointment(
     psychologist_id: Annotated[UUID, Path()],
     use_case: FromDishka[SolicitScheduleAppointmentUseCase],
 ) -> AppointmentDTO | JSONResponse:
-    dto = SolicitScheduleAppointmentDTO(
-        date=appointment_date, psychologist_id=psychologist_id, patient_id=jwt_data.id
-    )
+    dto = SolicitScheduleAppointmentDTO(date=appointment_date, psychologist_id=psychologist_id, patient_id=jwt_data.id)
     return await use_case.execute(dto)
 
 
@@ -137,16 +131,10 @@ async def update_patient(
     email: Annotated[str | None, Form(examples=[""])] = None,
     cpf: Annotated[str | None, Form(examples=[""])] = None,
     phone_number: Annotated[str | None, Form(examples=[""])] = None,
-    birth_date: Annotated[
-        date | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
+    birth_date: Annotated[date | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator] = None,
     gender: Annotated[str | None, Form(examples=[""])] = None,
-    city_id: Annotated[
-        UUID | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
-    profile_picture: Annotated[
-        UploadFile | None, File(examples=None), ConvertEmptyStrToNoneBeforeValidator
-    ] = None,
+    city_id: Annotated[UUID | None, Form(examples=[""]), ConvertEmptyStrToNoneBeforeValidator] = None,
+    profile_picture: Annotated[UploadFile | None, File(examples=None), ConvertEmptyStrToNoneBeforeValidator] = None,
     delete_profile_picture: Annotated[bool, Form(examples=[False])] = False,
 ) -> PatientDTO | JSONResponse:
     dto = UpdatePatientDTO(

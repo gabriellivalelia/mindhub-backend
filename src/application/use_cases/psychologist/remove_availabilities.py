@@ -30,17 +30,13 @@ class RemoveAvailabilitiesUseCase(IUseCase[RemoveAvailabilitiesDTO, Psychologist
     async def execute(self, dto: RemoveAvailabilitiesDTO) -> PsychologistDTO:
         availability_datetimes = dto.availability_datetimes
 
-        psychologist = await self.psychologist_repo.get_by_id(
-            UniqueEntityId(dto.psychologist_id)
-        )
+        psychologist = await self.psychologist_repo.get_by_id(UniqueEntityId(dto.psychologist_id))
 
         if not psychologist:
             raise ApplicationException("Psychologist not found.")
 
         if not availability_datetimes:
-            raise ApplicationException(
-                "É necessário fornecer pelo menos uma disponibilidade para remover."
-            )
+            raise ApplicationException("É necessário fornecer pelo menos uma disponibilidade para remover.")
 
         # Remove the availabilities (domain will validate if they exist and are available)
         psychologist.remove_availabilities(availability_datetimes)

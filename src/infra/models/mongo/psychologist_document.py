@@ -16,4 +16,5 @@ class PsychologistDocument(UserDocument):
     audiences: list[str] = Field(default_factory=list)
     value_per_appointment: float
     description: str | None = None
-    availabilities: list[Link[AvailabilityDocument]] | None = None
+    # Availabilities como subdocumentos embutidos (não Links)
+    availabilities: list[AvailabilityDocument] | None = Field(default_factory=list)
