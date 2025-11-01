@@ -3,7 +3,7 @@ from typing import Any
 from uuid import UUID, uuid4
 
 
-@dataclass(frozen=True)
+@dataclass()
 class UniqueEntityId:
     _value: UUID
 

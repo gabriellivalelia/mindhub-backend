@@ -28,6 +28,8 @@ check = "ruff check ."
 format = "ruff format ."
 dev = "uv run python src/main.py"
 start-dev = ["format", "dev"]
+seed = "uv run python src/infra/database/seeds/run_seeds.py"
+check-env = "uv run python check_environment.py"
 
 [tool.ruff]
 line-length = 120

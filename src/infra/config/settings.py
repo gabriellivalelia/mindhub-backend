@@ -23,6 +23,16 @@ class Settings(BaseSettings):
     MONGO_DATABASE_NAME: str = "mindhub-dev"
 
     @property
+    def MONGODB_URL(self) -> str:
+        """Alias for MONGO_URI for compatibility"""
+        return self.MONGO_URI
+
+    @property
+    def DATABASE_NAME(self) -> str:
+        """Alias for MONGO_DATABASE_NAME for compatibility"""
+        return self.MONGO_DATABASE_NAME
+
+    @property
     def DATABASE_URL(self) -> str:
         """Construct the PostgreSQL database URL for SQLAlchemy"""
         return (
