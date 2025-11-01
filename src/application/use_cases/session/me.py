@@ -6,8 +6,6 @@ from application.dtos.psychologist_dto import PsychologistDTO
 from application.dtos.user_dto import UserDTO
 from application.repos.iuser_repo import IUserRepo
 from domain.common.unique_entity_id import UniqueEntityId
-from domain.patient import Patient
-from domain.psychologist import Psychologist
 
 
 class MeUseCase(IUseCase[UUID, UserDTO | None]):
@@ -19,9 +17,13 @@ class MeUseCase(IUseCase[UUID, UserDTO | None]):
     async def execute(self, dto: UUID) -> UserDTO | None:
         found_user = await self.user_repo.get_by_id(UniqueEntityId(dto))
 
-        if isinstance(found_user, Patient):
+        if not found_user:
+            return None
+
+        user_type = found_user.get_user_type()
+        if user_type == "patient":
             return PatientDTO.to_dto(found_user)
-        elif isinstance(found_user, Psychologist):
+        elif user_type == "psychologist":
             return PsychologistDTO.to_dto(found_user)
 
         return None

@@ -73,6 +73,9 @@ class Psychologist(User):
             ]
         )
 
+        # Consultation price validation: must not exceed 1000
+        Guard.in_range(value_per_appointment, 0, 1000, "value_per_appointment")
+
         self._crp = crp if isinstance(crp, CRP) else CRP(value=crp)
         self._description = description
         self._specialties = specialties
@@ -158,3 +161,13 @@ class Psychologist(User):
         availability.schedule()
 
         return availability.id
+
+    # Implementação do método abstrato
+    def get_user_type(self) -> str:
+        """
+        Retorna o tipo de usuário.
+
+        Returns:
+            str: "psychologist"
+        """
+        return "psychologist"

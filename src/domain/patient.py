@@ -1,6 +1,5 @@
-from datetime import date, datetime
+from datetime import date
 
-from domain.appointment import Appointment
 from domain.city import City
 from domain.common.unique_entity_id import UniqueEntityId
 from domain.user import GenderEnum, User
@@ -9,8 +8,6 @@ from domain.value_objects.email import Email
 from domain.value_objects.file_data import FileData
 from domain.value_objects.password import Password
 from domain.value_objects.phone_number import PhoneNumber
-
-# TODO
 
 
 class Patient(User):
@@ -40,15 +37,12 @@ class Patient(User):
             id=id,
         )
 
-    def schedule_appointment(
-        self,
-        date: datetime,
-        psychologist_id: UniqueEntityId,
-    ) -> Appointment:
-        pass
+    # Implementação do método abstrato
+    def get_user_type(self) -> str:
+        """
+        Retorna o tipo de usuário.
 
-        # Ver se o horário está disponível
-        # Criar o pagamento via Pix
-        # Criar a consulta
-        # Marcar o horário como indisponível
-        # Retornar a consulta
+        Returns:
+            str: "patient"
+        """
+        return "patient"

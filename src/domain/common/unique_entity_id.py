@@ -1,12 +1,18 @@
+from dataclasses import dataclass
 from typing import Any
 from uuid import UUID, uuid4
 
-from domain.common.identifier import Identifier
 
+@dataclass(frozen=True)
+class UniqueEntityId:
+    _value: UUID
 
-class UniqueEntityId(Identifier[UUID]):
     def __init__(self, id: UUID | None = None):
-        super().__init__(uuid4() if id is None else id)
+        self._value = uuid4() if id is None else id
+
+    @property
+    def value(self):
+        return self._value
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, UniqueEntityId):

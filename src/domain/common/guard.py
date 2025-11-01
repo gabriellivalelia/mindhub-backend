@@ -35,7 +35,7 @@ class Guard:
             not isinstance(argument, list)  # type: ignore
             or len([filter(lambda item: item is not None, argument)]) == 0
         ):
-            raise GuardException(f"{argument_name} cannot be empty")
+            raise GuardException(f"{argument_name} não pode ser vazio")
 
     @staticmethod
     def greater_than(min_value: float, actual_value: float) -> None:
@@ -43,7 +43,7 @@ class Guard:
         Raises GuardException if actual_value is NOT strictly greater than min_value.
         """
         if not (actual_value > min_value):
-            raise GuardException(f"Number given ({actual_value}) is not greater than ({min_value})")
+            raise GuardException(f"Número fornecido ({actual_value}) não é maior que ({min_value})")
 
     @staticmethod
     def greater_equal_than(min_value: float, actual_value: float) -> None:
@@ -51,7 +51,7 @@ class Guard:
         Raises GuardException if actual_value is not greater or equal than min_value.
         """
         if not (actual_value >= min_value):
-            raise GuardException(f"Number given ({actual_value}) is not greater than ({min_value})")
+            raise GuardException(f"Número fornecido ({actual_value}) não é maior ou igual a ({min_value})")
 
     @staticmethod
     def against_empty_str(argument: Any, argument_name: str) -> None:
@@ -59,10 +59,10 @@ class Guard:
         Raises GuardException if argument is a empty string.
         """
         if argument is None:
-            raise GuardException(f"{argument_name} cannot be null or undefined")
+            raise GuardException(f"{argument_name} não pode ser nulo ou indefinido")
 
         if str(argument) == "":
-            raise GuardException(f"{argument_name} cannot be empty")
+            raise GuardException(f"{argument_name} não pode ser vazio")
 
     @staticmethod
     def against_empty_str_bulk(args: list[Argument]) -> None:
@@ -84,7 +84,7 @@ class Guard:
         Raises GuardException if text is shorter than num_chars.
         """
         if len(text) < num_chars:
-            raise GuardException(f"Text is not at least {num_chars} characters long")
+            raise GuardException(f"Texto não possui pelo menos {num_chars} caracteres")
 
     @staticmethod
     def against_at_most(num_chars: int, text: str) -> None:
@@ -92,7 +92,7 @@ class Guard:
         Raises GuardException if text is longer than num_chars.
         """
         if len(text) > num_chars:
-            raise GuardException(f"Text is greater than {num_chars} characters")
+            raise GuardException(f"Texto excede {num_chars} caracteres")
 
     @staticmethod
     def against_undefined(argument: object, argument_name: str) -> None:
@@ -101,7 +101,7 @@ class Guard:
         (Python does not distinguish between null and undefined like TypeScript.)
         """
         if argument is None:
-            raise GuardException(f"{argument_name} is undefined.")
+            raise GuardException(f"{argument_name} está indefinido.")
 
     @staticmethod
     def against_undefined_bulk(args: list[Argument]) -> None:
@@ -123,7 +123,7 @@ class Guard:
         Raises GuardException if value is not in the list of valid_values.
         """
         if value not in valid_values:
-            raise GuardException(f'{argument_name} must be one of {valid_values}. Got "{value}"')
+            raise GuardException(f'{argument_name} deve ser um dos seguintes: {valid_values}. Recebido: "{value}"')
 
     @staticmethod
     def is_one_of_enum(value: Any, enum_class: Type[Enum], argument_name: str) -> None:
@@ -132,7 +132,7 @@ class Guard:
         """
         values = set(item.value for item in enum_class)
         if value not in values:
-            raise GuardException(f'{argument_name} must be one of {values}. Got "{value}"')
+            raise GuardException(f'{argument_name} deve ser um dos seguintes: {values}. Recebido: "{value}"')
 
     @staticmethod
     def in_range(num: float, min_value: float, max_value: float, argument_name: str) -> None:
@@ -140,7 +140,7 @@ class Guard:
         Raises GuardException if num is not between [min_value, max_value].
         """
         if not (min_value <= num <= max_value):
-            raise GuardException(f"{argument_name} is not within range [{min_value}, {max_value}]")
+            raise GuardException(f"{argument_name} não está dentro do intervalo [{min_value}, {max_value}]")
 
     @staticmethod
     def all_in_range(numbers: list[float], min_value: float, max_value: float, argument_name: str) -> None:
@@ -150,5 +150,5 @@ class Guard:
         for num in numbers:
             if not (min_value <= num <= max_value):
                 raise GuardException(
-                    f"One of the values for '{argument_name}' is not within the range [{min_value}, {max_value}]"
+                    f"Um dos valores para '{argument_name}' não está dentro do intervalo [{min_value}, {max_value}]"
                 )

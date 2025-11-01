@@ -17,7 +17,7 @@ from domain.value_objects.phone_number import PhoneNumber
 class GenderEnum(str, Enum):
     MALE = "male"
     FEMALE = "female"
-    NON_BINARY = "non-binary"
+    NON_BINARY = "non_binary"
     PREFER_NOT_TO_SAY = "prefer_not_to_say"
 
 
@@ -45,6 +45,13 @@ class User(Entity, ABC):
             ]
         )
         Guard.against_empty_str(name, "name")
+
+        # Age validation: must be between 18 and 150 years
+        from datetime import date
+
+        today = date.today()
+        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+        Guard.in_range(age, 18, 150, "age (from birth_date)")
 
         super().__init__(id)
 
@@ -116,3 +123,15 @@ class User(Entity, ABC):
     def city(self, city: City):
         Guard.against_undefined(city, "city")
         self._city = city
+
+    from abc import abstractmethod
+
+    @abstractmethod
+    def get_user_type(self) -> str:
+        """
+        Retorna o tipo de usuário.
+
+        Returns:
+            str: Tipo do usuário ("patient" ou "psychologist")
+        """
+        pass

@@ -37,12 +37,12 @@ class RescheduleAppointmentUseCase(IUseCase[RescheduleAppointmentDTO, Appointmen
         appointment = await self.appointment_repo.get_by_id(UniqueEntityId(dto.appointment_id))
 
         if not appointment:
-            raise ApplicationException("Appointment not found.")
+            raise ApplicationException("Agendamento não encontrado.")
 
         # Authorization: only patient or psychologist related to appointment can reschedule
         req_id = str(dto.requesting_user_id)
         if req_id != str(appointment.patient_id.value) and req_id != str(appointment.psychologist_id.value):
-            raise ApplicationException("Not authorized to reschedule this appointment.")
+            raise ApplicationException("Você não tem permissão para reagendar este agendamento.")
 
         # Use timezone-aware comparison (new_date may include tzinfo)
         now = datetime.now(timezone.utc)
@@ -55,12 +55,12 @@ class RescheduleAppointmentUseCase(IUseCase[RescheduleAppointmentDTO, Appointmen
         # Permitir margem de 1 hora para diferenças de timezone
         time_diff_hours = (new_date - now).total_seconds() / 3600
         if time_diff_hours < -1:
-            raise ApplicationException("Cannot reschedule to a past date.")
+            raise ApplicationException("Não é possível reagendar para uma data passada.")
 
         # attempt to schedule new availability in psychologist and free old availability
         psychologist = await self.psychologist_repo.get_by_id(appointment.psychologist_id)
         if not psychologist:
-            raise ApplicationException("Psychologist not found.")
+            raise ApplicationException("Psicólogo não encontrado.")
 
         # schedule new availability (this will raise if not available)
         new_availability_id = psychologist.get_availability_by_date(dto.new_date)

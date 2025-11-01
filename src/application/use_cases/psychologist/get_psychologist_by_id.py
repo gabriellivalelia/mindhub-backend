@@ -23,6 +23,6 @@ class GetPsychologistByIdUseCase(IUseCase[GetPsychologistByIdDTO, PsychologistDT
         psychologist = await self.psychologist_repo.get_by_id(UniqueEntityId(dto.psychologist_id))
 
         if not psychologist:
-            raise ApplicationException("Psychologist not found.")
+            raise ApplicationException("Psicólogo não encontrado.")
 
         return PsychologistDTO.to_dto(psychologist)

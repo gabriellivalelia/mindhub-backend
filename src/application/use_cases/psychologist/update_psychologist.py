@@ -75,7 +75,7 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
     async def execute(self, dto: UpdatePsychologistDTO) -> PsychologistDTO:
         found_psychologist = await self.psychologist_repo.get_by_id(UniqueEntityId(dto.psychologist_id))
         if not found_psychologist:
-            raise ApplicationException("Psychologist not found.")
+            raise ApplicationException("Psicólogo não encontrado.")
 
         query_list: list[dict[str, str]] = []
 
@@ -97,25 +97,25 @@ class UpdatePsychologistUseCase(IUseCase[UpdatePsychologistDTO, PsychologistDTO]
         if len(query_list) > 0:
             is_duplicated = await self.user_repo.exists_by(query_list)
             if is_duplicated:
-                raise ApplicationException("Duplicated e-mail, cpf or crp.")
+                raise ApplicationException("E-mail, CPF ou CRP duplicado.")
 
         specialties = found_psychologist.specialties
         if dto.specialty_ids:
             specialties = await self.specialty_repo.get_by_ids([UniqueEntityId(id) for id in dto.specialty_ids])
             if len(specialties) != len(dto.specialty_ids):
-                raise ApplicationException("One or more specialties were not found.")
+                raise ApplicationException("Uma ou mais especialidades não foram encontradas.")
 
         approaches = found_psychologist.approaches
         if dto.approach_ids:
             approaches = await self.approach_repo.get_by_ids([UniqueEntityId(id) for id in dto.approach_ids])
             if len(approaches) != len(dto.approach_ids):
-                raise ApplicationException("One or more approaches were not found.")
+                raise ApplicationException("Uma ou mais abordagens não foram encontradas.")
 
         city = found_psychologist.city
         if dto.city_id:
             city = await self.city_repo.get_by_id(UniqueEntityId(dto.city_id))
             if not city:
-                raise ApplicationException("City not found.")
+                raise ApplicationException("Cidade não encontrada.")
 
         profile_picture = found_psychologist.profile_picture
         if dto.delete_profile_picture:

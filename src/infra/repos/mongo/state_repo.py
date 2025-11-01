@@ -40,12 +40,12 @@ class MongoStateRepo(IStateRepo):
             if filters.name:
                 query_conditions["name"] = {"$regex": filters.name, "$options": "i"}
 
-        total = await StateDocument.count()
         find_query = StateDocument.find(
             query_conditions if query_conditions else {},
             fetch_links=True,
             session=self._session,
         )
+        total = await find_query.count()
 
         if pageable.sort:
             direction_dict = {"asc": 1, "desc": -1}

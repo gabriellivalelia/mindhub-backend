@@ -32,7 +32,7 @@ class DefaultAuthService(IAuthService):
             return None
 
     def sign_jwt_tokens(self, user: User) -> tuple[str, str]:
-        access_token_data = JWTData(id=user.id.value).model_dump()
+        access_token_data = JWTData(id=user.id.value, user_type=user.get_user_type()).model_dump()
         access_token_expire = datetime.now(timezone.utc) + timedelta(minutes=Settings().ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token_data.update({"exp": access_token_expire})
         access_token = jwt.encode(  # type: ignore

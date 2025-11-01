@@ -33,7 +33,7 @@ class RemoveAvailabilitiesUseCase(IUseCase[RemoveAvailabilitiesDTO, Psychologist
         psychologist = await self.psychologist_repo.get_by_id(UniqueEntityId(dto.psychologist_id))
 
         if not psychologist:
-            raise ApplicationException("Psychologist not found.")
+            raise ApplicationException("Psicólogo não encontrado.")
 
         if not availability_datetimes:
             raise ApplicationException("É necessário fornecer pelo menos uma disponibilidade para remover.")

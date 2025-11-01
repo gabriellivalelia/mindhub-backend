@@ -34,7 +34,7 @@ class Pageable(BaseModel):
         normalized: list[tuple[str, SORT_DIRECTION]] = []
         for item in v:
             if not isinstance(item, (list, tuple)) or len(item) != 2:  # type: ignore
-                raise GuardException("each sort item must be a (field, direction) tuple")
+                raise GuardException("cada item de ordenação deve ser uma tupla (campo, direção)")
 
             field_name, direction = item
             direction = str(direction).lower()

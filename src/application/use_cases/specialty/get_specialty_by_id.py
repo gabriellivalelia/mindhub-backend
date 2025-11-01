@@ -23,6 +23,6 @@ class GetSpecialtyByIdUseCase(IUseCase[GetSpecialtyByIdDTO, SpecialtyDTO]):
         specialty = await self.specialty_repo.get_by_id(UniqueEntityId(dto.specialty_id))
 
         if not specialty:
-            raise ApplicationException("Specialty not found.")
+            raise ApplicationException("Especialidade não encontrada.")
 
         return SpecialtyDTO.to_dto(specialty)

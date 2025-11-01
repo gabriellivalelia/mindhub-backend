@@ -53,61 +53,6 @@ class MongoPsychologistRepo(IPsychologistRepo):
             "audiences": 15,
             "max_price": 5,
         }
-        # filters_exprs: list[object] = []
-
-        # if filters:
-        #     if filters.name:
-        #         # case-insensitive regex match for name
-        #         filters_exprs.append(
-        #             {"name": {"$regex": filters.name, "$options": "i"}}
-        #         )
-        #     if filters.gender is not None:
-        #         filters_exprs.append(
-        #             PsychologistDocument.gender == filters.gender.value
-        #         )
-        #     if filters.specialty_ids is not None:
-        #         filters_exprs.append(
-        #             In(PsychologistDocument.specialties.id, list(filters.specialty_ids))
-        #         )
-        #     if filters.approach_ids is not None:
-        #         filters_exprs.append(
-        #             In(PsychologistDocument.approaches.id, list(filters.approach_ids))
-        #         )
-        #     if filters.audiences:
-        #         filters_exprs.append(
-        #             In(
-        #                 PsychologistDocument.audiences,
-        #                 [a.value for a in filters.audiences],
-        #             )
-        #         )
-        #     if filters.max_price is not None:
-        #         filters_exprs.append(
-        #             PsychologistDocument.value_per_appointment <= filters.max_price
-        #         )
-
-        # find_query = PsychologistDocument.find(
-        #     *filters_exprs if filters_exprs else {},
-        #     fetch_links=True,
-        #     session=self._session,
-        # )
-        # total = await PsychologistDocument.find(
-        #     *filters_exprs if filters_exprs else {}, session=self._session
-        # ).count()
-
-        # if pageable.sort:
-        #     direction_dict = {"asc": ASCENDING, "desc": DESCENDING}
-        #     sort_list = [
-        #         (field_name, direction_dict[direction.value])
-        #         for field_name, direction in pageable.sort
-        #     ]
-        #     find_query = find_query.sort(sort_list)  # type: ignore
-        # else:
-        #     find_query = find_query.sort([("name", 1)])  # type: ignore
-
-        # find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
-
-        # docs = await find_query.to_list()
-
         pipeline = []
 
         if filters:

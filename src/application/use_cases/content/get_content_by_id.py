@@ -25,7 +25,7 @@ class GetContentByIdUseCase(IUseCase[GetContentByIdDTO, ContentDTO]):
     async def execute(self, dto: GetContentByIdDTO) -> ContentDTO:
         content = await self.content_repo.get_by_id(UniqueEntityId(dto.content_id))
         if not content:
-            raise ApplicationException("Content not found")
+            raise ApplicationException("Conteúdo não encontrado")
 
         # Buscar nome do autor
         author = await self.psychologist_repo.get_by_id(content.author_id)

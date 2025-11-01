@@ -8,6 +8,7 @@ from uuid import uuid4
 
 import httpx
 
+from application.common.exception import ApplicationException
 from infra.models.mongo.city_document import CityDocument
 from infra.models.mongo.state_document import StateDocument
 
@@ -38,7 +39,7 @@ class IBGEService:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPError as e:
-            print(f"Error fetching states from IBGE API: {e}")
+            raise ApplicationException(f"Error fetching states from IBGE API: {e}")
             return []
 
     async def fetch_cities_by_state(self, state_id: int) -> List[Dict[str, Any]]:
@@ -56,7 +57,7 @@ class IBGEService:
             response.raise_for_status()
             return response.json()
         except httpx.HTTPError as e:
-            print(f"Error fetching cities for state {state_id} from IBGE API: {e}")
+            raise ApplicationException(f"Error fetching cities for state {state_id} from IBGE API: {e}")
             return []
 
     async def create_state_documents(self) -> List[StateDocument]:
@@ -115,7 +116,7 @@ class IBGEService:
             if isinstance(result, list):
                 city_documents.extend(result)
             else:
-                print(f"Error fetching cities: {result}")
+                raise ApplicationException(f"Error fetching cities: {result}")
 
         return city_documents
 
@@ -128,12 +129,8 @@ class IBGEService:
         Returns:
             Tuple of (state_documents, city_documents)
         """
-        print("Fetching Brazilian states from IBGE API...")
         state_documents = await self.create_state_documents()
-        print(f"Created {len(state_documents)} state documents")
 
-        print("Fetching Brazilian cities from IBGE API...")
         city_documents = await self.create_city_documents()
-        print(f"Created {len(city_documents)} city documents")
 
         return state_documents, city_documents

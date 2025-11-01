@@ -82,19 +82,19 @@ class CreatePsychologistUseCase(IUseCase[CreatePsychologistDTO, PsychologistDTO]
 
         is_duplicated = await self.user_repo.exists_by([{"email": email.value}, {"cpf": cpf.value}, {"crp": crp.value}])
         if is_duplicated:
-            raise ApplicationException("Duplicated e-mail, cpf or crp.")
+            raise ApplicationException("E-mail, CPF ou CRP duplicado.")
 
         city = await self.city_repo.get_by_id(UniqueEntityId(dto.city_id))
         if not city:
-            raise DomainException("City not found.")
+            raise DomainException("Cidade não encontrada.")
 
         specialties = await self.specialty_repo.get_by_ids([UniqueEntityId(id) for id in dto.specialty_ids])
         if len(specialties) != len(dto.specialty_ids):
-            raise DomainException("One or more specialties were not found.")
+            raise DomainException("Uma ou mais especialidades não foram encontradas.")
 
         approaches = await self.approach_repo.get_by_ids([UniqueEntityId(id) for id in dto.approach_ids])
         if len(approaches) != len(dto.approach_ids):
-            raise DomainException("One or more approaches were not found.")
+            raise DomainException("Uma ou mais abordagens não foram encontradas.")
 
         audiences = [AudienceEnum(audience) for audience in dto.audiences]
 

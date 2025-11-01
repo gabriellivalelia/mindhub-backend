@@ -22,10 +22,10 @@ class DeleteContentUseCase(IUseCase[DeleteContentDTO, bool]):
     async def execute(self, dto: DeleteContentDTO) -> bool:
         content = await self.content_repo.get_by_id(UniqueEntityId(dto.content_id))
         if not content:
-            raise ApplicationException("Content not found")
+            raise ApplicationException("Conteúdo não encontrado")
 
         # Verifica se o usuário é o autor
         if content.author_id.value != dto.requesting_user_id:
-            raise ApplicationException("Only the author can delete this content")
+            raise ApplicationException("Apenas o autor pode deletar este conteúdo")
 
         return await self.content_repo.delete(UniqueEntityId(dto.content_id))

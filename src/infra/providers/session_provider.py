@@ -32,27 +32,27 @@ class SessionProvider(Provider):
         if credentials is None:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid authentication scheme",
+                detail="Autenticação falhou",
             )
 
         if credentials.scheme != "Bearer":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid authentication scheme",
+                detail="Esquema de autenticação inválido",
             )
 
         decoded = await auth_service.decode_access_token(credentials.credentials)
         if decoded is None:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid or expired token",
+                detail="Token inválido ou expirado",
             )
 
         tokens = await auth_service.get_tokens(str(decoded.id))
         if len(tokens) == 0:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Auth token not found. User is probably not logged in. Please login again",
+                detail="Token de autenticação não encontrado. Usuário provavelmente não está logado. Por favor, faça login novamente",
             )
 
         return decoded

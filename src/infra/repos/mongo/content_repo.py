@@ -31,14 +31,19 @@ class MongoContentRepo(IContentRepo):
         return await ContentMongoMapper.to_domain(doc) if doc else None
 
     async def get(self, pageable: Pageable, filters: ContentFilters | None = None) -> Page[Content]:
-        find_query = ContentDocument.find(fetch_links=True, session=self._session)
+        filters_exprs: list[object] = []
 
         if filters:
             if filters.title:
-                find_query = find_query.find({"title": {"$regex": filters.title, "$options": "i"}})
+                filters_exprs.append({"title": {"$regex": filters.title, "$options": "i"}})
             if filters.author_id:
-                find_query = find_query.find({"author_id": filters.author_id})
+                filters_exprs.append(ContentDocument.author.id == filters.author_id)
 
+        find_query = ContentDocument.find(
+            *filters_exprs if filters_exprs else {},
+            fetch_links=True,
+            session=self._session,
+        )
         total = await find_query.count()
 
         if pageable.sort:
@@ -49,6 +54,7 @@ class MongoContentRepo(IContentRepo):
             find_query = find_query.sort([("created_at", -1)])  # type: ignore
 
         find_query = find_query.skip(pageable.offset()).limit(pageable.limit())
+
         docs = await find_query.to_list()
 
         entities = [await ContentMongoMapper.to_domain(doc) for doc in docs]

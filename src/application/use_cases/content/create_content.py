@@ -33,7 +33,7 @@ class CreateContentUseCase(IUseCase[CreateContentDTO, ContentDTO]):
         # Verifica se o autor é um psicólogo
         psychologist = await self.psychologist_repo.get_by_id(UniqueEntityId(dto.author_id))
         if not psychologist:
-            raise ApplicationException("Only psychologists can create content")
+            raise ApplicationException("Apenas psicólogos podem criar conteúdos")
 
         content = Content(
             title=dto.title,

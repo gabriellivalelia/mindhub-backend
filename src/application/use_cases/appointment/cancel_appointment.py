@@ -36,7 +36,7 @@ class CancelAppointmentUseCase(IUseCase[CancelAppointmentDTO, AppointmentDTO]):
         appointment = await self.appointment_repo.get_by_id(UniqueEntityId(dto.appointment_id))
 
         if not appointment:
-            raise ApplicationException("Appointment not found.")
+            raise ApplicationException("Agendamento não encontrado.")
 
         # Authorization: only patient or psychologist related to appointment can cancel
         # authorization: requesting user must be either patient or psychologist on appointment
@@ -44,7 +44,7 @@ class CancelAppointmentUseCase(IUseCase[CancelAppointmentDTO, AppointmentDTO]):
             dto.requesting_user_id != appointment.patient_id.value
             and dto.requesting_user_id != appointment.psychologist_id.value
         ):
-            raise ApplicationException("Not authorized to cancel this appointment.")
+            raise ApplicationException("Você não tem permissão para cancelar este agendamento.")
 
         # Disallow cancelling if already canceled or completed
         if (

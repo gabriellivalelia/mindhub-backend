@@ -23,6 +23,6 @@ class GetApproachByIdUseCase(IUseCase[GetApproachByIdDTO, ApproachDTO]):
         approach = await self.approach_repo.get_by_id(UniqueEntityId(dto.approach_id))
 
         if not approach:
-            raise ApplicationException("Approach not found.")
+            raise ApplicationException("Abordagem não encontrada.")
 
         return ApproachDTO.to_dto(approach)

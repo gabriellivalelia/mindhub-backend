@@ -28,7 +28,6 @@ class GetContentsUseCase(IUseCase[GetContentsDTO, Page[ContentDTO]]):
     async def execute(self, dto: GetContentsDTO) -> Page[ContentDTO]:
         pageable = Pageable(page=dto.page, size=dto.size, sort=dto.sort)
         filters = ContentFilters(title=dto.title, author_id=dto.author_id)
-
         page = await self.content_repo.get(pageable, filters)
 
         # Buscar nomes dos autores

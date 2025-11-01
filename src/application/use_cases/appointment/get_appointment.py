@@ -26,7 +26,7 @@ class GetAppointmentByIdUseCase(IUseCase[GetAppointmentByIdDTO, AppointmentDTO])
         appointment = await self.appointment_repo.get_by_id(UniqueEntityId(dto.appointment_id))
 
         if not appointment:
-            raise ApplicationException("Appointment not found")
+            raise ApplicationException("Agendamento não encontrado")
 
         return AppointmentDTO.to_dto(appointment)
 
@@ -41,7 +41,6 @@ class GetAppointmentsUseCase(IUseCase[GetAppointmentsDTO, Page[AppointmentDTO]])
         self.appointment_repo = appointment_repo
 
     async def execute(self, dto: GetAppointmentsDTO) -> Page[AppointmentDTO]:
-        print(dto)
         pageable = Pageable(page=dto.page, size=dto.size, sort=dto.sort)
         filters = AppointmentFilters(
             start_date=dto.start_date,

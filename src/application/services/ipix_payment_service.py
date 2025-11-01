@@ -6,5 +6,5 @@ from domain.pix_payment import PixPayment
 class IPixPaymentService(ABC):
     @abstractmethod
     async def create_payment(self, amount: float) -> PixPayment:
-        """Create a new PIX payment with the specified amount"""
+        """Cria um novo pagamento PIX com o valor especificado"""
         pass

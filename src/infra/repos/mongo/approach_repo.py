@@ -47,12 +47,11 @@ class MongoApproachRepo(IApproachRepo):
             if filters.name:
                 query_conditions["name"] = {"$regex": filters.name, "$options": "i"}
 
-        total = await ApproachDocument.find(query_conditions if query_conditions else {}, session=self._session).count()
-
         find_query = ApproachDocument.find(
             query_conditions if query_conditions else {},
             session=self._session,
         )
+        total = await find_query.count()
 
         if pageable.sort:
             direction_dict = {"asc": ASCENDING, "desc": DESCENDING}

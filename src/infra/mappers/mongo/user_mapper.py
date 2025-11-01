@@ -19,7 +19,7 @@ class UserMongoMapper(IMapper[UserDocument, User]):
         if isinstance(model, PsychologistDocument):
             return await PsychologistMongoMapper.to_domain(model)
 
-        raise ApplicationException("Invalid model type")
+        raise ApplicationException("Tipo de modelo inválido")
 
     @staticmethod
     async def to_model(entity: User) -> UserDocument:
@@ -29,4 +29,4 @@ class UserMongoMapper(IMapper[UserDocument, User]):
         if isinstance(entity, Psychologist):
             return await PsychologistMongoMapper.to_model(entity)
 
-        raise ApplicationException("Invalid entity type")
+        raise ApplicationException("Tipo de entidade inválido")

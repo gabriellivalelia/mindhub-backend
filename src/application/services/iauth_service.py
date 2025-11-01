@@ -9,6 +9,7 @@ from domain.value_objects.password import Password
 
 class JWTData(BaseModel):
     id: UUID
+    user_type: str  # "patient" or "psychologist"
 
     @field_serializer("id")
     def serialize_id(self, id: UUID, _info: FieldSerializationInfo) -> str:

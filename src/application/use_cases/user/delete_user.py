@@ -24,11 +24,11 @@ class DeleteUserUseCase(IUseCase[DeleteUserDTO, bool]):
     async def execute(self, dto: DeleteUserDTO) -> bool:
         user = await self.user_repo.get_by_id(UniqueEntityId(dto.user_id))
         if not user:
-            raise ApplicationException("User not found.")
+            raise ApplicationException("Usuário não encontrado.")
 
         deleted = await self.user_repo.delete(UniqueEntityId(dto.user_id))
 
         if not deleted:
-            raise ApplicationException("Failed to delete user.")
+            raise ApplicationException("Falha ao deletar usuário.")
 
         return deleted

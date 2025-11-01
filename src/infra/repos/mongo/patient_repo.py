@@ -54,13 +54,13 @@ class MongoPatientRepo(IPatientRepo):
             if filters.email:
                 query_conditions["email"] = {"$regex": filters.email, "$options": "i"}
 
-        total = await PatientDocument.count()
-
         find_query = PatientDocument.find(
             query_conditions if query_conditions else {},
             fetch_links=True,
             session=self._session,
         )
+        total = await find_query.count()
+
         if pageable.sort:
             direction_dict = {"asc": ASCENDING, "desc": DESCENDING}
             sort_list = [(field_name, direction_dict[direction.value]) for field_name, direction in pageable.sort]

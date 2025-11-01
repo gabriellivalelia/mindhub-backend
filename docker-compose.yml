@@ -3,7 +3,7 @@ services:
     image: mongo:6
     container_name: mongo
     environment:
-      MONGO_INITDB_DATABASE: fazaconta
+      MONGO_INITDB_DATABASE: mindhub
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
