@@ -54,7 +54,6 @@ class MongoManager:
         logger.info("✅ Established connection with MongoDB and initialized Beanie")
 
         manager = cls(client)
-        await manager.seed()
 
         try:
             yield manager
