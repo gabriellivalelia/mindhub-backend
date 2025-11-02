@@ -10,7 +10,7 @@ sys.path.insert(0, str(src_path))
 
 # ruff: noqa: E402
 from beanie import init_beanie  # noqa: E402
-from motor.motor_asyncio import AsyncIOMotorClient  # noqa: E402
+from pymongo import AsyncMongoClient  # noqa: E402
 
 from infra.config.settings import Settings  # noqa: E402
 from infra.database.seeds.approach_seeder import seed_approaches  # noqa: E402
@@ -34,7 +34,7 @@ async def init_database():
     settings = Settings()
 
     # Conecta ao MongoDB
-    client = AsyncIOMotorClient(settings.MONGODB_URL)
+    client = AsyncMongoClient(settings.MONGODB_URL, uuidRepresentation="standard")
     database = client[settings.DATABASE_NAME]
 
     # Inicializa o Beanie com todos os modelos

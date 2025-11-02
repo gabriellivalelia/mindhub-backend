@@ -86,14 +86,14 @@ Cada psicólogo inclui:
 
 **Psicólogos criados:**
 
-1. Dra. Ana Paula Silva (BH) - ana.silva@mindhub.com
-2. Dr. Carlos Eduardo Santos (BH) - carlos.santos@mindhub.com
-3. Dra. Mariana Costa (Contagem) - mariana.costa@mindhub.com
-4. Dr. Roberto Oliveira (Uberlândia) - roberto.oliveira@mindhub.com
-5. Dra. Juliana Ferreira (Juiz de Fora) - juliana.ferreira@mindhub.com
-6. Dr. Fernando Alves (São Paulo) - fernando.alves@mindhub.com
-7. Dra. Patricia Lima (BH) - patricia.lima@mindhub.com
-8. Dr. André Rodrigues (Betim) - andre.rodrigues@mindhub.com
+1. Ana Paula Silva (BH) - ana.silva@mindhub.com
+2. Carlos Eduardo Santos (BH) - carlos.santos@mindhub.com
+3. Mariana Costa (Contagem) - mariana.costa@mindhub.com
+4. Roberto Oliveira (Uberlândia) - roberto.oliveira@mindhub.com
+5. Juliana Ferreira (Juiz de Fora) - juliana.ferreira@mindhub.com
+6. Fernando Alves (São Paulo) - fernando.alves@mindhub.com
+7. Patricia Lima (BH) - patricia.lima@mindhub.com
+8. André Rodrigues (Betim) - andre.rodrigues@mindhub.com
 
 ## 🔄 Comportamento dos Seeds
 
